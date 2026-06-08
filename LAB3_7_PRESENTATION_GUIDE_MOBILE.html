@@ -1,0 +1,1706 @@
+<!doctype html>
+<html lang='vi'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Kịch bản trình bày Lab 3-7</title>
+<style>
+:root {--bg:#f4f6f8;--paper:#fff;--ink:#17202a;--line:#d7dde6;--brand:#0f766e;--brand2:#1d4ed8;--warm:#92400e;--code:#0f172a;--codeText:#e5e7eb;}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+header{background:#152232;color:white;padding:22px 18px 18px} header h1{margin:0 0 8px;font-size:26px;line-height:1.2} header p{margin:6px 0;color:#dbe4ee;max-width:1050px}
+.topnav{position:sticky;top:0;z-index:20;display:flex;gap:8px;overflow-x:auto;padding:10px;background:#fff;border-bottom:1px solid var(--line)} .topnav a{flex:0 0 auto;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-weight:700;font-size:14px;background:#f8fafc}
+main{max-width:1180px;margin:0 auto;padding:16px} .lab{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px;margin:0 0 18px} .lab h2{margin:0 0 12px;font-size:24px;padding-bottom:10px;border-bottom:2px solid #e8edf3}
+.speech,.datasets,.say,.chunks,.teacher,.visual{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;background:#fbfcfe} .speech{border-left:5px solid var(--brand)} .datasets{border-left:5px solid var(--brand2)}
+.dataset-card{background:white;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin:10px 0} .dataset-card h4{margin:0 0 6px;color:#0f766e} .dataset-card p{margin:5px 0}
+.cell{border:1px solid var(--line);border-radius:12px;margin:14px 0;overflow:hidden;background:white} .cell>summary{cursor:pointer;background:#eaf1f8;padding:13px 14px;font-weight:800;font-size:17px} .cell>summary span{display:inline-block;background:var(--brand);color:white;border-radius:7px;padding:2px 8px;margin-right:8px;font-size:13px} .cellbody{padding:12px}
+.say{border-left:5px solid var(--brand);background:#f0fdfa} .chunks{border-left:5px solid var(--warm);background:#fff7ed} .teacher{border-left:5px solid #7c3aed;background:#faf5ff} .visual{border-left:5px solid #dc2626;background:#fff1f2}
+h3,h4{margin:0 0 7px;line-height:1.3} p{margin:0 0 6px} ul{margin:6px 0 0;padding-left:21px} li{margin:7px 0}
+.codebox{margin-top:12px;border:1px solid #cbd5e1;border-radius:10px;overflow:hidden} .codebox>summary{cursor:pointer;padding:11px 13px;background:#f8fafc;font-weight:800;color:#0f766e}
+.code{background:var(--code);color:var(--codeText);overflow:auto;max-height:70vh;padding:10px 0;font-family:Consolas,Monaco,'Courier New',monospace;font-size:13px;line-height:1.55} .codeline{display:grid;grid-template-columns:52px max-content;min-width:max-content} .no{color:#94a3b8;text-align:right;padding:0 12px 0 8px;user-select:none;border-right:1px solid #334155} .codeline code{white-space:pre;padding-left:12px;padding-right:16px}
+.note{font-size:14px;color:#dbe4ee} .controls{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap} button{border:1px solid #91a1b5;background:#fff;color:#17202a;border-radius:8px;padding:8px 10px;font-weight:700}
+@media(max-width:720px){body{font-size:17px;line-height:1.7}header{padding:18px 14px}header h1{font-size:22px}main{padding:10px}.lab{padding:12px;border-radius:10px}.lab h2{font-size:21px}.cell>summary{font-size:16px;padding:12px}.speech,.datasets,.say,.chunks,.teacher,.visual{padding:11px;margin:10px 0}.code{font-size:12px;max-height:62vh}.codeline{grid-template-columns:42px max-content}.topnav{padding:8px;gap:6px}.topnav a{font-size:13px;padding:7px 10px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Kịch bản trình bày code Lab 3-7</h1>
+  <p>File này được làm lại theo kiểu dễ đọc trên điện thoại: mỗi cell có phần <b>em trình bày với cô như sau</b>, các cụm code cần chỉ, câu trả lời nếu cô hỏi thêm, và code gốc để đối chiếu.</p>
+  <p class='note'>Code trong mục “Code gốc” được lấy trực tiếp từ notebook hiện tại, không viết lại thuật toán khác.</p>
+  <div class='controls'>
+    <button onclick="document.querySelectorAll('details.cell').forEach(x=>x.open=true)">Mở tất cả cell</button>
+    <button onclick="document.querySelectorAll('details.cell').forEach(x=>x.open=false)">Đóng tất cả cell</button>
+    <button onclick="document.querySelectorAll('details.codebox').forEach(x=>x.open=!x.open)">Bật/tắt code gốc</button>
+  </div>
+</header>
+<nav class='topnav'><a href='#lab3'>Lab 3: Regression Techniques</a><a href='#lab4'>Lab 4: Classification Techniques</a><a href='#lab5'>Lab 5: Model Evaluation</a><a href='#lab6'>Lab 6: Ensemble Learning</a><a href='#lab7'>Lab 7: Clustering Techniques</a></nav>
+<main>
+    <section class='lab' id='lab3'>
+      <h2>Lab 3 - Regression Techniques</h2>
+      <div class='speech'><h3>Mở đầu lab, em nói ngắn gọn</h3><p>Trong lab này em làm các kỹ thuật hồi quy và phân loại logistic. Phần quan trọng là em không dùng sẵn Linear Regression, PolynomialFeatures hay LogisticRegression cho thuật toán chính, mà tự viết bằng NumPy để hiểu công thức cập nhật tham số.</p></div>
+      <div class='datasets'><h3>Dataset của lab này</h3>
+        <div class='dataset-card'>
+          <h4>Auto MPG</h4>
+          <p><b>Nguồn:</b> UCI Machine Learning Repository</p>
+          <p><b>File:</b> <code>Lab3/data/auto-mpg.data</code></p>
+          <p>Bộ này gồm thông tin xe như mpg, số xy-lanh, dung tích, horsepower, weight, acceleration, năm sản xuất và origin. Nó phù hợp với hồi quy vì target mpg là giá trị liên tục, nên có thể dùng để dự đoán mức tiêu hao nhiên liệu từ horsepower hoặc weight.</p>
+        </div>
+
+        <div class='dataset-card'>
+          <h4>Iris</h4>
+          <p><b>Nguồn:</b> UCI Machine Learning Repository</p>
+          <p><b>File:</b> <code>Lab3/data/iris.data</code></p>
+          <p>Bộ này có 150 mẫu hoa Iris, 3 loài, mỗi mẫu có 4 số đo cánh/đài hoa. Nó phù hợp với Logistic Regression vì target là nhãn phân loại, và khi dùng petal length/petal width thì có thể vẽ decision boundary rất dễ giải thích.</p>
+        </div></div>
+      
+        <details class='cell' open>
+          <summary><span>Cell 1</span> Import thư viện</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Ở cell đầu tiên, em chỉ chuẩn bị thư viện. os dùng để nối đường dẫn file, NumPy để tính toán ma trận, pandas để đọc dataset dạng bảng, còn matplotlib để vẽ biểu đồ loss và decision boundary.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-5:</b> Cụm này là phần import. Nó chưa train model, chỉ chuẩn bị công cụ cho các cell sau.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi vì sao dùng NumPy, em trả lời: vì các thuật toán viết tay cần thao tác vector, ma trận và gradient nên NumPy là thư viện nền tảng phù hợp.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Cell này không vẽ hình.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (5 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># Import thu vien co ban; cac thuat toan ben duoi tu viet bang NumPy.</code></div>
+<div class='codeline'><span class='no'>2</span><code>import os</code></div>
+<div class='codeline'><span class='no'>3</span><code>import numpy as np</code></div>
+<div class='codeline'><span class='no'>4</span><code>import pandas as pd</code></div>
+<div class='codeline'><span class='no'>5</span><code>import matplotlib.pyplot as plt</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 2</span> Linear Regression bằng Gradient Descent trên Auto MPG</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Ở cell này, em đọc bộ Auto MPG, lấy horsepower làm biến đầu vào và mpg làm giá trị cần dự đoán. Sau đó em tự chia train-test, tự chuẩn hóa dữ liệu, rồi viết Batch Gradient Descent để học hai tham số của đường hồi quy tuyến tính. Cuối cell em chạy nhiều learning rate để so sánh tốc độ hội tụ.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-13:</b> Đọc dataset Auto MPG từ file ngoài, bỏ dòng thiếu dữ liệu, chọn X là horsepower và y là mpg.</li>
+<li><b>Dòng 15-27:</b> Chia train-test thủ công bằng cách xáo trộn index, sau đó chuẩn hóa horsepower theo mean/std của tập train. Việc chuẩn hóa giúp Gradient Descent ổn định hơn.</li>
+<li><b>Dòng 29-42:</b> Định nghĩa hàm Gradient Descent. Trong mỗi vòng lặp, code tính sai số, tính gradient của MSE theo theta, rồi cập nhật theta theo learning rate.</li>
+<li><b>Dòng 44-52:</b> Chạy thử nhiều learning rate. Với mỗi learning rate, em train theta, dự đoán trên test và in test MSE.</li>
+<li><b>Dòng 54-58:</b> Vẽ loss theo iteration bằng thang log để nhìn learning rate nào hội tụ nhanh hoặc chậm.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi learning rate là gì, em nói: learning rate quyết định bước nhảy khi cập nhật tham số; nhỏ quá thì học chậm, lớn quá thì dễ dao động hoặc không hội tụ.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Biểu đồ loss: đường nào giảm nhanh và mượt là learning rate tốt. Nếu đường giảm rất chậm thì learning rate nhỏ. Nếu loss dao động hoặc không giảm ổn định thì learning rate quá lớn.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (58 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># Doc Auto MPG tu UCI file ngoai, khong tu tao du lieu synthetic.</code></div>
+<div class='codeline'><span class='no'>2</span><code>columns = [&quot;mpg&quot;, &quot;cylinders&quot;, &quot;displacement&quot;, &quot;horsepower&quot;, &quot;weight&quot;, &quot;acceleration&quot;, &quot;model_year&quot;, &quot;origin&quot;, &quot;car_name&quot;]</code></div>
+<div class='codeline'><span class='no'>3</span><code>auto = pd.read_csv(</code></div>
+<div class='codeline'><span class='no'>4</span><code>    os.path.join(&quot;data&quot;, &quot;auto-mpg.data&quot;),</code></div>
+<div class='codeline'><span class='no'>5</span><code>    delim_whitespace=True,</code></div>
+<div class='codeline'><span class='no'>6</span><code>    names=columns,</code></div>
+<div class='codeline'><span class='no'>7</span><code>    na_values=&quot;?&quot;,</code></div>
+<div class='codeline'><span class='no'>8</span><code>    quotechar=&#x27;&quot;&#x27;</code></div>
+<div class='codeline'><span class='no'>9</span><code>).dropna()</code></div>
+<div class='codeline'><span class='no'>10</span><code></code></div>
+<div class='codeline'><span class='no'>11</span><code># Du doan mpg tu horsepower de minh hoa hoi quy tuyen tinh 1 bien.</code></div>
+<div class='codeline'><span class='no'>12</span><code>X_linear = auto[[&quot;horsepower&quot;]].to_numpy(dtype=float)</code></div>
+<div class='codeline'><span class='no'>13</span><code>y_linear = auto[&quot;mpg&quot;].to_numpy(dtype=float).reshape(-1, 1)</code></div>
+<div class='codeline'><span class='no'>14</span><code></code></div>
+<div class='codeline'><span class='no'>15</span><code># Chia train/test ve chuan hda tu viet.</code></div>
+<div class='codeline'><span class='no'>16</span><code>rng = np.random.default_rng(42)</code></div>
+<div class='codeline'><span class='no'>17</span><code>idx = rng.permutation(len(X_linear))</code></div>
+<div class='codeline'><span class='no'>18</span><code>split = int(0.8 * len(idx))</code></div>
+<div class='codeline'><span class='no'>19</span><code>train_idx, test_idx = idx[:split], idx[split:]</code></div>
+<div class='codeline'><span class='no'>20</span><code>X_train_raw, X_test_raw = X_linear[train_idx], X_linear[test_idx]</code></div>
+<div class='codeline'><span class='no'>21</span><code>y_train, y_test = y_linear[train_idx], y_linear[test_idx]</code></div>
+<div class='codeline'><span class='no'>22</span><code>mean_x = X_train_raw.mean(axis=0)</code></div>
+<div class='codeline'><span class='no'>23</span><code>std_x = X_train_raw.std(axis=0)</code></div>
+<div class='codeline'><span class='no'>24</span><code>X_train = (X_train_raw - mean_x) / std_x</code></div>
+<div class='codeline'><span class='no'>25</span><code>X_test = (X_test_raw - mean_x) / std_x</code></div>
+<div class='codeline'><span class='no'>26</span><code>X_train_b = np.c_[np.ones((len(X_train), 1)), X_train]</code></div>
+<div class='codeline'><span class='no'>27</span><code>X_test_b = np.c_[np.ones((len(X_test), 1)), X_test]</code></div>
+<div class='codeline'><span class='no'>28</span><code></code></div>
+<div class='codeline'><span class='no'>29</span><code># Batch Gradient Descent viet tay cho Linear Regression.</code></div>
+<div class='codeline'><span class='no'>30</span><code>def gradient_descent(X_b, y, learning_rate, n_iterations=160):</code></div>
+<div class='codeline'><span class='no'>31</span><code>    theta = np.zeros((X_b.shape[1], 1))</code></div>
+<div class='codeline'><span class='no'>32</span><code>    cost_history = []</code></div>
+<div class='codeline'><span class='no'>33</span><code>    m = len(y)</code></div>
+<div class='codeline'><span class='no'>34</span><code>    for iteration in range(n_iterations):</code></div>
+<div class='codeline'><span class='no'>35</span><code>        error = X_b.dot(theta) - y</code></div>
+<div class='codeline'><span class='no'>36</span><code>        gradients = 2 / m * X_b.T.dot(error)</code></div>
+<div class='codeline'><span class='no'>37</span><code>        theta = theta - learning_rate * gradients</code></div>
+<div class='codeline'><span class='no'>38</span><code>        cost_history.append(float(np.mean(error ** 2)))</code></div>
+<div class='codeline'><span class='no'>39</span><code>    return theta, cost_history</code></div>
+<div class='codeline'><span class='no'>40</span><code></code></div>
+<div class='codeline'><span class='no'>41</span><code>learning_rates = [0.005, 0.03, 0.1, 0.8]</code></div>
+<div class='codeline'><span class='no'>42</span><code>cost_histories = {}</code></div>
+<div class='codeline'><span class='no'>43</span><code>for lr in learning_rates:</code></div>
+<div class='codeline'><span class='no'>44</span><code>    theta, cost_history = gradient_descent(X_train_b, y_train, lr)</code></div>
+<div class='codeline'><span class='no'>45</span><code>    cost_histories[lr] = cost_history</code></div>
+<div class='codeline'><span class='no'>46</span><code>    test_mse = np.mean((X_test_b.dot(theta) - y_test) ** 2)</code></div>
+<div class='codeline'><span class='no'>47</span><code>    print(f&quot;lr={lr}: theta={theta.ravel()}, test MSE={test_mse:.3f}&quot;)</code></div>
+<div class='codeline'><span class='no'>48</span><code></code></div>
+<div class='codeline'><span class='no'>49</span><code>plt.figure(figsize=(10, 6))</code></div>
+<div class='codeline'><span class='no'>50</span><code>for lr, cost_history in cost_histories.items():</code></div>
+<div class='codeline'><span class='no'>51</span><code>    plt.plot(cost_history, label=f&#x27;lr = {lr}&#x27;)</code></div>
+<div class='codeline'><span class='no'>52</span><code>plt.yscale(&#x27;log&#x27;)</code></div>
+<div class='codeline'><span class='no'>53</span><code>plt.title(&#x27;Gradient Descent viet tay: MSE theo s veng lyp&#x27;)</code></div>
+<div class='codeline'><span class='no'>54</span><code>plt.xlabel(&#x27;Iterations&#x27;)</code></div>
+<div class='codeline'><span class='no'>55</span><code>plt.ylabel(&#x27;Cost MSE (log scale)&#x27;)</code></div>
+<div class='codeline'><span class='no'>56</span><code>plt.legend()</code></div>
+<div class='codeline'><span class='no'>57</span><code>plt.grid(True, alpha=0.3)</code></div>
+<div class='codeline'><span class='no'>58</span><code>plt.show()</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 3</span> Polynomial Regression viết tay</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này mở rộng hồi quy tuyến tính thành hồi quy đa thức. Em tự tạo feature x, x^2, ..., x^degree, rồi dùng Normal Equation để tìm tham số. Em dùng weight để dự đoán mpg, vì quan hệ giữa cân nặng xe và mức tiêu hao nhiên liệu thường không hoàn toàn tuyến tính.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-5:</b> Phần tiêu đề nhấn mạnh không dùng PolynomialFeatures hoặc LinearRegression của sklearn.</li>
+<li><b>Dòng 7-13:</b> Hàm create_polynomial_features tự tạo cột bias và các lũy thừa của X.</li>
+<li><b>Dòng 15-20:</b> Hàm Normal Equation giải trực tiếp theta bằng công thức ma trận, có regularization nhỏ để tránh lỗi nghịch đảo.</li>
+<li><b>Dòng 22-30:</b> Chuẩn bị dữ liệu: lấy weight làm X, mpg làm y, chuẩn hóa weight và tạo lưới X mới để vẽ đường cong.</li>
+<li><b>Dòng 32-47:</b> Lặp qua các bậc đa thức, fit theta, dự đoán trên lưới và vẽ từng đường hồi quy lên scatter plot.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi khác gì Linear Regression, em nói: bản chất vẫn là hồi quy tuyến tính theo tham số theta, nhưng đầu vào đã được biến đổi thành các lũy thừa nên mô hình biểu diễn được đường cong.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Hình scatter và các đường degree cho thấy bậc thấp đơn giản hơn, bậc cao bám dữ liệu tốt hơn nhưng nếu quá cao có thể overfit.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (47 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>2</span><code># POLYNOMIAL REGRESSION VIET TAY (FROM SCRATCH)</code></div>
+<div class='codeline'><span class='no'>3</span><code># Khong dung sklearn.preprocessing.PolynomialFeatures</code></div>
+<div class='codeline'><span class='no'>4</span><code># Khong dung sklearn.linear_model.LinearRegression</code></div>
+<div class='codeline'><span class='no'>5</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>6</span><code></code></div>
+<div class='codeline'><span class='no'>7</span><code>def create_polynomial_features(X, degree):</code></div>
+<div class='codeline'><span class='no'>8</span><code>    &quot;&quot;&quot;Tao polynomial features thu cong: [1, X, X^2, ..., X^degree].&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>9</span><code>    X_poly = np.ones((X.shape[0], 1))</code></div>
+<div class='codeline'><span class='no'>10</span><code>    for d in range(1, degree + 1):</code></div>
+<div class='codeline'><span class='no'>11</span><code>        X_poly = np.c_[X_poly, X ** d]</code></div>
+<div class='codeline'><span class='no'>12</span><code>    return X_poly</code></div>
+<div class='codeline'><span class='no'>13</span><code></code></div>
+<div class='codeline'><span class='no'>14</span><code>def linear_regression_normal_equation(X, y, l2=1e-8):</code></div>
+<div class='codeline'><span class='no'>15</span><code>    &quot;&quot;&quot;Fit hi quy tuyen tinh bang Normal Equation co regularization rat nho.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>16</span><code>    reg = l2 * np.eye(X.shape[1])</code></div>
+<div class='codeline'><span class='no'>17</span><code>    reg[0, 0] = 0</code></div>
+<div class='codeline'><span class='no'>18</span><code>    return np.linalg.pinv(X.T.dot(X) + reg).dot(X.T).dot(y)</code></div>
+<div class='codeline'><span class='no'>19</span><code></code></div>
+<div class='codeline'><span class='no'>20</span><code># D aon mpg tu weight bang coc boc da thuc khac nhau.</code></div>
+<div class='codeline'><span class='no'>21</span><code>X_poly_raw = auto[[&quot;weight&quot;]].to_numpy(dtype=float)</code></div>
+<div class='codeline'><span class='no'>22</span><code>y_poly = auto[&quot;mpg&quot;].to_numpy(dtype=float).reshape(-1, 1)</code></div>
+<div class='codeline'><span class='no'>23</span><code>mean_w = X_poly_raw.mean(axis=0)</code></div>
+<div class='codeline'><span class='no'>24</span><code>std_w = X_poly_raw.std(axis=0)</code></div>
+<div class='codeline'><span class='no'>25</span><code>X_poly = (X_poly_raw - mean_w) / std_w</code></div>
+<div class='codeline'><span class='no'>26</span><code>X_new_raw = np.linspace(X_poly_raw.min(), X_poly_raw.max(), 200).reshape(-1, 1)</code></div>
+<div class='codeline'><span class='no'>27</span><code>X_new = (X_new_raw - mean_w) / std_w</code></div>
+<div class='codeline'><span class='no'>28</span><code></code></div>
+<div class='codeline'><span class='no'>29</span><code>degrees = [1, 2, 3, 5]</code></div>
+<div class='codeline'><span class='no'>30</span><code>colors = [&#x27;red&#x27;, &#x27;green&#x27;, &#x27;orange&#x27;, &#x27;purple&#x27;]</code></div>
+<div class='codeline'><span class='no'>31</span><code></code></div>
+<div class='codeline'><span class='no'>32</span><code>plt.figure(figsize=(10, 6))</code></div>
+<div class='codeline'><span class='no'>33</span><code>plt.scatter(X_poly_raw, y_poly, color=&#x27;blue&#x27;, s=18, label=&#x27;Auto MPG data&#x27;, alpha=0.45)</code></div>
+<div class='codeline'><span class='no'>34</span><code>for degree, color in zip(degrees, colors):</code></div>
+<div class='codeline'><span class='no'>35</span><code>    X_feat = create_polynomial_features(X_poly, degree)</code></div>
+<div class='codeline'><span class='no'>36</span><code>    X_new_feat = create_polynomial_features(X_new, degree)</code></div>
+<div class='codeline'><span class='no'>37</span><code>    theta = linear_regression_normal_equation(X_feat, y_poly)</code></div>
+<div class='codeline'><span class='no'>38</span><code>    y_new = X_new_feat.dot(theta)</code></div>
+<div class='codeline'><span class='no'>39</span><code>    mse = np.mean((X_feat.dot(theta) - y_poly) ** 2)</code></div>
+<div class='codeline'><span class='no'>40</span><code>    plt.plot(X_new_raw, y_new, color=color, label=f&#x27;Degree {degree}, train MSE={mse:.2f}&#x27;, linewidth=2)</code></div>
+<div class='codeline'><span class='no'>41</span><code></code></div>
+<div class='codeline'><span class='no'>42</span><code>plt.title(&#x27;Polynomial Regression viet tay tren Auto MPG&#x27;)</code></div>
+<div class='codeline'><span class='no'>43</span><code>plt.xlabel(&#x27;Weight&#x27;)</code></div>
+<div class='codeline'><span class='no'>44</span><code>plt.ylabel(&#x27;MPG&#x27;)</code></div>
+<div class='codeline'><span class='no'>45</span><code>plt.legend(loc=&#x27;upper right&#x27;)</code></div>
+<div class='codeline'><span class='no'>46</span><code>plt.grid(True, alpha=0.3)</code></div>
+<div class='codeline'><span class='no'>47</span><code>plt.show()</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 4</span> Softmax Logistic Regression trên Iris</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Ở cell này, em viết Logistic Regression đa lớp bằng softmax. Em định nghĩa softmax, one-hot label, class model có fit và predict, rồi đọc Iris từ file UCI. Sau khi train, em in classification report và vẽ decision boundary trên hai feature petal length/petal width.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-15:</b> Khai báo các hàm toán học: softmax để đổi score thành xác suất, one-hot để biểu diễn nhãn nhiều lớp.</li>
+<li><b>Dòng 17-55:</b> Định nghĩa class LogisticRegressionScratch. Trong fit, model tính score, tính xác suất, lấy sai số so với one-hot label, rồi cập nhật weights và bias bằng gradient descent.</li>
+<li><b>Dòng 57-75:</b> Tự viết hàm accuracy và classification report để không phụ thuộc sklearn metrics.</li>
+<li><b>Dòng 77-86:</b> Đọc Iris từ file ngoài, map tên loài hoa thành số, chọn hai feature petal length/petal width.</li>
+<li><b>Dòng 88-103:</b> Chia train-test stratified thủ công để mỗi lớp đều có mặt trong train và test.</li>
+<li><b>Dòng 105-109:</b> Chuẩn hóa dữ liệu, train model, dự đoán và in báo cáo phân loại.</li>
+<li><b>Dòng 109-109:</b> Tạo lưới điểm 2D và vẽ decision boundary để thấy vùng dự đoán của từng lớp.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi vì sao dùng softmax, em nói: vì Iris có 3 lớp, sigmoid chỉ phù hợp nhị phân; softmax cho ra xác suất của tất cả các lớp và chọn lớp có xác suất cao nhất.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Decision boundary thể hiện mỗi vùng màu là một lớp Iris mà model dự đoán. Các điểm thật nằm trong vùng cùng màu càng nhiều thì model phân loại càng tốt.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (109 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>2</span><code># LOGISTIC REGRESSION VIET TAY (FROM SCRATCH)</code></div>
+<div class='codeline'><span class='no'>3</span><code># Khong dung sklearn.linear_model.LogisticRegression</code></div>
+<div class='codeline'><span class='no'>4</span><code># Khong dung sklearn.datasets.load_iris</code></div>
+<div class='codeline'><span class='no'>5</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>6</span><code></code></div>
+<div class='codeline'><span class='no'>7</span><code>def softmax(z):</code></div>
+<div class='codeline'><span class='no'>8</span><code>    exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))</code></div>
+<div class='codeline'><span class='no'>9</span><code>    return exp_z / np.sum(exp_z, axis=1, keepdims=True)</code></div>
+<div class='codeline'><span class='no'>10</span><code></code></div>
+<div class='codeline'><span class='no'>11</span><code>def one_hot_encode(y, n_classes):</code></div>
+<div class='codeline'><span class='no'>12</span><code>    one_hot = np.zeros((len(y), n_classes))</code></div>
+<div class='codeline'><span class='no'>13</span><code>    one_hot[np.arange(len(y)), y] = 1</code></div>
+<div class='codeline'><span class='no'>14</span><code>    return one_hot</code></div>
+<div class='codeline'><span class='no'>15</span><code></code></div>
+<div class='codeline'><span class='no'>16</span><code>class LogisticRegressionScratch:</code></div>
+<div class='codeline'><span class='no'>17</span><code>    &quot;&quot;&quot;Softmax Logistic Regression viet tay cho phan loai nhieu lyp.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>18</span><code>    def __init__(self, learning_rate=0.15, n_iterations=2500, l2=0.001):</code></div>
+<div class='codeline'><span class='no'>19</span><code>        self.lr = learning_rate</code></div>
+<div class='codeline'><span class='no'>20</span><code>        self.n_iter = n_iterations</code></div>
+<div class='codeline'><span class='no'>21</span><code>        self.l2 = l2</code></div>
+<div class='codeline'><span class='no'>22</span><code>        self.losses = []</code></div>
+<div class='codeline'><span class='no'>23</span><code></code></div>
+<div class='codeline'><span class='no'>24</span><code>    def fit(self, X, y):</code></div>
+<div class='codeline'><span class='no'>25</span><code>        m, n = X.shape</code></div>
+<div class='codeline'><span class='no'>26</span><code>        n_classes = len(np.unique(y))</code></div>
+<div class='codeline'><span class='no'>27</span><code>        self.weights = np.zeros((n, n_classes))</code></div>
+<div class='codeline'><span class='no'>28</span><code>        self.bias = np.zeros((1, n_classes))</code></div>
+<div class='codeline'><span class='no'>29</span><code>        y_encoded = one_hot_encode(y, n_classes)</code></div>
+<div class='codeline'><span class='no'>30</span><code>        for i in range(self.n_iter):</code></div>
+<div class='codeline'><span class='no'>31</span><code>            scores = X.dot(self.weights) + self.bias</code></div>
+<div class='codeline'><span class='no'>32</span><code>            y_pred = softmax(scores)</code></div>
+<div class='codeline'><span class='no'>33</span><code>            error = y_pred - y_encoded</code></div>
+<div class='codeline'><span class='no'>34</span><code>            dw = X.T.dot(error) / m + self.l2 * self.weights</code></div>
+<div class='codeline'><span class='no'>35</span><code>            db = np.sum(error, axis=0, keepdims=True) / m</code></div>
+<div class='codeline'><span class='no'>36</span><code>            self.weights -= self.lr * dw</code></div>
+<div class='codeline'><span class='no'>37</span><code>            self.bias -= self.lr * db</code></div>
+<div class='codeline'><span class='no'>38</span><code>            if i % 50 == 0:</code></div>
+<div class='codeline'><span class='no'>39</span><code>                loss = -np.mean(np.sum(y_encoded * np.log(y_pred + 1e-12), axis=1))</code></div>
+<div class='codeline'><span class='no'>40</span><code>                self.losses.append(float(loss))</code></div>
+<div class='codeline'><span class='no'>41</span><code>        return self</code></div>
+<div class='codeline'><span class='no'>42</span><code></code></div>
+<div class='codeline'><span class='no'>43</span><code>    def predict(self, X):</code></div>
+<div class='codeline'><span class='no'>44</span><code>        return np.argmax(softmax(X.dot(self.weights) + self.bias), axis=1)</code></div>
+<div class='codeline'><span class='no'>45</span><code></code></div>
+<div class='codeline'><span class='no'>46</span><code>def accuracy_score_manual(y_true, y_pred):</code></div>
+<div class='codeline'><span class='no'>47</span><code>    return np.mean(y_true == y_pred)</code></div>
+<div class='codeline'><span class='no'>48</span><code></code></div>
+<div class='codeline'><span class='no'>49</span><code>def classification_report_manual(y_true, y_pred, target_names):</code></div>
+<div class='codeline'><span class='no'>50</span><code>    print(f&quot;{&#x27;class&#x27;:&gt;18} {&#x27;precision&#x27;:&gt;10} {&#x27;recall&#x27;:&gt;10} {&#x27;f1-score&#x27;:&gt;10} {&#x27;support&#x27;:&gt;10}&quot;)</code></div>
+<div class='codeline'><span class='no'>51</span><code>    for c, name in enumerate(target_names):</code></div>
+<div class='codeline'><span class='no'>52</span><code>        tp = np.sum((y_pred == c) &amp; (y_true == c))</code></div>
+<div class='codeline'><span class='no'>53</span><code>        fp = np.sum((y_pred == c) &amp; (y_true != c))</code></div>
+<div class='codeline'><span class='no'>54</span><code>        fn = np.sum((y_pred != c) &amp; (y_true == c))</code></div>
+<div class='codeline'><span class='no'>55</span><code>        precision = tp / (tp + fp) if (tp + fp) else 0</code></div>
+<div class='codeline'><span class='no'>56</span><code>        recall = tp / (tp + fn) if (tp + fn) else 0</code></div>
+<div class='codeline'><span class='no'>57</span><code>        f1 = 2 * precision * recall / (precision + recall) if (precision + recall) else 0</code></div>
+<div class='codeline'><span class='no'>58</span><code>        support = np.sum(y_true == c)</code></div>
+<div class='codeline'><span class='no'>59</span><code>        print(f&quot;{name:&gt;18} {precision:&gt;10.2f} {recall:&gt;10.2f} {f1:&gt;10.2f} {support:&gt;10}&quot;)</code></div>
+<div class='codeline'><span class='no'>60</span><code>    print(&quot;accuracy:&quot;, accuracy_score_manual(y_true, y_pred))</code></div>
+<div class='codeline'><span class='no'>61</span><code></code></div>
+<div class='codeline'><span class='no'>62</span><code># Doc Iris tu UCI file ngoai; dung petal length/width de ve decision boundary.</code></div>
+<div class='codeline'><span class='no'>63</span><code>iris_cols = [&quot;sepal_length&quot;, &quot;sepal_width&quot;, &quot;petal_length&quot;, &quot;petal_width&quot;, &quot;species&quot;]</code></div>
+<div class='codeline'><span class='no'>64</span><code>iris = pd.read_csv(os.path.join(&quot;data&quot;, &quot;iris.data&quot;), header=None, names=iris_cols).dropna()</code></div>
+<div class='codeline'><span class='no'>65</span><code>target_names = sorted(iris[&quot;species&quot;].unique())</code></div>
+<div class='codeline'><span class='no'>66</span><code>label_map = {name: i for i, name in enumerate(target_names)}</code></div>
+<div class='codeline'><span class='no'>67</span><code>X_iris = iris[[&quot;petal_length&quot;, &quot;petal_width&quot;]].to_numpy(dtype=float)</code></div>
+<div class='codeline'><span class='no'>68</span><code>y_iris = iris[&quot;species&quot;].map(label_map).to_numpy(dtype=int)</code></div>
+<div class='codeline'><span class='no'>69</span><code></code></div>
+<div class='codeline'><span class='no'>70</span><code># Chia train/test stratified thu cong.</code></div>
+<div class='codeline'><span class='no'>71</span><code>rng = np.random.default_rng(42)</code></div>
+<div class='codeline'><span class='no'>72</span><code>train_idx, test_idx = [], []</code></div>
+<div class='codeline'><span class='no'>73</span><code>for c in np.unique(y_iris):</code></div>
+<div class='codeline'><span class='no'>74</span><code>    idx = np.where(y_iris == c)[0]</code></div>
+<div class='codeline'><span class='no'>75</span><code>    rng.shuffle(idx)</code></div>
+<div class='codeline'><span class='no'>76</span><code>    n_test = int(0.25 * len(idx))</code></div>
+<div class='codeline'><span class='no'>77</span><code>    test_idx.extend(idx[:n_test])</code></div>
+<div class='codeline'><span class='no'>78</span><code>    train_idx.extend(idx[n_test:])</code></div>
+<div class='codeline'><span class='no'>79</span><code>train_idx = np.array(train_idx); test_idx = np.array(test_idx)</code></div>
+<div class='codeline'><span class='no'>80</span><code>rng.shuffle(train_idx); rng.shuffle(test_idx)</code></div>
+<div class='codeline'><span class='no'>81</span><code>X_train, X_test = X_iris[train_idx], X_iris[test_idx]</code></div>
+<div class='codeline'><span class='no'>82</span><code>y_train, y_test = y_iris[train_idx], y_iris[test_idx]</code></div>
+<div class='codeline'><span class='no'>83</span><code></code></div>
+<div class='codeline'><span class='no'>84</span><code># Chuan hda thu cong.</code></div>
+<div class='codeline'><span class='no'>85</span><code>mean = X_train.mean(axis=0)</code></div>
+<div class='codeline'><span class='no'>86</span><code>std = X_train.std(axis=0)</code></div>
+<div class='codeline'><span class='no'>87</span><code>X_train_scaled = (X_train - mean) / std</code></div>
+<div class='codeline'><span class='no'>88</span><code>X_test_scaled = (X_test - mean) / std</code></div>
+<div class='codeline'><span class='no'>89</span><code></code></div>
+<div class='codeline'><span class='no'>90</span><code>log_reg = LogisticRegressionScratch()</code></div>
+<div class='codeline'><span class='no'>91</span><code>log_reg.fit(X_train_scaled, y_train)</code></div>
+<div class='codeline'><span class='no'>92</span><code>y_pred = log_reg.predict(X_test_scaled)</code></div>
+<div class='codeline'><span class='no'>93</span><code>classification_report_manual(y_test, y_pred, target_names)</code></div>
+<div class='codeline'><span class='no'>94</span><code></code></div>
+<div class='codeline'><span class='no'>95</span><code># Ve decision boundary.</code></div>
+<div class='codeline'><span class='no'>96</span><code>x_min, x_max = X_iris[:, 0].min() - 0.5, X_iris[:, 0].max() + 0.5</code></div>
+<div class='codeline'><span class='no'>97</span><code>y_min, y_max = X_iris[:, 1].min() - 0.3, X_iris[:, 1].max() + 0.3</code></div>
+<div class='codeline'><span class='no'>98</span><code>xx, yy = np.meshgrid(np.linspace(x_min, x_max, 250), np.linspace(y_min, y_max, 250))</code></div>
+<div class='codeline'><span class='no'>99</span><code>grid = np.c_[xx.ravel(), yy.ravel()]</code></div>
+<div class='codeline'><span class='no'>100</span><code>grid_scaled = (grid - mean) / std</code></div>
+<div class='codeline'><span class='no'>101</span><code>Z = log_reg.predict(grid_scaled).reshape(xx.shape)</code></div>
+<div class='codeline'><span class='no'>102</span><code></code></div>
+<div class='codeline'><span class='no'>103</span><code>plt.figure(figsize=(8, 6))</code></div>
+<div class='codeline'><span class='no'>104</span><code>plt.contourf(xx, yy, Z, alpha=0.25, cmap=&#x27;tab10&#x27;)</code></div>
+<div class='codeline'><span class='no'>105</span><code>plt.scatter(X_iris[:, 0], X_iris[:, 1], c=y_iris, cmap=&#x27;tab10&#x27;, edgecolor=&#x27;k&#x27;, s=45)</code></div>
+<div class='codeline'><span class='no'>106</span><code>plt.title(&#x27;Decision Boundary - Logistic Regression viet tay&#x27;)</code></div>
+<div class='codeline'><span class='no'>107</span><code>plt.xlabel(&#x27;Petal length&#x27;)</code></div>
+<div class='codeline'><span class='no'>108</span><code>plt.ylabel(&#x27;Petal width&#x27;)</code></div>
+<div class='codeline'><span class='no'>109</span><code>plt.show()</code></div></div>
+            </details>
+          </div>
+        </details>
+    </section>
+    <section class='lab' id='lab4'>
+      <h2>Lab 4 - Classification Techniques</h2>
+      <div class='speech'><h3>Mở đầu lab, em nói ngắn gọn</h3><p>Trong lab này em làm các mô hình phân loại cổ điển: KNN, Naive Bayes, Decision Tree và SVM RBF. Ý chính khi trình bày là mỗi thuật toán được viết tay để thấy rõ cách model ra quyết định: KNN dựa vào khoảng cách, Naive Bayes dựa vào xác suất từ, Decision Tree dựa vào Gini, SVM RBF dùng kernel để tách dữ liệu phi tuyến.</p></div>
+      <div class='datasets'><h3>Dataset của lab này</h3>
+        <div class='dataset-card'>
+          <h4>Iris</h4>
+          <p><b>Nguồn:</b> UCI Machine Learning Repository</p>
+          <p><b>File:</b> <code>Lab4/data/iris.data</code></p>
+          <p>Dùng cho KNN vì dữ liệu nhỏ, sạch, có nhãn rõ ràng và dùng 2 đặc trưng petal length/petal width để vẽ decision boundary khi thay đổi K.</p>
+        </div>
+
+        <div class='dataset-card'>
+          <h4>SMS Spam Collection</h4>
+          <p><b>Nguồn:</b> UCI, file TSV tải qua GitHub raw</p>
+          <p><b>File:</b> <code>Lab4/data/sms.tsv</code></p>
+          <p>Bộ này gồm tin nhắn SMS gắn nhãn ham/spam. Nó phù hợp với Naive Bayes vì bài toán spam filter thường biểu diễn văn bản bằng Bag-of-Words rồi tính xác suất từ theo từng lớp.</p>
+        </div>
+
+        <div class='dataset-card'>
+          <h4>WDBC Breast Cancer</h4>
+          <p><b>Nguồn:</b> UCI Machine Learning Repository</p>
+          <p><b>File:</b> <code>Lab4/data/wdbc.data</code></p>
+          <p>Bộ này gồm 569 mẫu khối u với 30 đặc trưng số học và nhãn benign/malignant. Nó phù hợp với Decision Tree vì cây có thể tách theo ngưỡng từng feature và visualize được đường ra quyết định.</p>
+        </div>
+
+        <div class='dataset-card'>
+          <h4>Two-moons</h4>
+          <p><b>Nguồn:</b> Tự tạo bằng NumPy</p>
+          <p><b>File:</b> <code>không có file riêng</code></p>
+          <p>Dữ liệu hai hình mặt trăng dùng để kiểm tra SVM RBF trên dữ liệu phi tuyến. Em tự tạo bằng NumPy để không dùng sklearn.make_moons.</p>
+        </div></div>
+      
+        <details class='cell' open>
+          <summary><span>Cell 1</span> KNN viết tay và decision boundary</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này em viết KNN từ đầu. KNN không học tham số như hồi quy, mà lưu tập train. Khi dự đoán một điểm mới, model tính khoảng cách Euclidean tới tất cả điểm train, lấy K điểm gần nhất và bỏ phiếu nhãn nhiều nhất.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-7:</b> Import thư viện và công cụ cần dùng cho xử lý file, mảng, bảng, biểu đồ và đếm phiếu.</li>
+<li><b>Dòng 9-31:</b> Định nghĩa class KNN: fit lưu dữ liệu train, _euclidean_distance tính khoảng cách, predict dự đoán nhiều điểm, _predict_one bỏ phiếu K láng giềng.</li>
+<li><b>Dòng 33-43:</b> Đọc Iris, map nhãn loài hoa thành số, lấy petal length/petal width và chuẩn hóa thủ công.</li>
+<li><b>Dòng 45-59:</b> Với K = 1, 5, 15, code tạo lưới điểm, dự đoán từng điểm trên lưới và vẽ decision boundary.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi K ảnh hưởng gì, em nói: K nhỏ thì biên quyết định gồ ghề và dễ nhạy với nhiễu; K lớn thì biên mượt hơn nhưng có thể làm mất chi tiết cục bộ.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Ba hình decision boundary cho thấy khi K thay đổi, vùng phân loại cũng đổi. Đây là phần quan trọng nhất để giải thích trực quan KNN.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (59 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code>import os</code></div>
+<div class='codeline'><span class='no'>2</span><code>import re</code></div>
+<div class='codeline'><span class='no'>3</span><code>import numpy as np</code></div>
+<div class='codeline'><span class='no'>4</span><code>import pandas as pd</code></div>
+<div class='codeline'><span class='no'>5</span><code>import matplotlib.pyplot as plt</code></div>
+<div class='codeline'><span class='no'>6</span><code>from collections import Counter</code></div>
+<div class='codeline'><span class='no'>7</span><code></code></div>
+<div class='codeline'><span class='no'>8</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>9</span><code># KNN VIET TAY (FROM SCRATCH)</code></div>
+<div class='codeline'><span class='no'>10</span><code># Khong dung sklearn.neighbors.KNeighborsClassifier</code></div>
+<div class='codeline'><span class='no'>11</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>12</span><code></code></div>
+<div class='codeline'><span class='no'>13</span><code>class KNNScratch:</code></div>
+<div class='codeline'><span class='no'>14</span><code>    &quot;&quot;&quot;K-Nearest Neighbors viet tay hoan toan.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>15</span><code>    def __init__(self, k=3):</code></div>
+<div class='codeline'><span class='no'>16</span><code>        self.k = k</code></div>
+<div class='codeline'><span class='no'>17</span><code>    def fit(self, X, y):</code></div>
+<div class='codeline'><span class='no'>18</span><code>        self.X_train = np.array(X)</code></div>
+<div class='codeline'><span class='no'>19</span><code>        self.y_train = np.array(y)</code></div>
+<div class='codeline'><span class='no'>20</span><code>    def _euclidean_distance(self, x1, x2):</code></div>
+<div class='codeline'><span class='no'>21</span><code>        return np.sqrt(np.sum((x1 - x2) ** 2))</code></div>
+<div class='codeline'><span class='no'>22</span><code>    def predict(self, X):</code></div>
+<div class='codeline'><span class='no'>23</span><code>        return np.array([self._predict_one(x) for x in X])</code></div>
+<div class='codeline'><span class='no'>24</span><code>    def _predict_one(self, x):</code></div>
+<div class='codeline'><span class='no'>25</span><code>        distances = [self._euclidean_distance(x, x_train) for x_train in self.X_train]</code></div>
+<div class='codeline'><span class='no'>26</span><code>        k_indices = np.argsort(distances)[:self.k]</code></div>
+<div class='codeline'><span class='no'>27</span><code>        k_labels = self.y_train[k_indices]</code></div>
+<div class='codeline'><span class='no'>28</span><code>        return Counter(k_labels).most_common(1)[0][0]</code></div>
+<div class='codeline'><span class='no'>29</span><code>    def score(self, X, y):</code></div>
+<div class='codeline'><span class='no'>30</span><code>        return np.mean(self.predict(X) == y)</code></div>
+<div class='codeline'><span class='no'>31</span><code></code></div>
+<div class='codeline'><span class='no'>32</span><code># Doc Iris tu UCI file ngoai, dung 2 feature de quan sat decision boundary.</code></div>
+<div class='codeline'><span class='no'>33</span><code>iris_cols = [&quot;sepal_length&quot;, &quot;sepal_width&quot;, &quot;petal_length&quot;, &quot;petal_width&quot;, &quot;species&quot;]</code></div>
+<div class='codeline'><span class='no'>34</span><code>iris = pd.read_csv(os.path.join(&quot;data&quot;, &quot;iris.data&quot;), header=None, names=iris_cols).dropna()</code></div>
+<div class='codeline'><span class='no'>35</span><code>label_map = {name: i for i, name in enumerate(sorted(iris[&quot;species&quot;].unique()))}</code></div>
+<div class='codeline'><span class='no'>36</span><code>X_knn = iris[[&quot;petal_length&quot;, &quot;petal_width&quot;]].to_numpy(float)</code></div>
+<div class='codeline'><span class='no'>37</span><code>y_knn = iris[&quot;species&quot;].map(label_map).to_numpy(int)</code></div>
+<div class='codeline'><span class='no'>38</span><code></code></div>
+<div class='codeline'><span class='no'>39</span><code># Chuan hda thu cong.</code></div>
+<div class='codeline'><span class='no'>40</span><code>mean_knn = X_knn.mean(axis=0)</code></div>
+<div class='codeline'><span class='no'>41</span><code>std_knn = X_knn.std(axis=0)</code></div>
+<div class='codeline'><span class='no'>42</span><code>X_knn_scaled = (X_knn - mean_knn) / std_knn</code></div>
+<div class='codeline'><span class='no'>43</span><code></code></div>
+<div class='codeline'><span class='no'>44</span><code># Thu nghiem coc gia tr K khac nhau.</code></div>
+<div class='codeline'><span class='no'>45</span><code>fig, axes = plt.subplots(1, 3, figsize=(15, 4))</code></div>
+<div class='codeline'><span class='no'>46</span><code>for ax, k in zip(axes, [1, 5, 15]):</code></div>
+<div class='codeline'><span class='no'>47</span><code>    knn = KNNScratch(k=k)</code></div>
+<div class='codeline'><span class='no'>48</span><code>    knn.fit(X_knn_scaled, y_knn)</code></div>
+<div class='codeline'><span class='no'>49</span><code>    x_min, x_max = X_knn_scaled[:, 0].min() - 0.5, X_knn_scaled[:, 0].max() + 0.5</code></div>
+<div class='codeline'><span class='no'>50</span><code>    y_min, y_max = X_knn_scaled[:, 1].min() - 0.5, X_knn_scaled[:, 1].max() + 0.5</code></div>
+<div class='codeline'><span class='no'>51</span><code>    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.03), np.arange(y_min, y_max, 0.03))</code></div>
+<div class='codeline'><span class='no'>52</span><code>    Z = knn.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)</code></div>
+<div class='codeline'><span class='no'>53</span><code>    ax.contourf(xx, yy, Z, alpha=0.35, cmap=&#x27;viridis&#x27;)</code></div>
+<div class='codeline'><span class='no'>54</span><code>    ax.scatter(X_knn_scaled[:, 0], X_knn_scaled[:, 1], c=y_knn, cmap=&#x27;viridis&#x27;, edgecolor=&#x27;k&#x27;, s=35)</code></div>
+<div class='codeline'><span class='no'>55</span><code>    ax.set_title(f&#x27;KNN viet tay, K={k}&#x27;)</code></div>
+<div class='codeline'><span class='no'>56</span><code>    ax.set_xlabel(&#x27;Petal length (scaled)&#x27;)</code></div>
+<div class='codeline'><span class='no'>57</span><code>    ax.set_ylabel(&#x27;Petal width (scaled)&#x27;)</code></div>
+<div class='codeline'><span class='no'>58</span><code>plt.tight_layout()</code></div>
+<div class='codeline'><span class='no'>59</span><code>plt.show()</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 2</span> Naive Bayes cho SMS Spam</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này em xây dựng bộ lọc spam. Đầu tiên em biến tin nhắn thành các từ bằng tokenizer, sau đó tạo vocabulary và vector Bag-of-Words. Với mỗi lớp spam/ham, em tính xác suất xuất hiện của từng từ có Laplace smoothing, rồi dùng log probability để dự đoán.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-8:</b> Phần tiêu đề nói rõ đây là Naive Bayes viết tay, không dùng MultinomialNB hay CountVectorizer.</li>
+<li><b>Dòng 10-78:</b> Định nghĩa class NaiveBayesScratch: tokenize văn bản, xây vocabulary, đổi text thành vector đếm từ, tính prior và likelihood cho từng lớp.</li>
+<li><b>Dòng 80-99:</b> Đọc SMS dataset, đổi nhãn spam thành 1 và ham thành 0, chia train-test stratified thủ công.</li>
+<li><b>Dòng 101-111:</b> Train Naive Bayes, dự đoán test set, rồi tính accuracy, spam precision và spam recall.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi vì sao dùng log, em nói: vì nhân nhiều xác suất nhỏ dễ bị underflow; lấy log biến tích thành tổng nên ổn định số hơn.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Cell này không vẽ hình; kết quả chính là accuracy, precision và recall của spam filter.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (111 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>2</span><code># NAIVE BAYES VIET TAY (FROM SCRATCH) - Bo loc Spam</code></div>
+<div class='codeline'><span class='no'>3</span><code># Khong dung sklearn.naive_bayes.MultinomialNB</code></div>
+<div class='codeline'><span class='no'>4</span><code># Khong dung CountVectorizer</code></div>
+<div class='codeline'><span class='no'>5</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>6</span><code></code></div>
+<div class='codeline'><span class='no'>7</span><code>class NaiveBayesScratch:</code></div>
+<div class='codeline'><span class='no'>8</span><code>    &quot;&quot;&quot;Multinomial Naive Bayes viet tay cho text classification.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>9</span><code>    </code></div>
+<div class='codeline'><span class='no'>10</span><code>    def __init__(self, alpha=1.0):</code></div>
+<div class='codeline'><span class='no'>11</span><code>        &quot;&quot;&quot;alpha: Laplace smoothing parameter.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>12</span><code>        self.alpha = alpha</code></div>
+<div class='codeline'><span class='no'>13</span><code>        self.class_priors = {}      # P(class)</code></div>
+<div class='codeline'><span class='no'>14</span><code>        self.word_probs = {}        # P(word | class)</code></div>
+<div class='codeline'><span class='no'>15</span><code>        self.vocabulary = []        # Danh sach tu vung</code></div>
+<div class='codeline'><span class='no'>16</span><code>        self.classes = []</code></div>
+<div class='codeline'><span class='no'>17</span><code>    </code></div>
+<div class='codeline'><span class='no'>18</span><code>    def _tokenize(self, text):</code></div>
+<div class='codeline'><span class='no'>19</span><code>        &quot;&quot;&quot;Tach van ban thanh cac tu (don gian: lowercase + split).&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>20</span><code>        return text.lower().split()</code></div>
+<div class='codeline'><span class='no'>21</span><code>    </code></div>
+<div class='codeline'><span class='no'>22</span><code>    def _build_vocabulary(self, texts):</code></div>
+<div class='codeline'><span class='no'>23</span><code>        &quot;&quot;&quot;Xay dung tu dien tu tat ca van ban.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>24</span><code>        vocab = set()</code></div>
+<div class='codeline'><span class='no'>25</span><code>        for text in texts:</code></div>
+<div class='codeline'><span class='no'>26</span><code>            vocab.update(self._tokenize(text))</code></div>
+<div class='codeline'><span class='no'>27</span><code>        self.vocabulary = sorted(vocab)</code></div>
+<div class='codeline'><span class='no'>28</span><code>    </code></div>
+<div class='codeline'><span class='no'>29</span><code>    def _text_to_vector(self, text):</code></div>
+<div class='codeline'><span class='no'>30</span><code>        &quot;&quot;&quot;Chuyen van ban thanh vector dem tu (Bag of Words) THU CONG.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>31</span><code>        tokens = self._tokenize(text)</code></div>
+<div class='codeline'><span class='no'>32</span><code>        vector = np.zeros(len(self.vocabulary))</code></div>
+<div class='codeline'><span class='no'>33</span><code>        for token in tokens:</code></div>
+<div class='codeline'><span class='no'>34</span><code>            if token in self.vocabulary:</code></div>
+<div class='codeline'><span class='no'>35</span><code>                idx = self.vocabulary.index(token)</code></div>
+<div class='codeline'><span class='no'>36</span><code>                vector[idx] += 1</code></div>
+<div class='codeline'><span class='no'>37</span><code>        return vector</code></div>
+<div class='codeline'><span class='no'>38</span><code>    </code></div>
+<div class='codeline'><span class='no'>39</span><code>    def fit(self, texts, labels):</code></div>
+<div class='codeline'><span class='no'>40</span><code>        &quot;&quot;&quot;Train mo hinh Naive Bayes.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>41</span><code>        self._build_vocabulary(texts)</code></div>
+<div class='codeline'><span class='no'>42</span><code>        self.classes = list(set(labels))</code></div>
+<div class='codeline'><span class='no'>43</span><code>        n_docs = len(texts)</code></div>
+<div class='codeline'><span class='no'>44</span><code>        n_vocab = len(self.vocabulary)</code></div>
+<div class='codeline'><span class='no'>45</span><code>        </code></div>
+<div class='codeline'><span class='no'>46</span><code>        for c in self.classes:</code></div>
+<div class='codeline'><span class='no'>47</span><code>            # Tinh P(class) - Prior probability</code></div>
+<div class='codeline'><span class='no'>48</span><code>            class_docs = [texts[i] for i in range(n_docs) if labels[i] == c]</code></div>
+<div class='codeline'><span class='no'>49</span><code>            self.class_priors[c] = len(class_docs) / n_docs</code></div>
+<div class='codeline'><span class='no'>50</span><code>            </code></div>
+<div class='codeline'><span class='no'>51</span><code>            # Dem so lan xuat hien cua moi tu trong class</code></div>
+<div class='codeline'><span class='no'>52</span><code>            word_counts = np.zeros(n_vocab)</code></div>
+<div class='codeline'><span class='no'>53</span><code>            for doc in class_docs:</code></div>
+<div class='codeline'><span class='no'>54</span><code>                word_counts += self._text_to_vector(doc)</code></div>
+<div class='codeline'><span class='no'>55</span><code>            </code></div>
+<div class='codeline'><span class='no'>56</span><code>            # Tinh P(word | class) voi Laplace smoothing</code></div>
+<div class='codeline'><span class='no'>57</span><code>            total_words = np.sum(word_counts)</code></div>
+<div class='codeline'><span class='no'>58</span><code>            self.word_probs[c] = (word_counts + self.alpha) / (total_words + self.alpha * n_vocab)</code></div>
+<div class='codeline'><span class='no'>59</span><code>    </code></div>
+<div class='codeline'><span class='no'>60</span><code>    def predict(self, texts):</code></div>
+<div class='codeline'><span class='no'>61</span><code>        &quot;&quot;&quot;Du doan nhan cho danh sach van ban.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>62</span><code>        predictions = []</code></div>
+<div class='codeline'><span class='no'>63</span><code>        for text in texts:</code></div>
+<div class='codeline'><span class='no'>64</span><code>            vector = self._text_to_vector(text)</code></div>
+<div class='codeline'><span class='no'>65</span><code>            </code></div>
+<div class='codeline'><span class='no'>66</span><code>            # Tinh log P(class | text) cho moi class</code></div>
+<div class='codeline'><span class='no'>67</span><code>            class_scores = {}</code></div>
+<div class='codeline'><span class='no'>68</span><code>            for c in self.classes:</code></div>
+<div class='codeline'><span class='no'>69</span><code>                # log P(class) + sum(log P(word_i | class) * count_i)</code></div>
+<div class='codeline'><span class='no'>70</span><code>                log_prior = np.log(self.class_priors[c])</code></div>
+<div class='codeline'><span class='no'>71</span><code>                log_likelihood = np.sum(vector * np.log(self.word_probs[c]))</code></div>
+<div class='codeline'><span class='no'>72</span><code>                class_scores[c] = log_prior + log_likelihood</code></div>
+<div class='codeline'><span class='no'>73</span><code>            </code></div>
+<div class='codeline'><span class='no'>74</span><code>            # Chon class co score cao nhat</code></div>
+<div class='codeline'><span class='no'>75</span><code>            predictions.append(max(class_scores, key=class_scores.get))</code></div>
+<div class='codeline'><span class='no'>76</span><code>        </code></div>
+<div class='codeline'><span class='no'>77</span><code>        return predictions</code></div>
+<div class='codeline'><span class='no'>78</span><code></code></div>
+<div class='codeline'><span class='no'>79</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>80</span><code># DEMO: B lyc Spam tren SMS Spam Collection dataset</code></div>
+<div class='codeline'><span class='no'>81</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>82</span><code></code></div>
+<div class='codeline'><span class='no'>83</span><code>sms = pd.read_csv(os.path.join(&quot;data&quot;, &quot;sms.tsv&quot;), sep=&quot;	&quot;, header=None, names=[&quot;label&quot;, &quot;message&quot;])</code></div>
+<div class='codeline'><span class='no'>84</span><code>texts = sms[&quot;message&quot;].astype(str).tolist()</code></div>
+<div class='codeline'><span class='no'>85</span><code>labels = (sms[&quot;label&quot;] == &quot;spam&quot;).astype(int).tolist()  # 1 = Spam, 0 = Ham</code></div>
+<div class='codeline'><span class='no'>86</span><code></code></div>
+<div class='codeline'><span class='no'>87</span><code># Chia train/test stratified thu cong.</code></div>
+<div class='codeline'><span class='no'>88</span><code>rng = np.random.default_rng(42)</code></div>
+<div class='codeline'><span class='no'>89</span><code>train_idx, test_idx = [], []</code></div>
+<div class='codeline'><span class='no'>90</span><code>labels_arr = np.array(labels)</code></div>
+<div class='codeline'><span class='no'>91</span><code>for c in np.unique(labels_arr):</code></div>
+<div class='codeline'><span class='no'>92</span><code>    idx = np.where(labels_arr == c)[0]</code></div>
+<div class='codeline'><span class='no'>93</span><code>    rng.shuffle(idx)</code></div>
+<div class='codeline'><span class='no'>94</span><code>    n_test = int(0.25 * len(idx))</code></div>
+<div class='codeline'><span class='no'>95</span><code>    test_idx.extend(idx[:n_test])</code></div>
+<div class='codeline'><span class='no'>96</span><code>    train_idx.extend(idx[n_test:])</code></div>
+<div class='codeline'><span class='no'>97</span><code>train_texts = [texts[i] for i in train_idx]</code></div>
+<div class='codeline'><span class='no'>98</span><code>test_texts = [texts[i] for i in test_idx]</code></div>
+<div class='codeline'><span class='no'>99</span><code>y_train = [labels[i] for i in train_idx]</code></div>
+<div class='codeline'><span class='no'>100</span><code>y_test = np.array([labels[i] for i in test_idx])</code></div>
+<div class='codeline'><span class='no'>101</span><code></code></div>
+<div class='codeline'><span class='no'>102</span><code>nb_classifier = NaiveBayesScratch(alpha=1.0)</code></div>
+<div class='codeline'><span class='no'>103</span><code>nb_classifier.fit(train_texts, y_train)</code></div>
+<div class='codeline'><span class='no'>104</span><code>predictions = np.array(nb_classifier.predict(test_texts))</code></div>
+<div class='codeline'><span class='no'>105</span><code></code></div>
+<div class='codeline'><span class='no'>106</span><code>accuracy = np.mean(predictions == y_test)</code></div>
+<div class='codeline'><span class='no'>107</span><code>precision = np.sum((predictions == 1) &amp; (y_test == 1)) / max(np.sum(predictions == 1), 1)</code></div>
+<div class='codeline'><span class='no'>108</span><code>recall = np.sum((predictions == 1) &amp; (y_test == 1)) / max(np.sum(y_test == 1), 1)</code></div>
+<div class='codeline'><span class='no'>109</span><code>print(f&quot;Naive Bayes viet tay - Accuracy: {accuracy:.4f}&quot;)</code></div>
+<div class='codeline'><span class='no'>110</span><code>print(f&quot;Spam precision: {precision:.4f}&quot;)</code></div>
+<div class='codeline'><span class='no'>111</span><code>print(f&quot;Spam recall: {recall:.4f}&quot;)</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 3</span> Decision Tree Gini trên WDBC</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này em tự viết Decision Tree. Ý tưởng là ở mỗi node, cây thử nhiều feature và threshold, chọn cách tách làm giảm Gini impurity nhiều nhất. Sau đó cây đệ quy xây node trái/phải cho tới khi đạt max_depth hoặc node đủ thuần.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-12:</b> Khai báo phần Decision Tree và class TreeNode để lưu thông tin một node trong cây.</li>
+<li><b>Dòng 14-105:</b> Định nghĩa DecisionTreeScratch: tính Gini, tìm split tốt nhất, build cây đệ quy, dự đoán một điểm và nhiều điểm.</li>
+<li><b>Dòng 107-162:</b> Các hàm visualize dùng để in cây dạng text và vẽ cây bằng matplotlib.</li>
+<li><b>Dòng 164-188:</b> Đọc WDBC từ file ngoài, tách X/y, chia train-test stratified thủ công.</li>
+<li><b>Dòng 190-203:</b> Train cây, tính accuracy, in cấu trúc cây và vẽ cây quyết định.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi Gini là gì, em nói: Gini đo độ lẫn lộn của nhãn trong node. Nếu node toàn một lớp thì Gini thấp, nếu trộn nhiều lớp thì Gini cao. Cây chọn split làm Gini giảm nhiều nhất.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Hình cây: mỗi node là một điều kiện feature &lt;= threshold. Đi nhánh True/False đến leaf sẽ ra class benign hoặc malignant.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (203 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>2</span><code># DECISION TREE VIET TAY (FROM SCRATCH)</code></div>
+<div class='codeline'><span class='no'>3</span><code># Khong dung sklearn.tree.DecisionTreeClassifier</code></div>
+<div class='codeline'><span class='no'>4</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>5</span><code></code></div>
+<div class='codeline'><span class='no'>6</span><code>class TreeNode:</code></div>
+<div class='codeline'><span class='no'>7</span><code>    &quot;&quot;&quot;Node trong Decision Tree.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>8</span><code>    def __init__(self, feature_idx=None, threshold=None, left=None, right=None, value=None, depth=0):</code></div>
+<div class='codeline'><span class='no'>9</span><code>        self.feature_idx = feature_idx  # Index cua feature de split</code></div>
+<div class='codeline'><span class='no'>10</span><code>        self.threshold = threshold      # Nguong split</code></div>
+<div class='codeline'><span class='no'>11</span><code>        self.left = left                # Node con trai</code></div>
+<div class='codeline'><span class='no'>12</span><code>        self.right = right              # Node con phai</code></div>
+<div class='codeline'><span class='no'>13</span><code>        self.value = value              # Gia tri du doan (cho leaf node)</code></div>
+<div class='codeline'><span class='no'>14</span><code>        self.depth = depth</code></div>
+<div class='codeline'><span class='no'>15</span><code></code></div>
+<div class='codeline'><span class='no'>16</span><code>class DecisionTreeScratch:</code></div>
+<div class='codeline'><span class='no'>17</span><code>    &quot;&quot;&quot;Decision Tree Classifier viet tay.</code></div>
+<div class='codeline'><span class='no'>18</span><code>    Su dung Gini Impurity de chon best split.</code></div>
+<div class='codeline'><span class='no'>19</span><code>    &quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>20</span><code>    </code></div>
+<div class='codeline'><span class='no'>21</span><code>    def __init__(self, max_depth=3, min_samples_split=2):</code></div>
+<div class='codeline'><span class='no'>22</span><code>        self.max_depth = max_depth</code></div>
+<div class='codeline'><span class='no'>23</span><code>        self.min_samples_split = min_samples_split</code></div>
+<div class='codeline'><span class='no'>24</span><code>        self.root = None</code></div>
+<div class='codeline'><span class='no'>25</span><code>        self.n_classes = None</code></div>
+<div class='codeline'><span class='no'>26</span><code>        self.feature_names = None</code></div>
+<div class='codeline'><span class='no'>27</span><code>        self.class_names = None</code></div>
+<div class='codeline'><span class='no'>28</span><code>    </code></div>
+<div class='codeline'><span class='no'>29</span><code>    def _gini(self, y):</code></div>
+<div class='codeline'><span class='no'>30</span><code>        &quot;&quot;&quot;Tinh Gini Impurity.</code></div>
+<div class='codeline'><span class='no'>31</span><code>        Gini = 1 - sum(p_i^2)</code></div>
+<div class='codeline'><span class='no'>32</span><code>        &quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>33</span><code>        if len(y) == 0:</code></div>
+<div class='codeline'><span class='no'>34</span><code>            return 0</code></div>
+<div class='codeline'><span class='no'>35</span><code>        _, counts = np.unique(y, return_counts=True)</code></div>
+<div class='codeline'><span class='no'>36</span><code>        probs = counts / len(y)</code></div>
+<div class='codeline'><span class='no'>37</span><code>        return 1 - np.sum(probs ** 2)</code></div>
+<div class='codeline'><span class='no'>38</span><code>    </code></div>
+<div class='codeline'><span class='no'>39</span><code>    def _best_split(self, X, y):</code></div>
+<div class='codeline'><span class='no'>40</span><code>        &quot;&quot;&quot;Tim best feature va threshold de split.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>41</span><code>        m, n = X.shape</code></div>
+<div class='codeline'><span class='no'>42</span><code>        best_gini = float(&#x27;inf&#x27;)</code></div>
+<div class='codeline'><span class='no'>43</span><code>        best_feature = None</code></div>
+<div class='codeline'><span class='no'>44</span><code>        best_threshold = None</code></div>
+<div class='codeline'><span class='no'>45</span><code>        </code></div>
+<div class='codeline'><span class='no'>46</span><code>        for feature in range(n):</code></div>
+<div class='codeline'><span class='no'>47</span><code>            thresholds = np.unique(X[:, feature])</code></div>
+<div class='codeline'><span class='no'>48</span><code>            for threshold in thresholds:</code></div>
+<div class='codeline'><span class='no'>49</span><code>                left_mask = X[:, feature] &lt;= threshold</code></div>
+<div class='codeline'><span class='no'>50</span><code>                right_mask = ~left_mask</code></div>
+<div class='codeline'><span class='no'>51</span><code>                </code></div>
+<div class='codeline'><span class='no'>52</span><code>                if np.sum(left_mask) == 0 or np.sum(right_mask) == 0:</code></div>
+<div class='codeline'><span class='no'>53</span><code>                    continue</code></div>
+<div class='codeline'><span class='no'>54</span><code>                </code></div>
+<div class='codeline'><span class='no'>55</span><code>                # Weighted Gini</code></div>
+<div class='codeline'><span class='no'>56</span><code>                gini = (np.sum(left_mask) * self._gini(y[left_mask]) + </code></div>
+<div class='codeline'><span class='no'>57</span><code>                        np.sum(right_mask) * self._gini(y[right_mask])) / m</code></div>
+<div class='codeline'><span class='no'>58</span><code>                </code></div>
+<div class='codeline'><span class='no'>59</span><code>                if gini &lt; best_gini:</code></div>
+<div class='codeline'><span class='no'>60</span><code>                    best_gini = gini</code></div>
+<div class='codeline'><span class='no'>61</span><code>                    best_feature = feature</code></div>
+<div class='codeline'><span class='no'>62</span><code>                    best_threshold = threshold</code></div>
+<div class='codeline'><span class='no'>63</span><code>        </code></div>
+<div class='codeline'><span class='no'>64</span><code>        return best_feature, best_threshold</code></div>
+<div class='codeline'><span class='no'>65</span><code>    </code></div>
+<div class='codeline'><span class='no'>66</span><code>    def _build_tree(self, X, y, depth=0):</code></div>
+<div class='codeline'><span class='no'>67</span><code>        &quot;&quot;&quot;Xay dung cay de quy.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>68</span><code>        # Dieu kien dung</code></div>
+<div class='codeline'><span class='no'>69</span><code>        if (depth &gt;= self.max_depth or </code></div>
+<div class='codeline'><span class='no'>70</span><code>            len(y) &lt; self.min_samples_split or </code></div>
+<div class='codeline'><span class='no'>71</span><code>            len(np.unique(y)) == 1):</code></div>
+<div class='codeline'><span class='no'>72</span><code>            # Leaf node: chon class co so luong nhieu nhat</code></div>
+<div class='codeline'><span class='no'>73</span><code>            unique, counts = np.unique(y, return_counts=True)</code></div>
+<div class='codeline'><span class='no'>74</span><code>            value = unique[np.argmax(counts)]</code></div>
+<div class='codeline'><span class='no'>75</span><code>            # Luu ca phan bo class cho visualization</code></div>
+<div class='codeline'><span class='no'>76</span><code>            class_counts = np.zeros(self.n_classes)</code></div>
+<div class='codeline'><span class='no'>77</span><code>            for u, c in zip(unique, counts):</code></div>
+<div class='codeline'><span class='no'>78</span><code>                class_counts[u] = c</code></div>
+<div class='codeline'><span class='no'>79</span><code>            return TreeNode(value=value, depth=depth)</code></div>
+<div class='codeline'><span class='no'>80</span><code>        </code></div>
+<div class='codeline'><span class='no'>81</span><code>        # Tim best split</code></div>
+<div class='codeline'><span class='no'>82</span><code>        best_feature, best_threshold = self._best_split(X, y)</code></div>
+<div class='codeline'><span class='no'>83</span><code>        </code></div>
+<div class='codeline'><span class='no'>84</span><code>        if best_feature is None:</code></div>
+<div class='codeline'><span class='no'>85</span><code>            unique, counts = np.unique(y, return_counts=True)</code></div>
+<div class='codeline'><span class='no'>86</span><code>            return TreeNode(value=unique[np.argmax(counts)], depth=depth)</code></div>
+<div class='codeline'><span class='no'>87</span><code>        </code></div>
+<div class='codeline'><span class='no'>88</span><code>        # Split data</code></div>
+<div class='codeline'><span class='no'>89</span><code>        left_mask = X[:, best_feature] &lt;= best_threshold</code></div>
+<div class='codeline'><span class='no'>90</span><code>        right_mask = ~left_mask</code></div>
+<div class='codeline'><span class='no'>91</span><code>        </code></div>
+<div class='codeline'><span class='no'>92</span><code>        # De quy xay trai va phai</code></div>
+<div class='codeline'><span class='no'>93</span><code>        left = self._build_tree(X[left_mask], y[left_mask], depth + 1)</code></div>
+<div class='codeline'><span class='no'>94</span><code>        right = self._build_tree(X[right_mask], y[right_mask], depth + 1)</code></div>
+<div class='codeline'><span class='no'>95</span><code>        </code></div>
+<div class='codeline'><span class='no'>96</span><code>        return TreeNode(feature_idx=best_feature, threshold=best_threshold,</code></div>
+<div class='codeline'><span class='no'>97</span><code>                       left=left, right=right, depth=depth)</code></div>
+<div class='codeline'><span class='no'>98</span><code>    </code></div>
+<div class='codeline'><span class='no'>99</span><code>    def fit(self, X, y):</code></div>
+<div class='codeline'><span class='no'>100</span><code>        self.n_classes = len(np.unique(y))</code></div>
+<div class='codeline'><span class='no'>101</span><code>        self.root = self._build_tree(np.array(X), np.array(y))</code></div>
+<div class='codeline'><span class='no'>102</span><code>    </code></div>
+<div class='codeline'><span class='no'>103</span><code>    def _predict_single(self, x, node):</code></div>
+<div class='codeline'><span class='no'>104</span><code>        &quot;&quot;&quot;Du doan cho 1 sample.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>105</span><code>        if node.value is not None:</code></div>
+<div class='codeline'><span class='no'>106</span><code>            return node.value</code></div>
+<div class='codeline'><span class='no'>107</span><code>        if x[node.feature_idx] &lt;= node.threshold:</code></div>
+<div class='codeline'><span class='no'>108</span><code>            return self._predict_single(x, node.left)</code></div>
+<div class='codeline'><span class='no'>109</span><code>        return self._predict_single(x, node.right)</code></div>
+<div class='codeline'><span class='no'>110</span><code>    </code></div>
+<div class='codeline'><span class='no'>111</span><code>    def predict(self, X):</code></div>
+<div class='codeline'><span class='no'>112</span><code>        return np.array([self._predict_single(x, self.root) for x in X])</code></div>
+<div class='codeline'><span class='no'>113</span><code>    </code></div>
+<div class='codeline'><span class='no'>114</span><code>    def score(self, X, y):</code></div>
+<div class='codeline'><span class='no'>115</span><code>        return np.mean(self.predict(X) == y)</code></div>
+<div class='codeline'><span class='no'>116</span><code></code></div>
+<div class='codeline'><span class='no'>117</span><code>def visualize_tree(node, feature_names=None, class_names=None, indent=&#x27;&#x27;):</code></div>
+<div class='codeline'><span class='no'>118</span><code>    &quot;&quot;&quot;In cay quyet dinh dang text.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>119</span><code>    if node.value is not None:</code></div>
+<div class='codeline'><span class='no'>120</span><code>        name = class_names[node.value] if class_names is not None else str(node.value)</code></div>
+<div class='codeline'><span class='no'>121</span><code>        print(f&quot;{indent}=&gt; Predict: {name}&quot;)</code></div>
+<div class='codeline'><span class='no'>122</span><code>        return</code></div>
+<div class='codeline'><span class='no'>123</span><code>    </code></div>
+<div class='codeline'><span class='no'>124</span><code>    feat_name = feature_names[node.feature_idx] if feature_names is not None else f&#x27;Feature[{node.feature_idx}]&#x27;</code></div>
+<div class='codeline'><span class='no'>125</span><code>    print(f&quot;{indent}If {feat_name} &lt;= {node.threshold:.4f}:&quot;)</code></div>
+<div class='codeline'><span class='no'>126</span><code>    visualize_tree(node.left, feature_names, class_names, indent + &#x27;  |  &#x27;)</code></div>
+<div class='codeline'><span class='no'>127</span><code>    print(f&quot;{indent}Else ({feat_name} &gt; {node.threshold:.4f}):&quot;)</code></div>
+<div class='codeline'><span class='no'>128</span><code>    visualize_tree(node.right, feature_names, class_names, indent + &#x27;  |  &#x27;)</code></div>
+<div class='codeline'><span class='no'>129</span><code></code></div>
+<div class='codeline'><span class='no'>130</span><code>def plot_tree_graphical(node, feature_names=None, class_names=None, ax=None, </code></div>
+<div class='codeline'><span class='no'>131</span><code>                        x=0.5, y=1.0, dx=0.25, dy=0.12):</code></div>
+<div class='codeline'><span class='no'>132</span><code>    &quot;&quot;&quot;Ve cay quyet dinh bang matplotlib.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>133</span><code>    if ax is None:</code></div>
+<div class='codeline'><span class='no'>134</span><code>        fig, ax = plt.subplots(1, 1, figsize=(20, 10))</code></div>
+<div class='codeline'><span class='no'>135</span><code>        ax.set_xlim(0, 1)</code></div>
+<div class='codeline'><span class='no'>136</span><code>        ax.set_ylim(0, 1.05)</code></div>
+<div class='codeline'><span class='no'>137</span><code>        ax.axis(&#x27;off&#x27;)</code></div>
+<div class='codeline'><span class='no'>138</span><code>    </code></div>
+<div class='codeline'><span class='no'>139</span><code>    if node.value is not None:</code></div>
+<div class='codeline'><span class='no'>140</span><code>        name = class_names[node.value] if class_names is not None else str(node.value)</code></div>
+<div class='codeline'><span class='no'>141</span><code>        ax.text(x, y, f&#x27;Predict:\n{name}&#x27;, ha=&#x27;center&#x27;, va=&#x27;center&#x27;,</code></div>
+<div class='codeline'><span class='no'>142</span><code>                bbox=dict(boxstyle=&#x27;round,pad=0.3&#x27;, facecolor=&#x27;lightgreen&#x27;, edgecolor=&#x27;black&#x27;),</code></div>
+<div class='codeline'><span class='no'>143</span><code>                fontsize=8)</code></div>
+<div class='codeline'><span class='no'>144</span><code>        return</code></div>
+<div class='codeline'><span class='no'>145</span><code>    </code></div>
+<div class='codeline'><span class='no'>146</span><code>    feat_name = feature_names[node.feature_idx] if feature_names is not None else f&#x27;F[{node.feature_idx}]&#x27;</code></div>
+<div class='codeline'><span class='no'>147</span><code>    label = f&#x27;{feat_name}\n&lt;= {node.threshold:.2f}&#x27;</code></div>
+<div class='codeline'><span class='no'>148</span><code>    ax.text(x, y, label, ha=&#x27;center&#x27;, va=&#x27;center&#x27;,</code></div>
+<div class='codeline'><span class='no'>149</span><code>            bbox=dict(boxstyle=&#x27;round,pad=0.3&#x27;, facecolor=&#x27;lightyellow&#x27;, edgecolor=&#x27;black&#x27;),</code></div>
+<div class='codeline'><span class='no'>150</span><code>            fontsize=8)</code></div>
+<div class='codeline'><span class='no'>151</span><code>    </code></div>
+<div class='codeline'><span class='no'>152</span><code>    # Left child</code></div>
+<div class='codeline'><span class='no'>153</span><code>    new_dx = dx / 2</code></div>
+<div class='codeline'><span class='no'>154</span><code>    ax.plot([x, x - dx], [y - 0.01, y - dy + 0.01], &#x27;k-&#x27;)</code></div>
+<div class='codeline'><span class='no'>155</span><code>    ax.text((x + x - dx) / 2 - 0.02, (y + y - dy) / 2, &#x27;True&#x27;, fontsize=7, color=&#x27;green&#x27;)</code></div>
+<div class='codeline'><span class='no'>156</span><code>    plot_tree_graphical(node.left, feature_names, class_names, ax, x - dx, y - dy, new_dx, dy)</code></div>
+<div class='codeline'><span class='no'>157</span><code>    </code></div>
+<div class='codeline'><span class='no'>158</span><code>    # Right child</code></div>
+<div class='codeline'><span class='no'>159</span><code>    ax.plot([x, x + dx], [y - 0.01, y - dy + 0.01], &#x27;k-&#x27;)</code></div>
+<div class='codeline'><span class='no'>160</span><code>    ax.text((x + x + dx) / 2 + 0.02, (y + y - dy) / 2, &#x27;False&#x27;, fontsize=7, color=&#x27;red&#x27;)</code></div>
+<div class='codeline'><span class='no'>161</span><code>    plot_tree_graphical(node.right, feature_names, class_names, ax, x + dx, y - dy, new_dx, dy)</code></div>
+<div class='codeline'><span class='no'>162</span><code></code></div>
+<div class='codeline'><span class='no'>163</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>164</span><code># DEMO: Phn loai banh nhan vei WDBC dataset tu UCI</code></div>
+<div class='codeline'><span class='no'>165</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>166</span><code></code></div>
+<div class='codeline'><span class='no'>167</span><code>wdbc_cols = [&quot;id&quot;, &quot;diagnosis&quot;] + [f&quot;feature_{i}&quot; for i in range(30)]</code></div>
+<div class='codeline'><span class='no'>168</span><code>wdbc = pd.read_csv(os.path.join(&quot;data&quot;, &quot;wdbc.data&quot;), header=None, names=wdbc_cols)</code></div>
+<div class='codeline'><span class='no'>169</span><code>X_cancer = wdbc[[f&quot;feature_{i}&quot; for i in range(30)]].to_numpy(float)</code></div>
+<div class='codeline'><span class='no'>170</span><code>y_cancer = (wdbc[&quot;diagnosis&quot;] == &quot;M&quot;).astype(int).to_numpy()  # 1 = malignant, 0 = benign</code></div>
+<div class='codeline'><span class='no'>171</span><code>feature_names = np.array([f&quot;feature_{i}&quot; for i in range(30)])</code></div>
+<div class='codeline'><span class='no'>172</span><code>class_names = np.array([&quot;benign&quot;, &quot;malignant&quot;])</code></div>
+<div class='codeline'><span class='no'>173</span><code></code></div>
+<div class='codeline'><span class='no'>174</span><code># Chia train/test stratified thu cong.</code></div>
+<div class='codeline'><span class='no'>175</span><code>rng = np.random.default_rng(42)</code></div>
+<div class='codeline'><span class='no'>176</span><code>train_idx, test_idx = [], []</code></div>
+<div class='codeline'><span class='no'>177</span><code>for c in np.unique(y_cancer):</code></div>
+<div class='codeline'><span class='no'>178</span><code>    idx = np.where(y_cancer == c)[0]</code></div>
+<div class='codeline'><span class='no'>179</span><code>    rng.shuffle(idx)</code></div>
+<div class='codeline'><span class='no'>180</span><code>    n_test = int(0.2 * len(idx))</code></div>
+<div class='codeline'><span class='no'>181</span><code>    test_idx.extend(idx[:n_test])</code></div>
+<div class='codeline'><span class='no'>182</span><code>    train_idx.extend(idx[n_test:])</code></div>
+<div class='codeline'><span class='no'>183</span><code>train_idx = np.array(train_idx); test_idx = np.array(test_idx)</code></div>
+<div class='codeline'><span class='no'>184</span><code>rng.shuffle(train_idx); rng.shuffle(test_idx)</code></div>
+<div class='codeline'><span class='no'>185</span><code>X_train_c, X_test_c = X_cancer[train_idx], X_cancer[test_idx]</code></div>
+<div class='codeline'><span class='no'>186</span><code>y_train_c, y_test_c = y_cancer[train_idx], y_cancer[test_idx]</code></div>
+<div class='codeline'><span class='no'>187</span><code></code></div>
+<div class='codeline'><span class='no'>188</span><code>tree_clf = DecisionTreeScratch(max_depth=3)</code></div>
+<div class='codeline'><span class='no'>189</span><code>tree_clf.fit(X_train_c, y_train_c)</code></div>
+<div class='codeline'><span class='no'>190</span><code>acc = tree_clf.score(X_test_c, y_test_c)</code></div>
+<div class='codeline'><span class='no'>191</span><code>print(f&quot;Decision Tree viet tay - Test Accuracy: {acc:.4f}&quot;)</code></div>
+<div class='codeline'><span class='no'>192</span><code></code></div>
+<div class='codeline'><span class='no'>193</span><code>print(&quot;\n--- Decision Tree Structure ---&quot;)</code></div>
+<div class='codeline'><span class='no'>194</span><code>visualize_tree(tree_clf.root, feature_names=feature_names, class_names=class_names)</code></div>
+<div class='codeline'><span class='no'>195</span><code></code></div>
+<div class='codeline'><span class='no'>196</span><code>fig, ax = plt.subplots(1, 1, figsize=(20, 10))</code></div>
+<div class='codeline'><span class='no'>197</span><code>ax.set_xlim(0, 1)</code></div>
+<div class='codeline'><span class='no'>198</span><code>ax.set_ylim(0, 1.05)</code></div>
+<div class='codeline'><span class='no'>199</span><code>ax.axis(&#x27;off&#x27;)</code></div>
+<div class='codeline'><span class='no'>200</span><code>ax.set_title(&#x27;Decision Tree viet tay - WDBC Visualization&#x27;, fontsize=14)</code></div>
+<div class='codeline'><span class='no'>201</span><code>plot_tree_graphical(tree_clf.root, feature_names=feature_names, class_names=class_names, ax=ax)</code></div>
+<div class='codeline'><span class='no'>202</span><code>plt.tight_layout()</code></div>
+<div class='codeline'><span class='no'>203</span><code>plt.show()</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 4</span> SVM RBF viết tay trên two-moons</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này em dùng SVM với RBF kernel để phân loại dữ liệu phi tuyến. Vì two-moons không tách được tốt bằng đường thẳng, RBF kernel giúp đo độ giống nhau phi tuyến giữa các điểm và tạo decision boundary cong.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-12:</b> Phần tiêu đề nhấn mạnh không dùng sklearn SVC.</li>
+<li><b>Dòng 14-70:</b> Định nghĩa SVMScratch: RBF kernel, fit bằng cập nhật alpha và bias, predict bằng kernel giữa điểm mới và điểm train.</li>
+<li><b>Dòng 76-90:</b> Tự tạo dữ liệu two-moons bằng NumPy, không dùng sklearn.make_moons.</li>
+<li><b>Dòng 92-108:</b> Train SVM, tạo lưới điểm 2D, dự đoán trên lưới và vẽ decision boundary.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi RBF kernel làm gì, em nói: RBF biến bài toán sang không gian tương đồng, điểm gần nhau có kernel lớn, điểm xa nhau có kernel nhỏ, nhờ vậy model tạo được biên cong.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Decision boundary cong ôm theo hai cụm mặt trăng. Đây là minh chứng SVM RBF phù hợp dữ liệu phi tuyến.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (108 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>2</span><code># SVM VIET TAY (FROM SCRATCH) voi RBF Kernel</code></div>
+<div class='codeline'><span class='no'>3</span><code># Khong dung sklearn.svm.SVC</code></div>
+<div class='codeline'><span class='no'>4</span><code># Su dung Gradient Descent tren Hinge Loss + Kernel Trick</code></div>
+<div class='codeline'><span class='no'>5</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>6</span><code></code></div>
+<div class='codeline'><span class='no'>7</span><code>class SVMScratch:</code></div>
+<div class='codeline'><span class='no'>8</span><code>    &quot;&quot;&quot;Support Vector Machine viet tay voi RBF Kernel.</code></div>
+<div class='codeline'><span class='no'>9</span><code>    Su dung Gradient Descent tren soft-margin SVM (Hinge Loss).</code></div>
+<div class='codeline'><span class='no'>10</span><code>    </code></div>
+<div class='codeline'><span class='no'>11</span><code>    Primal form with kernel approximation:</code></div>
+<div class='codeline'><span class='no'>12</span><code>    - Tinh kernel matrix K</code></div>
+<div class='codeline'><span class='no'>13</span><code>    - Toi uu: min (1/2)||w||^2 + C * sum(max(0, 1 - y_i * f(x_i)))</code></div>
+<div class='codeline'><span class='no'>14</span><code>    &quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>15</span><code>    </code></div>
+<div class='codeline'><span class='no'>16</span><code>    def __init__(self, C=1.0, gamma=1.0, learning_rate=0.001, n_iterations=1000):</code></div>
+<div class='codeline'><span class='no'>17</span><code>        self.C = C              # Regularization parameter</code></div>
+<div class='codeline'><span class='no'>18</span><code>        self.gamma = gamma      # RBF kernel parameter</code></div>
+<div class='codeline'><span class='no'>19</span><code>        self.lr = learning_rate</code></div>
+<div class='codeline'><span class='no'>20</span><code>        self.n_iter = n_iterations</code></div>
+<div class='codeline'><span class='no'>21</span><code>        self.alpha = None       # Dual coefficients</code></div>
+<div class='codeline'><span class='no'>22</span><code>        self.b = 0              # Bias</code></div>
+<div class='codeline'><span class='no'>23</span><code>        self.X_train = None</code></div>
+<div class='codeline'><span class='no'>24</span><code>        self.y_train = None</code></div>
+<div class='codeline'><span class='no'>25</span><code>    </code></div>
+<div class='codeline'><span class='no'>26</span><code>    def _rbf_kernel(self, X1, X2):</code></div>
+<div class='codeline'><span class='no'>27</span><code>        &quot;&quot;&quot;Tinh RBF Kernel Matrix.</code></div>
+<div class='codeline'><span class='no'>28</span><code>        K(x_i, x_j) = exp(-gamma * ||x_i - x_j||^2)</code></div>
+<div class='codeline'><span class='no'>29</span><code>        &quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>30</span><code>        # Tinh ||x_i - x_j||^2 = ||x_i||^2 + ||x_j||^2 - 2*x_i.x_j</code></div>
+<div class='codeline'><span class='no'>31</span><code>        X1_sq = np.sum(X1 ** 2, axis=1).reshape(-1, 1)</code></div>
+<div class='codeline'><span class='no'>32</span><code>        X2_sq = np.sum(X2 ** 2, axis=1).reshape(1, -1)</code></div>
+<div class='codeline'><span class='no'>33</span><code>        sq_dists = X1_sq + X2_sq - 2 * X1.dot(X2.T)</code></div>
+<div class='codeline'><span class='no'>34</span><code>        return np.exp(-self.gamma * sq_dists)</code></div>
+<div class='codeline'><span class='no'>35</span><code>    </code></div>
+<div class='codeline'><span class='no'>36</span><code>    def fit(self, X, y):</code></div>
+<div class='codeline'><span class='no'>37</span><code>        &quot;&quot;&quot;Train SVM bang Gradient Descent tren dual-like form.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>38</span><code>        self.X_train = np.array(X)</code></div>
+<div class='codeline'><span class='no'>39</span><code>        # Chuyen labels thanh -1 va +1</code></div>
+<div class='codeline'><span class='no'>40</span><code>        self.y_train = np.where(np.array(y) == 0, -1, 1).astype(float)</code></div>
+<div class='codeline'><span class='no'>41</span><code>        m = len(self.y_train)</code></div>
+<div class='codeline'><span class='no'>42</span><code>        </code></div>
+<div class='codeline'><span class='no'>43</span><code>        # Tinh Kernel Matrix</code></div>
+<div class='codeline'><span class='no'>44</span><code>        K = self._rbf_kernel(self.X_train, self.X_train)</code></div>
+<div class='codeline'><span class='no'>45</span><code>        </code></div>
+<div class='codeline'><span class='no'>46</span><code>        # Khoi tao alpha (dual coefficients)</code></div>
+<div class='codeline'><span class='no'>47</span><code>        self.alpha = np.zeros(m)</code></div>
+<div class='codeline'><span class='no'>48</span><code>        self.b = 0</code></div>
+<div class='codeline'><span class='no'>49</span><code>        </code></div>
+<div class='codeline'><span class='no'>50</span><code>        # Gradient Descent</code></div>
+<div class='codeline'><span class='no'>51</span><code>        for _ in range(self.n_iter):</code></div>
+<div class='codeline'><span class='no'>52</span><code>            # Tinh decision function: f(x) = sum(alpha_i * y_i * K(x_i, x)) + b</code></div>
+<div class='codeline'><span class='no'>53</span><code>            decision = (self.alpha * self.y_train).dot(K) + self.b</code></div>
+<div class='codeline'><span class='no'>54</span><code>            </code></div>
+<div class='codeline'><span class='no'>55</span><code>            # Tinh margins</code></div>
+<div class='codeline'><span class='no'>56</span><code>            margins = self.y_train * decision</code></div>
+<div class='codeline'><span class='no'>57</span><code>            </code></div>
+<div class='codeline'><span class='no'>58</span><code>            # Gradient cho moi sample</code></div>
+<div class='codeline'><span class='no'>59</span><code>            for i in range(m):</code></div>
+<div class='codeline'><span class='no'>60</span><code>                if margins[i] &lt; 1:  # Misclassified hoac trong margin</code></div>
+<div class='codeline'><span class='no'>61</span><code>                    self.alpha[i] += self.lr * (self.C * self.y_train[i] * K[i].dot(self.alpha * self.y_train) - self.alpha[i])</code></div>
+<div class='codeline'><span class='no'>62</span><code>                    self.b += self.lr * self.C * self.y_train[i]</code></div>
+<div class='codeline'><span class='no'>63</span><code>                else:</code></div>
+<div class='codeline'><span class='no'>64</span><code>                    self.alpha[i] -= self.lr * self.alpha[i] * 0.01  # Nhe regularization</code></div>
+<div class='codeline'><span class='no'>65</span><code>            </code></div>
+<div class='codeline'><span class='no'>66</span><code>            # Clip alpha</code></div>
+<div class='codeline'><span class='no'>67</span><code>            self.alpha = np.clip(self.alpha, 0, self.C)</code></div>
+<div class='codeline'><span class='no'>68</span><code>    </code></div>
+<div class='codeline'><span class='no'>69</span><code>    def predict(self, X):</code></div>
+<div class='codeline'><span class='no'>70</span><code>        &quot;&quot;&quot;Du doan class.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>71</span><code>        K = self._rbf_kernel(np.array(X), self.X_train)</code></div>
+<div class='codeline'><span class='no'>72</span><code>        decision = K.dot(self.alpha * self.y_train) + self.b</code></div>
+<div class='codeline'><span class='no'>73</span><code>        return np.where(decision &gt;= 0, 1, 0)</code></div>
+<div class='codeline'><span class='no'>74</span><code></code></div>
+<div class='codeline'><span class='no'>75</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>76</span><code># DEMO: Phn loai du lieu phi tuyen hinh mat trang</code></div>
+<div class='codeline'><span class='no'>77</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>78</span><code></code></div>
+<div class='codeline'><span class='no'>79</span><code>def make_two_moons_np(n_samples=200, noise=0.15, random_state=42):</code></div>
+<div class='codeline'><span class='no'>80</span><code>    &quot;&quot;&quot;Tao two-moons bang NumPy, khong dung sklearn.datasets.make_moons.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>81</span><code>    rng = np.random.default_rng(random_state)</code></div>
+<div class='codeline'><span class='no'>82</span><code>    n1 = n_samples // 2</code></div>
+<div class='codeline'><span class='no'>83</span><code>    n2 = n_samples - n1</code></div>
+<div class='codeline'><span class='no'>84</span><code>    t1 = rng.uniform(0, np.pi, n1)</code></div>
+<div class='codeline'><span class='no'>85</span><code>    t2 = rng.uniform(0, np.pi, n2)</code></div>
+<div class='codeline'><span class='no'>86</span><code>    moon1 = np.c_[np.cos(t1), np.sin(t1)]</code></div>
+<div class='codeline'><span class='no'>87</span><code>    moon2 = np.c_[1 - np.cos(t2), 0.5 - np.sin(t2)]</code></div>
+<div class='codeline'><span class='no'>88</span><code>    X = np.vstack([moon1, moon2]) + rng.normal(0, noise, size=(n_samples, 2))</code></div>
+<div class='codeline'><span class='no'>89</span><code>    y = np.r_[np.zeros(n1), np.ones(n2)].astype(int)</code></div>
+<div class='codeline'><span class='no'>90</span><code>    idx = rng.permutation(n_samples)</code></div>
+<div class='codeline'><span class='no'>91</span><code>    return X[idx], y[idx]</code></div>
+<div class='codeline'><span class='no'>92</span><code></code></div>
+<div class='codeline'><span class='no'>93</span><code>X_moon, y_moon = make_two_moons_np(n_samples=200, noise=0.15, random_state=42)</code></div>
+<div class='codeline'><span class='no'>94</span><code></code></div>
+<div class='codeline'><span class='no'>95</span><code>svm_clf = SVMScratch(C=1.0, gamma=1.0, learning_rate=0.001, n_iterations=500)</code></div>
+<div class='codeline'><span class='no'>96</span><code>svm_clf.fit(X_moon, y_moon)</code></div>
+<div class='codeline'><span class='no'>97</span><code></code></div>
+<div class='codeline'><span class='no'>98</span><code>x_min, x_max = X_moon[:, 0].min() - 0.5, X_moon[:, 0].max() + 0.5</code></div>
+<div class='codeline'><span class='no'>99</span><code>y_min, y_max = X_moon[:, 1].min() - 0.5, X_moon[:, 1].max() + 0.5</code></div>
+<div class='codeline'><span class='no'>100</span><code>xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.05), np.arange(y_min, y_max, 0.05))</code></div>
+<div class='codeline'><span class='no'>101</span><code>grid_points = np.c_[xx.ravel(), yy.ravel()]</code></div>
+<div class='codeline'><span class='no'>102</span><code>Z = svm_clf.predict(grid_points).reshape(xx.shape)</code></div>
+<div class='codeline'><span class='no'>103</span><code></code></div>
+<div class='codeline'><span class='no'>104</span><code>fig, ax = plt.subplots(figsize=(8, 6))</code></div>
+<div class='codeline'><span class='no'>105</span><code>ax.contourf(xx, yy, Z, cmap=plt.cm.coolwarm, alpha=0.8)</code></div>
+<div class='codeline'><span class='no'>106</span><code>ax.scatter(X_moon[:, 0], X_moon[:, 1], c=y_moon, cmap=plt.cm.coolwarm, edgecolors=&#x27;k&#x27;)</code></div>
+<div class='codeline'><span class='no'>107</span><code>ax.set_title(&#x27;SVM viet tay vei RBF Kernel - Decision Boundary&#x27;)</code></div>
+<div class='codeline'><span class='no'>108</span><code>plt.show()</code></div></div>
+            </details>
+          </div>
+        </details>
+    </section>
+    <section class='lab' id='lab5'>
+      <h2>Lab 5 - Model Evaluation</h2>
+      <div class='speech'><h3>Mở đầu lab, em nói ngắn gọn</h3><p>Trong lab này em tập trung vào đánh giá mô hình trên dữ liệu mất cân bằng. Điểm cần nhấn mạnh là accuracy có thể gây hiểu nhầm, nên em tự tính thêm confusion matrix, precision, recall, F1, ROC và Precision-Recall để đánh giá đúng lớp fraud hiếm.</p></div>
+      <div class='datasets'><h3>Dataset của lab này</h3>
+        <div class='dataset-card'>
+          <h4>Credit Card Fraud Detection</h4>
+          <p><b>Nguồn:</b> Kaggle - mlg-ulb/creditcardfraud</p>
+          <p><b>File:</b> <code>Lab1/data/creditcard.csv</code></p>
+          <p>Bộ này có giao dịch thẻ tín dụng, nhãn Class=1 là gian lận và Class=0 là bình thường. Dữ liệu cực kỳ mất cân bằng nên rất phù hợp cho Lab 5: nếu chỉ nhìn accuracy thì model có thể dự đoán toàn bình thường vẫn cao, nhưng recall fraud lại kém.</p>
+        </div></div>
+      
+        <details class='cell' open>
+          <summary><span>Cell 1</span> Import thư viện</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này chỉ import thư viện cơ bản: os để lấy đường dẫn, NumPy để tính toán, pandas để đọc dữ liệu và matplotlib để vẽ confusion matrix, ROC, Precision-Recall.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-4:</b> Import công cụ nền tảng cho toàn bộ Lab 5.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi vì sao không import sklearn metrics, em nói: vì trong lab này em tự tính các metric để hiểu rõ công thức đánh giá.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Cell này không vẽ hình.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (4 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code>import os</code></div>
+<div class='codeline'><span class='no'>2</span><code>import numpy as np</code></div>
+<div class='codeline'><span class='no'>3</span><code>import pandas as pd</code></div>
+<div class='codeline'><span class='no'>4</span><code>import matplotlib.pyplot as plt</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 2</span> Hàm tiện ích train-test, chuẩn hóa, sigmoid</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này em viết các hàm phụ trợ. train_test_split_np chia dữ liệu theo từng lớp để giữ tỷ lệ fraud/normal. standardize_train_test chuẩn hóa theo tập train. sigmoid dùng trong Logistic Regression để đổi logit thành xác suất.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-14:</b> Hàm chia train-test stratified thủ công, đảm bảo lớp fraud hiếm vẫn xuất hiện trong cả train và test.</li>
+<li><b>Dòng 16-21:</b> Hàm chuẩn hóa dữ liệu bằng mean/std của train để tránh rò rỉ thông tin từ test.</li>
+<li><b>Dòng 23-25:</b> Hàm sigmoid có clip để tránh overflow khi số quá lớn hoặc quá nhỏ.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi vì sao chuẩn hóa theo train, em nói: vì test phải giả lập dữ liệu chưa biết; nếu dùng thống kê của test để chuẩn hóa thì bị data leakage.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Cell này không vẽ hình.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (25 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># Hm tien ich tu viet, khong dung train_test_split/metrics cua sklearn.</code></div>
+<div class='codeline'><span class='no'>2</span><code>def train_test_split_np(X, y, test_size=0.25, random_state=42):</code></div>
+<div class='codeline'><span class='no'>3</span><code>    rng = np.random.default_rng(random_state)</code></div>
+<div class='codeline'><span class='no'>4</span><code>    train_parts, test_parts = [], []</code></div>
+<div class='codeline'><span class='no'>5</span><code>    for cls in np.unique(y):</code></div>
+<div class='codeline'><span class='no'>6</span><code>        idx = np.where(y == cls)[0]</code></div>
+<div class='codeline'><span class='no'>7</span><code>        rng.shuffle(idx)</code></div>
+<div class='codeline'><span class='no'>8</span><code>        n_test = max(1, int(len(idx) * test_size))</code></div>
+<div class='codeline'><span class='no'>9</span><code>        test_parts.append(idx[:n_test])</code></div>
+<div class='codeline'><span class='no'>10</span><code>        train_parts.append(idx[n_test:])</code></div>
+<div class='codeline'><span class='no'>11</span><code>    train_idx = np.concatenate(train_parts)</code></div>
+<div class='codeline'><span class='no'>12</span><code>    test_idx = np.concatenate(test_parts)</code></div>
+<div class='codeline'><span class='no'>13</span><code>    rng.shuffle(train_idx)</code></div>
+<div class='codeline'><span class='no'>14</span><code>    rng.shuffle(test_idx)</code></div>
+<div class='codeline'><span class='no'>15</span><code>    return X[train_idx], X[test_idx], y[train_idx], y[test_idx]</code></div>
+<div class='codeline'><span class='no'>16</span><code></code></div>
+<div class='codeline'><span class='no'>17</span><code>def standardize_train_test(X_train, X_test):</code></div>
+<div class='codeline'><span class='no'>18</span><code>    mean = X_train.mean(axis=0)</code></div>
+<div class='codeline'><span class='no'>19</span><code>    std = X_train.std(axis=0)</code></div>
+<div class='codeline'><span class='no'>20</span><code>    std[std == 0] = 1</code></div>
+<div class='codeline'><span class='no'>21</span><code>    return (X_train - mean) / std, (X_test - mean) / std</code></div>
+<div class='codeline'><span class='no'>22</span><code></code></div>
+<div class='codeline'><span class='no'>23</span><code>def sigmoid(z):</code></div>
+<div class='codeline'><span class='no'>24</span><code>    z = np.clip(z, -40, 40)</code></div>
+<div class='codeline'><span class='no'>25</span><code>    return 1 / (1 + np.exp(-z))</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 3</span> Đọc Credit Card Fraud và tạo tập mất cân bằng</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Ở cell này em đọc dataset credit card từ Lab1. Vì dữ liệu gốc rất lớn, em lấy mẫu 20.000 giao dịch normal và giữ toàn bộ fraud, sau đó trộn lại. Cách này vẫn giữ tính mất cân bằng nhưng giúp notebook chạy nhanh hơn.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-5:</b> Kiểm tra file creditcard.csv có tồn tại không; nếu không có thì báo lỗi rõ ràng.</li>
+<li><b>Dòng 7-11:</b> Đọc dữ liệu, lấy toàn bộ fraud và sample một phần normal để giảm kích thước.</li>
+<li><b>Dòng 13-15:</b> Tạo X gồm Time, Amount và V1-V28; y là cột Class. In kích thước và tỷ lệ fraud để thấy dữ liệu mất cân bằng.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi vì sao dùng dataset này, em nói: vì fraud là lớp rất hiếm, nên nó rất phù hợp để minh họa accuracy trap và các metric như recall/Precision-Recall.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Cell này chưa vẽ hình; kết quả cần nói là tỷ lệ fraud nhỏ hơn nhiều so với normal.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (15 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># Doc dataset mat can bang that. Lay mau normal de notebook chay nhanh nhung fraud van la lop hiem.</code></div>
+<div class='codeline'><span class='no'>2</span><code>DATA_PATH = os.path.join(&quot;..&quot;, &quot;Lab1&quot;, &quot;data&quot;, &quot;creditcard.csv&quot;)</code></div>
+<div class='codeline'><span class='no'>3</span><code>if not os.path.exists(DATA_PATH):</code></div>
+<div class='codeline'><span class='no'>4</span><code>    raise FileNotFoundError(&quot;Can file Lab1/data/creditcard.csv de chay Lab5.&quot;)</code></div>
+<div class='codeline'><span class='no'>5</span><code></code></div>
+<div class='codeline'><span class='no'>6</span><code>df = pd.read_csv(DATA_PATH)</code></div>
+<div class='codeline'><span class='no'>7</span><code>fraud = df[df[&quot;Class&quot;] == 1]</code></div>
+<div class='codeline'><span class='no'>8</span><code>normal = df[df[&quot;Class&quot;] == 0].sample(n=20000, random_state=42)</code></div>
+<div class='codeline'><span class='no'>9</span><code>work = pd.concat([normal, fraud], axis=0).sample(frac=1, random_state=42).reset_index(drop=True)</code></div>
+<div class='codeline'><span class='no'>10</span><code></code></div>
+<div class='codeline'><span class='no'>11</span><code>features = [&quot;Time&quot;, &quot;Amount&quot;] + [f&quot;V{i}&quot; for i in range(1, 29)]</code></div>
+<div class='codeline'><span class='no'>12</span><code>X = work[features].to_numpy(float)</code></div>
+<div class='codeline'><span class='no'>13</span><code>y = work[&quot;Class&quot;].to_numpy(int)</code></div>
+<div class='codeline'><span class='no'>14</span><code>print(&quot;Kich thuoc mau:&quot;, work.shape)</code></div>
+<div class='codeline'><span class='no'>15</span><code>print(&quot;Tu ly fraud:&quot;, y.mean())</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 4</span> Logistic Regression viết tay có class_weight</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này em tự viết Logistic Regression nhị phân. Trong fit, model thêm bias, tính xác suất bằng sigmoid, tính gradient và cập nhật theta. Em train hai bản: baseline bình thường và balanced có class weight để phạt lỗi lớp hiếm mạnh hơn.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-6:</b> Khai báo class LogisticRegressionScratch và các tham số learning rate, số epoch, class_weight.</li>
+<li><b>Dòng 8-27:</b> Hàm fit: thêm bias, khởi tạo theta, tạo sample_weight nếu dùng balanced, rồi lặp gradient descent để cập nhật theta.</li>
+<li><b>Dòng 29-34:</b> Hàm predict_proba trả xác suất, hàm predict đổi xác suất thành nhãn theo threshold 0.5.</li>
+<li><b>Dòng 36-38:</b> Chia train-test, chuẩn hóa, train hai mô hình baseline và balanced.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi class_weight balanced là gì, em nói: nó tăng trọng số cho lớp fraud hiếm, để model không chỉ tối ưu cho lớp normal chiếm đa số.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Cell này không vẽ hình; kết quả được dùng ở các cell đánh giá phía sau.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (38 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># Logistic Regression viet tay, co tuy chn class_weight=&#x27;balanced&#x27;.</code></div>
+<div class='codeline'><span class='no'>2</span><code>class LogisticRegressionScratch:</code></div>
+<div class='codeline'><span class='no'>3</span><code>    def __init__(self, learning_rate=0.08, n_epochs=500, class_weight=None):</code></div>
+<div class='codeline'><span class='no'>4</span><code>        self.learning_rate = learning_rate</code></div>
+<div class='codeline'><span class='no'>5</span><code>        self.n_epochs = n_epochs</code></div>
+<div class='codeline'><span class='no'>6</span><code>        self.class_weight = class_weight</code></div>
+<div class='codeline'><span class='no'>7</span><code>        self.losses = []</code></div>
+<div class='codeline'><span class='no'>8</span><code></code></div>
+<div class='codeline'><span class='no'>9</span><code>    def fit(self, X, y):</code></div>
+<div class='codeline'><span class='no'>10</span><code>        X_b = np.c_[np.ones((len(X), 1)), X]</code></div>
+<div class='codeline'><span class='no'>11</span><code>        self.theta = np.zeros(X_b.shape[1])</code></div>
+<div class='codeline'><span class='no'>12</span><code>        if self.class_weight == &quot;balanced&quot;:</code></div>
+<div class='codeline'><span class='no'>13</span><code>            counts = np.bincount(y, minlength=2)</code></div>
+<div class='codeline'><span class='no'>14</span><code>            class_weights = len(y) / (2 * counts)</code></div>
+<div class='codeline'><span class='no'>15</span><code>            sample_weight = class_weights[y]</code></div>
+<div class='codeline'><span class='no'>16</span><code>        else:</code></div>
+<div class='codeline'><span class='no'>17</span><code>            sample_weight = np.ones(len(y))</code></div>
+<div class='codeline'><span class='no'>18</span><code>        for epoch in range(self.n_epochs):</code></div>
+<div class='codeline'><span class='no'>19</span><code>            proba = sigmoid(X_b @ self.theta)</code></div>
+<div class='codeline'><span class='no'>20</span><code>            error = (proba - y) * sample_weight</code></div>
+<div class='codeline'><span class='no'>21</span><code>            grad = X_b.T @ error / len(y)</code></div>
+<div class='codeline'><span class='no'>22</span><code>            self.theta -= self.learning_rate * grad</code></div>
+<div class='codeline'><span class='no'>23</span><code>            if epoch % 20 == 0:</code></div>
+<div class='codeline'><span class='no'>24</span><code>                loss = -np.mean(sample_weight * (y*np.log(proba+1e-12) + (1-y)*np.log(1-proba+1e-12)))</code></div>
+<div class='codeline'><span class='no'>25</span><code>                self.losses.append(float(loss))</code></div>
+<div class='codeline'><span class='no'>26</span><code>        return self</code></div>
+<div class='codeline'><span class='no'>27</span><code></code></div>
+<div class='codeline'><span class='no'>28</span><code>    def predict_proba(self, X):</code></div>
+<div class='codeline'><span class='no'>29</span><code>        return sigmoid(np.c_[np.ones((len(X), 1)), X] @ self.theta)</code></div>
+<div class='codeline'><span class='no'>30</span><code></code></div>
+<div class='codeline'><span class='no'>31</span><code>    def predict(self, X, threshold=0.5):</code></div>
+<div class='codeline'><span class='no'>32</span><code>        return (self.predict_proba(X) &gt;= threshold).astype(int)</code></div>
+<div class='codeline'><span class='no'>33</span><code></code></div>
+<div class='codeline'><span class='no'>34</span><code>X_train, X_test, y_train, y_test = train_test_split_np(X, y, test_size=0.25, random_state=42)</code></div>
+<div class='codeline'><span class='no'>35</span><code>X_train_s, X_test_s = standardize_train_test(X_train, X_test)</code></div>
+<div class='codeline'><span class='no'>36</span><code></code></div>
+<div class='codeline'><span class='no'>37</span><code>baseline = LogisticRegressionScratch().fit(X_train_s, y_train)</code></div>
+<div class='codeline'><span class='no'>38</span><code>balanced = LogisticRegressionScratch(class_weight=&quot;balanced&quot;).fit(X_train_s, y_train)</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 5</span> Tự tính metric đánh giá</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này em tự tính các metric từ TP, TN, FP, FN. Accuracy cho biết tổng thể đúng bao nhiêu, precision cho biết dự đoán fraud thì đúng bao nhiêu, recall cho biết bắt được bao nhiêu fraud thật, F1 cân bằng precision và recall.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-13:</b> Hàm classification_metrics tính TP, TN, FP, FN rồi suy ra accuracy, precision, recall và F1.</li>
+<li><b>Dòng 15-15:</b> Lặp qua baseline và balanced, dự đoán test set rồi in metric để so sánh.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi metric nào quan trọng với fraud, em nói: recall rất quan trọng vì bỏ sót fraud là rủi ro lớn; precision cũng cần để tránh báo động nhầm quá nhiều.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Cell này in số liệu, chưa vẽ hình.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (15 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># Metric viet tay: confusion matrix, precision, recall, f1.</code></div>
+<div class='codeline'><span class='no'>2</span><code>def classification_metrics(y_true, y_pred):</code></div>
+<div class='codeline'><span class='no'>3</span><code>    tp = int(np.sum((y_true == 1) &amp; (y_pred == 1)))</code></div>
+<div class='codeline'><span class='no'>4</span><code>    tn = int(np.sum((y_true == 0) &amp; (y_pred == 0)))</code></div>
+<div class='codeline'><span class='no'>5</span><code>    fp = int(np.sum((y_true == 0) &amp; (y_pred == 1)))</code></div>
+<div class='codeline'><span class='no'>6</span><code>    fn = int(np.sum((y_true == 1) &amp; (y_pred == 0)))</code></div>
+<div class='codeline'><span class='no'>7</span><code>    acc = (tp + tn) / len(y_true)</code></div>
+<div class='codeline'><span class='no'>8</span><code>    precision = tp / max(tp + fp, 1)</code></div>
+<div class='codeline'><span class='no'>9</span><code>    recall = tp / max(tp + fn, 1)</code></div>
+<div class='codeline'><span class='no'>10</span><code>    f1 = 2 * precision * recall / max(precision + recall, 1e-12)</code></div>
+<div class='codeline'><span class='no'>11</span><code>    return {&quot;tp&quot;: tp, &quot;tn&quot;: tn, &quot;fp&quot;: fp, &quot;fn&quot;: fn, &quot;accuracy&quot;: acc, &quot;precision&quot;: precision, &quot;recall&quot;: recall, &quot;f1&quot;: f1}</code></div>
+<div class='codeline'><span class='no'>12</span><code></code></div>
+<div class='codeline'><span class='no'>13</span><code>for name, model in [(&quot;Baseline&quot;, baseline), (&quot;Balanced&quot;, balanced)]:</code></div>
+<div class='codeline'><span class='no'>14</span><code>    pred = model.predict(X_test_s)</code></div>
+<div class='codeline'><span class='no'>15</span><code>    print(name, classification_metrics(y_test, pred))</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 6</span> Vẽ confusion matrix</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này em vẽ confusion matrix cho hai mô hình. Confusion matrix giúp nhìn rõ model dự đoán đúng normal, đúng fraud, báo động nhầm và bỏ sót fraud bao nhiêu trường hợp.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-12:</b> Hàm plot_confusion tạo ma trận 2x2 và ghi số lượng lên từng ô.</li>
+<li><b>Dòng 14-16:</b> Vẽ song song baseline và balanced để so sánh trực quan.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi đọc confusion matrix thế nào, em nói: hàng là nhãn thật, cột là nhãn dự đoán; ô fraud thật nhưng predicted 0 là FN, tức bỏ sót fraud.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Hình confusion matrix là phần nên chỉ rõ khi trình bày: balanced thường đổi trade-off, có thể tăng khả năng bắt fraud nhưng cũng có thể tăng false positive.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (16 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># Ve confusion matrix bang matplotlib.</code></div>
+<div class='codeline'><span class='no'>2</span><code>def plot_confusion(ax, metrics, title):</code></div>
+<div class='codeline'><span class='no'>3</span><code>    cm = np.array([[metrics[&quot;tn&quot;], metrics[&quot;fp&quot;]], [metrics[&quot;fn&quot;], metrics[&quot;tp&quot;]]])</code></div>
+<div class='codeline'><span class='no'>4</span><code>    ax.imshow(cm, cmap=&quot;Blues&quot;)</code></div>
+<div class='codeline'><span class='no'>5</span><code>    for i in range(2):</code></div>
+<div class='codeline'><span class='no'>6</span><code>        for j in range(2):</code></div>
+<div class='codeline'><span class='no'>7</span><code>            ax.text(j, i, str(cm[i, j]), ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=12)</code></div>
+<div class='codeline'><span class='no'>8</span><code>    ax.set_xticks([0, 1], [&quot;Pred 0&quot;, &quot;Pred 1&quot;])</code></div>
+<div class='codeline'><span class='no'>9</span><code>    ax.set_yticks([0, 1], [&quot;True 0&quot;, &quot;True 1&quot;])</code></div>
+<div class='codeline'><span class='no'>10</span><code>    ax.set_title(title)</code></div>
+<div class='codeline'><span class='no'>11</span><code></code></div>
+<div class='codeline'><span class='no'>12</span><code>fig, axes = plt.subplots(1, 2, figsize=(10, 4))</code></div>
+<div class='codeline'><span class='no'>13</span><code>plot_confusion(axes[0], classification_metrics(y_test, baseline.predict(X_test_s)), &quot;Baseline&quot;)</code></div>
+<div class='codeline'><span class='no'>14</span><code>plot_confusion(axes[1], classification_metrics(y_test, balanced.predict(X_test_s)), &quot;Class weight balanced&quot;)</code></div>
+<div class='codeline'><span class='no'>15</span><code>plt.tight_layout()</code></div>
+<div class='codeline'><span class='no'>16</span><code>plt.show()</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 7</span> ROC và Precision-Recall curve</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này em tự tạo nhiều threshold khác nhau. Với mỗi threshold, em đổi score thành nhãn rồi tính FPR, TPR, precision và recall. Sau đó em vẽ ROC và Precision-Recall cho baseline và balanced.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-15:</b> Hàm roc_pr_points quét nhiều threshold và tính các điểm trên ROC/PR curve.</li>
+<li><b>Dòng 17-30:</b> Lấy xác suất của từng model, vẽ ROC bên trái và Precision-Recall bên phải.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi vì sao Precision-Recall quan trọng, em nói: vì dữ liệu fraud mất cân bằng, PR curve tập trung vào lớp dương hiếm nên phản ánh khả năng bắt fraud rõ hơn accuracy hoặc đôi khi rõ hơn ROC.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>ROC thể hiện TPR theo FPR. Precision-Recall thể hiện khi cố tăng recall thì precision thay đổi thế nào. Với fraud, em ưu tiên nhìn PR curve.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (30 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># Tu tinh ROC ve Precision-Recall theo nhieu threshold.</code></div>
+<div class='codeline'><span class='no'>2</span><code>def roc_pr_points(y_true, scores):</code></div>
+<div class='codeline'><span class='no'>3</span><code>    thresholds = np.r_[np.inf, np.sort(scores)[::-1], -np.inf]</code></div>
+<div class='codeline'><span class='no'>4</span><code>    fpr, tpr, precision, recall = [], [], [], []</code></div>
+<div class='codeline'><span class='no'>5</span><code>    for th in thresholds:</code></div>
+<div class='codeline'><span class='no'>6</span><code>        pred = (scores &gt;= th).astype(int)</code></div>
+<div class='codeline'><span class='no'>7</span><code>        m = classification_metrics(y_true, pred)</code></div>
+<div class='codeline'><span class='no'>8</span><code>        fpr.append(m[&quot;fp&quot;] / max(m[&quot;fp&quot;] + m[&quot;tn&quot;], 1))</code></div>
+<div class='codeline'><span class='no'>9</span><code>        tpr.append(m[&quot;recall&quot;])</code></div>
+<div class='codeline'><span class='no'>10</span><code>        precision.append(m[&quot;precision&quot;])</code></div>
+<div class='codeline'><span class='no'>11</span><code>        recall.append(m[&quot;recall&quot;])</code></div>
+<div class='codeline'><span class='no'>12</span><code>    return np.array(fpr), np.array(tpr), np.array(recall), np.array(precision)</code></div>
+<div class='codeline'><span class='no'>13</span><code></code></div>
+<div class='codeline'><span class='no'>14</span><code>fig, axes = plt.subplots(1, 2, figsize=(12, 5))</code></div>
+<div class='codeline'><span class='no'>15</span><code>for name, model in [(&quot;Baseline&quot;, baseline), (&quot;Balanced&quot;, balanced)]:</code></div>
+<div class='codeline'><span class='no'>16</span><code>    scores = model.predict_proba(X_test_s)</code></div>
+<div class='codeline'><span class='no'>17</span><code>    fpr, tpr, rec, prec = roc_pr_points(y_test, scores)</code></div>
+<div class='codeline'><span class='no'>18</span><code>    axes[0].plot(fpr, tpr, label=name)</code></div>
+<div class='codeline'><span class='no'>19</span><code>    axes[1].plot(rec, prec, label=name)</code></div>
+<div class='codeline'><span class='no'>20</span><code>axes[0].plot([0, 1], [0, 1], &quot;k--&quot;, alpha=0.5)</code></div>
+<div class='codeline'><span class='no'>21</span><code>axes[0].set_title(&quot;ROC Curve&quot;)</code></div>
+<div class='codeline'><span class='no'>22</span><code>axes[0].set_xlabel(&quot;False Positive Rate&quot;)</code></div>
+<div class='codeline'><span class='no'>23</span><code>axes[0].set_ylabel(&quot;True Positive Rate&quot;)</code></div>
+<div class='codeline'><span class='no'>24</span><code>axes[1].set_title(&quot;Precision-Recall Curve&quot;)</code></div>
+<div class='codeline'><span class='no'>25</span><code>axes[1].set_xlabel(&quot;Recall&quot;)</code></div>
+<div class='codeline'><span class='no'>26</span><code>axes[1].set_ylabel(&quot;Precision&quot;)</code></div>
+<div class='codeline'><span class='no'>27</span><code>for ax in axes:</code></div>
+<div class='codeline'><span class='no'>28</span><code>    ax.legend(); ax.grid(alpha=0.3)</code></div>
+<div class='codeline'><span class='no'>29</span><code>plt.tight_layout()</code></div>
+<div class='codeline'><span class='no'>30</span><code>plt.show()</code></div></div>
+            </details>
+          </div>
+        </details>
+    </section>
+    <section class='lab' id='lab6'>
+      <h2>Lab 6 - Ensemble Learning</h2>
+      <div class='speech'><h3>Mở đầu lab, em nói ngắn gọn</h3><p>Trong lab này em dùng đúng yêu cầu đề là Random Forest và XGBoost để tối ưu độ chính xác. Em có thêm Decision Tree đơn làm baseline, rồi so sánh với hai ensemble để thấy ensemble thường ổn định và chính xác hơn.</p></div>
+      <div class='datasets'><h3>Dataset của lab này</h3>
+        <div class='dataset-card'>
+          <h4>Wine Recognition</h4>
+          <p><b>Nguồn:</b> UCI Machine Learning Repository</p>
+          <p><b>File:</b> <code>Lab6/data/wine.data</code></p>
+          <p>Bộ này có 178 mẫu rượu, 13 đặc trưng hóa học và 3 lớp rượu. Nó phù hợp với classification và ensemble vì số feature vừa đủ để cây quyết định, Random Forest và XGBoost học được feature importance để giải thích model.</p>
+        </div></div>
+      
+        <details class='cell' open>
+          <summary><span>Cell 1</span> Đọc Wine và train Decision Tree baseline</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Ở cell này em đọc Wine dataset từ file UCI, đặt tên cột, tách X và y, chia train-test có stratify. Sau đó em train một Decision Tree đơn làm baseline để lát nữa so sánh với Random Forest và XGBoost.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-8:</b> Import thư viện cần dùng cho ensemble và đánh giá.</li>
+<li><b>Dòng 10-20:</b> Đọc Wine dataset, đặt tên feature, target là class trừ 1 để nhãn về 0,1,2.</li>
+<li><b>Dòng 22-33:</b> Chia train-test, train Decision Tree baseline, dự đoán và in classification report.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi vì sao cần baseline, em nói: baseline cho mình mốc so sánh; nếu ensemble tốt hơn cây đơn thì chứng minh việc kết hợp nhiều cây có ích.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Cell này in report, chưa vẽ hình.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (33 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code>import os</code></div>
+<div class='codeline'><span class='no'>2</span><code>import numpy as np</code></div>
+<div class='codeline'><span class='no'>3</span><code>import pandas as pd</code></div>
+<div class='codeline'><span class='no'>4</span><code>import matplotlib.pyplot as plt</code></div>
+<div class='codeline'><span class='no'>5</span><code>from sklearn.model_selection import train_test_split</code></div>
+<div class='codeline'><span class='no'>6</span><code>from sklearn.tree import DecisionTreeClassifier</code></div>
+<div class='codeline'><span class='no'>7</span><code>from sklearn.metrics import accuracy_score, classification_report</code></div>
+<div class='codeline'><span class='no'>8</span><code></code></div>
+<div class='codeline'><span class='no'>9</span><code>wine_columns = [</code></div>
+<div class='codeline'><span class='no'>10</span><code>    &quot;class&quot;, &quot;alcohol&quot;, &quot;malic_acid&quot;, &quot;ash&quot;, &quot;alcalinity_of_ash&quot;, &quot;magnesium&quot;,</code></div>
+<div class='codeline'><span class='no'>11</span><code>    &quot;total_phenols&quot;, &quot;flavanoids&quot;, &quot;nonflavanoid_phenols&quot;, &quot;proanthocyanins&quot;,</code></div>
+<div class='codeline'><span class='no'>12</span><code>    &quot;color_intensity&quot;, &quot;hue&quot;, &quot;od280_od315&quot;, &quot;proline&quot;</code></div>
+<div class='codeline'><span class='no'>13</span><code>]</code></div>
+<div class='codeline'><span class='no'>14</span><code></code></div>
+<div class='codeline'><span class='no'>15</span><code># Doc dataset ngoai tu UCI, khong dung load_wine cua sklearn.</code></div>
+<div class='codeline'><span class='no'>16</span><code>wine_df = pd.read_csv(os.path.join(&quot;data&quot;, &quot;wine.data&quot;), header=None, names=wine_columns)</code></div>
+<div class='codeline'><span class='no'>17</span><code>feature_names = wine_columns[1:]</code></div>
+<div class='codeline'><span class='no'>18</span><code>target_names = [&quot;class_0&quot;, &quot;class_1&quot;, &quot;class_2&quot;]</code></div>
+<div class='codeline'><span class='no'>19</span><code>X = wine_df[feature_names]</code></div>
+<div class='codeline'><span class='no'>20</span><code>y = wine_df[&quot;class&quot;] - 1</code></div>
+<div class='codeline'><span class='no'>21</span><code></code></div>
+<div class='codeline'><span class='no'>22</span><code># Chia train/test co stratify de giu ty le 3 lop.</code></div>
+<div class='codeline'><span class='no'>23</span><code>X_train, X_test, y_train, y_test = train_test_split(</code></div>
+<div class='codeline'><span class='no'>24</span><code>    X, y, test_size=0.25, random_state=42, stratify=y</code></div>
+<div class='codeline'><span class='no'>25</span><code>)</code></div>
+<div class='codeline'><span class='no'>26</span><code></code></div>
+<div class='codeline'><span class='no'>27</span><code># Baseline Decision Tree de so sanh voi ensemble.</code></div>
+<div class='codeline'><span class='no'>28</span><code>dt_model = DecisionTreeClassifier(random_state=42)</code></div>
+<div class='codeline'><span class='no'>29</span><code>dt_model.fit(X_train, y_train)</code></div>
+<div class='codeline'><span class='no'>30</span><code>dt_preds = dt_model.predict(X_test)</code></div>
+<div class='codeline'><span class='no'>31</span><code>dt_accuracy = accuracy_score(y_test, dt_preds)</code></div>
+<div class='codeline'><span class='no'>32</span><code>print(f&quot;Baseline Decision Tree Accuracy: {dt_accuracy:.4f}&quot;)</code></div>
+<div class='codeline'><span class='no'>33</span><code>print(classification_report(y_test, dt_preds, target_names=target_names))</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 2</span> Random Forest</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này train Random Forest. Random Forest là nhiều Decision Tree train trên các mẫu bootstrap và chọn ngẫu nhiên một phần feature khi tách node. Nhờ vậy nó giảm overfitting và variance so với một cây đơn.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-1:</b> Import RandomForestClassifier từ sklearn vì đề Lab 6 yêu cầu dùng Random Forest.</li>
+<li><b>Dòng 3-11:</b> Khởi tạo Random Forest với 300 cây, max_features=sqrt và class_weight balanced.</li>
+<li><b>Dòng 12-16:</b> Train, predict, tính accuracy và in classification report.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi Random Forest khác Decision Tree thế nào, em nói: Decision Tree là một cây nên dễ overfit; Random Forest lấy trung bình/bỏ phiếu nhiều cây nên ổn định hơn.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Cell này in metric, chưa vẽ hình.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (16 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code>from sklearn.ensemble import RandomForestClassifier</code></div>
+<div class='codeline'><span class='no'>2</span><code></code></div>
+<div class='codeline'><span class='no'>3</span><code># Random Forest dung bagging nhieu cay quyet dinh.</code></div>
+<div class='codeline'><span class='no'>4</span><code>rf_model = RandomForestClassifier(</code></div>
+<div class='codeline'><span class='no'>5</span><code>    n_estimators=300,</code></div>
+<div class='codeline'><span class='no'>6</span><code>    max_features=&quot;sqrt&quot;,</code></div>
+<div class='codeline'><span class='no'>7</span><code>    random_state=42,</code></div>
+<div class='codeline'><span class='no'>8</span><code>    class_weight=&quot;balanced&quot;</code></div>
+<div class='codeline'><span class='no'>9</span><code>)</code></div>
+<div class='codeline'><span class='no'>10</span><code>rf_model.fit(X_train, y_train)</code></div>
+<div class='codeline'><span class='no'>11</span><code>rf_preds = rf_model.predict(X_test)</code></div>
+<div class='codeline'><span class='no'>12</span><code>rf_accuracy = accuracy_score(y_test, rf_preds)</code></div>
+<div class='codeline'><span class='no'>13</span><code></code></div>
+<div class='codeline'><span class='no'>14</span><code>print(f&quot;Random Forest Accuracy: {rf_accuracy:.4f}\n&quot;)</code></div>
+<div class='codeline'><span class='no'>15</span><code>print(&quot;Classification Report:&quot;)</code></div>
+<div class='codeline'><span class='no'>16</span><code>print(classification_report(y_test, rf_preds, target_names=target_names))</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 3</span> XGBoost</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này train XGBoost. Khác Random Forest train nhiều cây độc lập, XGBoost train cây tuần tự; cây sau cố gắng sửa lỗi còn lại của các cây trước. Vì vậy nó thường đạt accuracy cao nếu tham số phù hợp.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-1:</b> Import XGBClassifier từ thư viện xgboost.</li>
+<li><b>Dòng 3-13:</b> Khởi tạo XGBoost với số cây, độ sâu, learning rate, subsample và colsample_bytree.</li>
+<li><b>Dòng 14-18:</b> Train model, predict test set, in accuracy và classification report.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi learning_rate trong XGBoost là gì, em nói: nó điều chỉnh mức đóng góp của mỗi cây mới; nhỏ hơn thì học chậm nhưng thường ổn định hơn.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Cell này in metric, chưa vẽ hình.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (18 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code>from xgboost import XGBClassifier</code></div>
+<div class='codeline'><span class='no'>2</span><code></code></div>
+<div class='codeline'><span class='no'>3</span><code># XGBoost dung boosting tuan tu de sua loi cua cac cay truoc.</code></div>
+<div class='codeline'><span class='no'>4</span><code>xgb_model = XGBClassifier(</code></div>
+<div class='codeline'><span class='no'>5</span><code>    n_estimators=250,</code></div>
+<div class='codeline'><span class='no'>6</span><code>    max_depth=3,</code></div>
+<div class='codeline'><span class='no'>7</span><code>    learning_rate=0.05,</code></div>
+<div class='codeline'><span class='no'>8</span><code>    subsample=0.9,</code></div>
+<div class='codeline'><span class='no'>9</span><code>    colsample_bytree=0.9,</code></div>
+<div class='codeline'><span class='no'>10</span><code>    random_state=42,</code></div>
+<div class='codeline'><span class='no'>11</span><code>    eval_metric=&quot;mlogloss&quot;</code></div>
+<div class='codeline'><span class='no'>12</span><code>)</code></div>
+<div class='codeline'><span class='no'>13</span><code>xgb_model.fit(X_train, y_train)</code></div>
+<div class='codeline'><span class='no'>14</span><code>xgb_preds = xgb_model.predict(X_test)</code></div>
+<div class='codeline'><span class='no'>15</span><code>xgb_accuracy = accuracy_score(y_test, xgb_preds)</code></div>
+<div class='codeline'><span class='no'>16</span><code></code></div>
+<div class='codeline'><span class='no'>17</span><code>print(f&quot;XGBoost Accuracy: {xgb_accuracy:.4f}&quot;)</code></div>
+<div class='codeline'><span class='no'>18</span><code>print(classification_report(y_test, xgb_preds, target_names=target_names))</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 4</span> Feature importance</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này lấy feature importance từ Random Forest và XGBoost rồi vẽ biểu đồ thanh ngang. Mục tiêu là không chỉ xem model đúng bao nhiêu, mà còn xem model dựa nhiều vào feature nào để phân biệt các loại rượu.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-5:</b> Lấy mảng importance của hai model và sắp xếp thứ tự feature.</li>
+<li><b>Dòng 7-23:</b> Vẽ hai biểu đồ thanh ngang: bên trái Random Forest, bên phải XGBoost.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi feature importance dùng để làm gì, em nói: nó giúp giải thích model, biết feature nào ảnh hưởng mạnh đến quyết định phân loại.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Biểu đồ thanh càng dài thì feature càng quan trọng theo model. Có thể so sánh hai mô hình xem chúng ưu tiên feature giống hay khác nhau.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (23 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># Trich feature importance cua Random Forest ve XGBoost.</code></div>
+<div class='codeline'><span class='no'>2</span><code>rf_importances = rf_model.feature_importances_</code></div>
+<div class='codeline'><span class='no'>3</span><code>xgb_importances = xgb_model.feature_importances_</code></div>
+<div class='codeline'><span class='no'>4</span><code></code></div>
+<div class='codeline'><span class='no'>5</span><code>rf_indices = np.argsort(rf_importances)</code></div>
+<div class='codeline'><span class='no'>6</span><code>xgb_indices = np.argsort(xgb_importances)</code></div>
+<div class='codeline'><span class='no'>7</span><code></code></div>
+<div class='codeline'><span class='no'>8</span><code>fig, axes = plt.subplots(1, 2, figsize=(14, 6))</code></div>
+<div class='codeline'><span class='no'>9</span><code></code></div>
+<div class='codeline'><span class='no'>10</span><code>axes[0].barh(range(len(rf_indices)), rf_importances[rf_indices], align=&#x27;center&#x27;, color=&#x27;skyblue&#x27;)</code></div>
+<div class='codeline'><span class='no'>11</span><code>axes[0].set_yticks(range(len(rf_indices)))</code></div>
+<div class='codeline'><span class='no'>12</span><code>axes[0].set_yticklabels(np.array(feature_names)[rf_indices])</code></div>
+<div class='codeline'><span class='no'>13</span><code>axes[0].set_title(&#x27;Random Forest Feature Importances&#x27;)</code></div>
+<div class='codeline'><span class='no'>14</span><code>axes[0].set_xlabel(&#x27;Relative Importance&#x27;)</code></div>
+<div class='codeline'><span class='no'>15</span><code></code></div>
+<div class='codeline'><span class='no'>16</span><code>axes[1].barh(range(len(xgb_indices)), xgb_importances[xgb_indices], align=&#x27;center&#x27;, color=&#x27;lightgreen&#x27;)</code></div>
+<div class='codeline'><span class='no'>17</span><code>axes[1].set_yticks(range(len(xgb_indices)))</code></div>
+<div class='codeline'><span class='no'>18</span><code>axes[1].set_yticklabels(np.array(feature_names)[xgb_indices])</code></div>
+<div class='codeline'><span class='no'>19</span><code>axes[1].set_title(&#x27;XGBoost Feature Importances&#x27;)</code></div>
+<div class='codeline'><span class='no'>20</span><code>axes[1].set_xlabel(&#x27;Relative Importance&#x27;)</code></div>
+<div class='codeline'><span class='no'>21</span><code></code></div>
+<div class='codeline'><span class='no'>22</span><code>plt.tight_layout()</code></div>
+<div class='codeline'><span class='no'>23</span><code>plt.show()</code></div></div>
+            </details>
+          </div>
+        </details>
+    </section>
+    <section class='lab' id='lab7'>
+      <h2>Lab 7 - Clustering Techniques</h2>
+      <div class='speech'><h3>Mở đầu lab, em nói ngắn gọn</h3><p>Trong lab này em làm clustering và anomaly detection. Em viết tay K-Means, Mean Shift, DBSCAN và GMM. Khi trình bày, nên nói rõ K-Means hợp cụm tròn/lồi, DBSCAN và Mean Shift hợp cụm theo mật độ, còn GMM học phân phối Gaussian để phát hiện điểm bất thường.</p></div>
+      <div class='datasets'><h3>Dataset của lab này</h3>
+        <div class='dataset-card'>
+          <h4>Mall Customers</h4>
+          <p><b>Nguồn:</b> GitHub raw dataset phổ biến cho customer segmentation</p>
+          <p><b>File:</b> <code>Lab7/data/Mall_Customers.csv</code></p>
+          <p>Bộ này có CustomerID, Gender, Age, Annual Income và Spending Score. Nó phù hợp với K-Means vì mục tiêu là phân khúc khách hàng theo thu nhập và mức chi tiêu.</p>
+        </div>
+
+        <div class='dataset-card'>
+          <h4>Two-moons</h4>
+          <p><b>Nguồn:</b> Tự tạo bằng NumPy</p>
+          <p><b>File:</b> <code>không có file riêng</code></p>
+          <p>Dữ liệu có hình cụm cong, dùng để chứng minh K-Means khó xử lý cụm phi tuyến, còn DBSCAN/Mean Shift dựa vào mật độ nên hợp hơn.</p>
+        </div>
+
+        <div class='dataset-card'>
+          <h4>Credit Card Fraud Detection</h4>
+          <p><b>Nguồn:</b> Kaggle - mlg-ulb/creditcardfraud</p>
+          <p><b>File:</b> <code>Lab1/data/creditcard.csv</code></p>
+          <p>Dùng cho GMM anomaly detection: fit GMM trên giao dịch bình thường, sau đó điểm có log-likelihood thấp được xem là bất thường hoặc nghi ngờ fraud.</p>
+        </div></div>
+      
+        <details class='cell' open>
+          <summary><span>Cell 1</span> K-Means customer segmentation</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này em viết K-Means từ đầu rồi áp dụng vào Mall Customers. K-Means hoạt động bằng cách khởi tạo centroid, gán mỗi điểm vào centroid gần nhất, cập nhật centroid bằng trung bình các điểm trong cụm, rồi lặp đến khi hội tụ.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-8:</b> Import thư viện và khai báo phần K-Means viết tay.</li>
+<li><b>Dòng 10-40:</b> Định nghĩa class KMeansScratch gồm khởi tạo centroid, gán cụm, cập nhật centroid và vòng lặp fit_predict.</li>
+<li><b>Dòng 42-51:</b> Đọc Mall Customers, lấy Age, Annual Income, Spending Score và chuẩn hóa.</li>
+<li><b>Dòng 53-62:</b> Chạy K-Means 5 cụm, gán nhãn cluster vào DataFrame, vẽ Income vs Spending Score và in trung bình từng cụm.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi vì sao cần chuẩn hóa, em nói: vì Age, Income và Spending Score có thang đo khác nhau; nếu không chuẩn hóa, feature có giá trị lớn hơn sẽ chi phối khoảng cách.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Biểu đồ phân khúc khách hàng: trục X là thu nhập, trục Y là điểm chi tiêu, màu là cụm. Có thể giải thích từng nhóm như thu nhập cao/chi tiêu cao, thu nhập thấp/chi tiêu thấp.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (62 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code>import os</code></div>
+<div class='codeline'><span class='no'>2</span><code>import numpy as np</code></div>
+<div class='codeline'><span class='no'>3</span><code>import pandas as pd</code></div>
+<div class='codeline'><span class='no'>4</span><code>import matplotlib.pyplot as plt</code></div>
+<div class='codeline'><span class='no'>5</span><code></code></div>
+<div class='codeline'><span class='no'>6</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>7</span><code># K-MEANS VIET TAY (FROM SCRATCH)</code></div>
+<div class='codeline'><span class='no'>8</span><code># Khong dung sklearn.cluster.KMeans</code></div>
+<div class='codeline'><span class='no'>9</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>10</span><code></code></div>
+<div class='codeline'><span class='no'>11</span><code>class KMeansScratch:</code></div>
+<div class='codeline'><span class='no'>12</span><code>    &quot;&quot;&quot;K-Means Clustering viet tay hoan toan.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>13</span><code>    def __init__(self, n_clusters=4, max_iter=300, random_state=42):</code></div>
+<div class='codeline'><span class='no'>14</span><code>        self.n_clusters = n_clusters</code></div>
+<div class='codeline'><span class='no'>15</span><code>        self.max_iter = max_iter</code></div>
+<div class='codeline'><span class='no'>16</span><code>        self.random_state = random_state</code></div>
+<div class='codeline'><span class='no'>17</span><code>        self.centroids = None</code></div>
+<div class='codeline'><span class='no'>18</span><code>        self.labels_ = None</code></div>
+<div class='codeline'><span class='no'>19</span><code>    def _init_centroids(self, X):</code></div>
+<div class='codeline'><span class='no'>20</span><code>        rng = np.random.default_rng(self.random_state)</code></div>
+<div class='codeline'><span class='no'>21</span><code>        indices = rng.choice(len(X), self.n_clusters, replace=False)</code></div>
+<div class='codeline'><span class='no'>22</span><code>        return X[indices].copy()</code></div>
+<div class='codeline'><span class='no'>23</span><code>    def _assign_clusters(self, X):</code></div>
+<div class='codeline'><span class='no'>24</span><code>        distances = np.sqrt(((X[:, None, :] - self.centroids[None, :, :]) ** 2).sum(axis=2))</code></div>
+<div class='codeline'><span class='no'>25</span><code>        return np.argmin(distances, axis=1)</code></div>
+<div class='codeline'><span class='no'>26</span><code>    def _update_centroids(self, X, labels):</code></div>
+<div class='codeline'><span class='no'>27</span><code>        new_centroids = np.zeros((self.n_clusters, X.shape[1]))</code></div>
+<div class='codeline'><span class='no'>28</span><code>        for k in range(self.n_clusters):</code></div>
+<div class='codeline'><span class='no'>29</span><code>            cluster_points = X[labels == k]</code></div>
+<div class='codeline'><span class='no'>30</span><code>            new_centroids[k] = cluster_points.mean(axis=0) if len(cluster_points) else self.centroids[k]</code></div>
+<div class='codeline'><span class='no'>31</span><code>        return new_centroids</code></div>
+<div class='codeline'><span class='no'>32</span><code>    def fit_predict(self, X):</code></div>
+<div class='codeline'><span class='no'>33</span><code>        self.centroids = self._init_centroids(X)</code></div>
+<div class='codeline'><span class='no'>34</span><code>        for iteration in range(self.max_iter):</code></div>
+<div class='codeline'><span class='no'>35</span><code>            labels = self._assign_clusters(X)</code></div>
+<div class='codeline'><span class='no'>36</span><code>            new_centroids = self._update_centroids(X, labels)</code></div>
+<div class='codeline'><span class='no'>37</span><code>            if np.allclose(self.centroids, new_centroids):</code></div>
+<div class='codeline'><span class='no'>38</span><code>                break</code></div>
+<div class='codeline'><span class='no'>39</span><code>            self.centroids = new_centroids</code></div>
+<div class='codeline'><span class='no'>40</span><code>        self.labels_ = labels</code></div>
+<div class='codeline'><span class='no'>41</span><code>        self.inertia_ = float(np.sum((X - self.centroids[labels]) ** 2))</code></div>
+<div class='codeline'><span class='no'>42</span><code>        return labels</code></div>
+<div class='codeline'><span class='no'>43</span><code></code></div>
+<div class='codeline'><span class='no'>44</span><code># Doc Mall Customers dataset tu file ngoai, khong dung make_blobs.</code></div>
+<div class='codeline'><span class='no'>45</span><code>customers = pd.read_csv(os.path.join(&quot;data&quot;, &quot;Mall_Customers.csv&quot;))</code></div>
+<div class='codeline'><span class='no'>46</span><code>X_customers_raw = customers[[&quot;Age&quot;, &quot;Annual Income (k$)&quot;, &quot;Spending Score (1-100)&quot;]].to_numpy(float)</code></div>
+<div class='codeline'><span class='no'>47</span><code>mean_c = X_customers_raw.mean(axis=0)</code></div>
+<div class='codeline'><span class='no'>48</span><code>std_c = X_customers_raw.std(axis=0)</code></div>
+<div class='codeline'><span class='no'>49</span><code>X_customers = (X_customers_raw - mean_c) / std_c</code></div>
+<div class='codeline'><span class='no'>50</span><code></code></div>
+<div class='codeline'><span class='no'>51</span><code>kmeans = KMeansScratch(n_clusters=5, random_state=42)</code></div>
+<div class='codeline'><span class='no'>52</span><code>kmeans_labels = kmeans.fit_predict(X_customers)</code></div>
+<div class='codeline'><span class='no'>53</span><code>customers[&quot;cluster&quot;] = kmeans_labels</code></div>
+<div class='codeline'><span class='no'>54</span><code></code></div>
+<div class='codeline'><span class='no'>55</span><code>plt.figure(figsize=(8, 6))</code></div>
+<div class='codeline'><span class='no'>56</span><code>plt.scatter(customers[&quot;Annual Income (k$)&quot;], customers[&quot;Spending Score (1-100)&quot;], c=kmeans_labels, cmap=&#x27;viridis&#x27;, s=55, alpha=0.8, edgecolor=&#x27;k&#x27;, linewidth=0.3)</code></div>
+<div class='codeline'><span class='no'>57</span><code>plt.title(&#x27;Customer Segmentation with K-Means viet tay&#x27;)</code></div>
+<div class='codeline'><span class='no'>58</span><code>plt.xlabel(&#x27;Annual Income (k$)&#x27;)</code></div>
+<div class='codeline'><span class='no'>59</span><code>plt.ylabel(&#x27;Spending Score (1-100)&#x27;)</code></div>
+<div class='codeline'><span class='no'>60</span><code>plt.grid(True, alpha=0.3)</code></div>
+<div class='codeline'><span class='no'>61</span><code>plt.show()</code></div>
+<div class='codeline'><span class='no'>62</span><code>print(customers.groupby(&quot;cluster&quot;)[[&quot;Age&quot;, &quot;Annual Income (k$)&quot;, &quot;Spending Score (1-100)&quot;]].mean())</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 2</span> Mean Shift và DBSCAN trên two-moons</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này so sánh K-Means với Mean Shift và DBSCAN trên dữ liệu two-moons. Dữ liệu này có cụm cong nên K-Means thường không tốt vì K-Means thích cụm dạng tròn/lồi. Mean Shift và DBSCAN dựa trên mật độ nên hợp hơn.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-18:</b> Tự tạo dữ liệu two-moons bằng NumPy.</li>
+<li><b>Dòng 20-51:</b> Định nghĩa MeanShiftScratch: mỗi điểm dịch về trung bình các điểm lân cận trong bandwidth, sau đó gộp các tâm gần nhau.</li>
+<li><b>Dòng 53-88:</b> Định nghĩa DBSCANScratch: tìm láng giềng trong eps, nếu đủ min_samples thì mở rộng cụm theo mật độ.</li>
+<li><b>Dòng 90-106:</b> Chạy K-Means, Mean Shift, DBSCAN và vẽ 3 biểu đồ cạnh nhau để so sánh.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi DBSCAN có ưu điểm gì, em nói: không cần biết trước số cụm, phát hiện được noise và xử lý cụm hình dạng lạ tốt hơn K-Means.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Ba hình cạnh nhau là điểm chính: K-Means hay cắt cụm cong sai, còn DBSCAN/Mean Shift thường bám theo cấu trúc hai mặt trăng tốt hơn.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (106 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>2</span><code># MEAN SHIFT ve DBSCAN VIET TAY</code></div>
+<div class='codeline'><span class='no'>3</span><code># Khong dung sklearn.cluster.MeanShift/DBSCAN</code></div>
+<div class='codeline'><span class='no'>4</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>5</span><code></code></div>
+<div class='codeline'><span class='no'>6</span><code>def make_two_moons_np(n_samples=300, noise=0.05, random_state=42):</code></div>
+<div class='codeline'><span class='no'>7</span><code>    &quot;&quot;&quot;Tao du lieu hinh mat trang bang NumPy, khong dung make_moons.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>8</span><code>    rng = np.random.default_rng(random_state)</code></div>
+<div class='codeline'><span class='no'>9</span><code>    n1 = n_samples // 2</code></div>
+<div class='codeline'><span class='no'>10</span><code>    n2 = n_samples - n1</code></div>
+<div class='codeline'><span class='no'>11</span><code>    t1 = rng.uniform(0, np.pi, n1)</code></div>
+<div class='codeline'><span class='no'>12</span><code>    t2 = rng.uniform(0, np.pi, n2)</code></div>
+<div class='codeline'><span class='no'>13</span><code>    moon1 = np.c_[np.cos(t1), np.sin(t1)]</code></div>
+<div class='codeline'><span class='no'>14</span><code>    moon2 = np.c_[1 - np.cos(t2), 0.5 - np.sin(t2)]</code></div>
+<div class='codeline'><span class='no'>15</span><code>    X = np.vstack([moon1, moon2]) + rng.normal(0, noise, size=(n_samples, 2))</code></div>
+<div class='codeline'><span class='no'>16</span><code>    return X[rng.permutation(n_samples)]</code></div>
+<div class='codeline'><span class='no'>17</span><code></code></div>
+<div class='codeline'><span class='no'>18</span><code>class MeanShiftScratch:</code></div>
+<div class='codeline'><span class='no'>19</span><code>    &quot;&quot;&quot;Mean Shift viet tay: dech tung diem ve trung banh lyn can trong bandwidth.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>20</span><code>    def __init__(self, bandwidth=0.38, max_iter=80, tol=1e-3):</code></div>
+<div class='codeline'><span class='no'>21</span><code>        self.bandwidth = bandwidth</code></div>
+<div class='codeline'><span class='no'>22</span><code>        self.max_iter = max_iter</code></div>
+<div class='codeline'><span class='no'>23</span><code>        self.tol = tol</code></div>
+<div class='codeline'><span class='no'>24</span><code>    def fit_predict(self, X):</code></div>
+<div class='codeline'><span class='no'>25</span><code>        centers = X.copy()</code></div>
+<div class='codeline'><span class='no'>26</span><code>        for _ in range(self.max_iter):</code></div>
+<div class='codeline'><span class='no'>27</span><code>            new_centers = []</code></div>
+<div class='codeline'><span class='no'>28</span><code>            for center in centers:</code></div>
+<div class='codeline'><span class='no'>29</span><code>                distances = np.sqrt(np.sum((X - center) ** 2, axis=1))</code></div>
+<div class='codeline'><span class='no'>30</span><code>                neighbors = X[distances &lt;= self.bandwidth]</code></div>
+<div class='codeline'><span class='no'>31</span><code>                new_centers.append(neighbors.mean(axis=0) if len(neighbors) else center)</code></div>
+<div class='codeline'><span class='no'>32</span><code>            new_centers = np.array(new_centers)</code></div>
+<div class='codeline'><span class='no'>33</span><code>            if np.max(np.linalg.norm(new_centers - centers, axis=1)) &lt; self.tol:</code></div>
+<div class='codeline'><span class='no'>34</span><code>                break</code></div>
+<div class='codeline'><span class='no'>35</span><code>            centers = new_centers</code></div>
+<div class='codeline'><span class='no'>36</span><code>        unique_centers = []</code></div>
+<div class='codeline'><span class='no'>37</span><code>        labels = np.full(len(X), -1)</code></div>
+<div class='codeline'><span class='no'>38</span><code>        for i, center in enumerate(centers):</code></div>
+<div class='codeline'><span class='no'>39</span><code>            assigned = False</code></div>
+<div class='codeline'><span class='no'>40</span><code>            for k, uc in enumerate(unique_centers):</code></div>
+<div class='codeline'><span class='no'>41</span><code>                if np.linalg.norm(center - uc) &lt; self.bandwidth / 2:</code></div>
+<div class='codeline'><span class='no'>42</span><code>                    labels[i] = k</code></div>
+<div class='codeline'><span class='no'>43</span><code>                    assigned = True</code></div>
+<div class='codeline'><span class='no'>44</span><code>                    break</code></div>
+<div class='codeline'><span class='no'>45</span><code>            if not assigned:</code></div>
+<div class='codeline'><span class='no'>46</span><code>                unique_centers.append(center)</code></div>
+<div class='codeline'><span class='no'>47</span><code>                labels[i] = len(unique_centers) - 1</code></div>
+<div class='codeline'><span class='no'>48</span><code>        self.cluster_centers_ = np.array(unique_centers)</code></div>
+<div class='codeline'><span class='no'>49</span><code>        self.labels_ = labels</code></div>
+<div class='codeline'><span class='no'>50</span><code>        return labels</code></div>
+<div class='codeline'><span class='no'>51</span><code></code></div>
+<div class='codeline'><span class='no'>52</span><code>class DBSCANScratch:</code></div>
+<div class='codeline'><span class='no'>53</span><code>    &quot;&quot;&quot;DBSCAN Clustering viet tay hoan toan.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>54</span><code>    def __init__(self, eps=0.18, min_samples=5):</code></div>
+<div class='codeline'><span class='no'>55</span><code>        self.eps = eps</code></div>
+<div class='codeline'><span class='no'>56</span><code>        self.min_samples = min_samples</code></div>
+<div class='codeline'><span class='no'>57</span><code>        self.labels_ = None</code></div>
+<div class='codeline'><span class='no'>58</span><code>    def _get_neighbors(self, X, idx):</code></div>
+<div class='codeline'><span class='no'>59</span><code>        distances = np.sqrt(np.sum((X - X[idx]) ** 2, axis=1))</code></div>
+<div class='codeline'><span class='no'>60</span><code>        return np.where(distances &lt;= self.eps)[0]</code></div>
+<div class='codeline'><span class='no'>61</span><code>    def fit_predict(self, X):</code></div>
+<div class='codeline'><span class='no'>62</span><code>        n = len(X)</code></div>
+<div class='codeline'><span class='no'>63</span><code>        labels = np.full(n, -1)</code></div>
+<div class='codeline'><span class='no'>64</span><code>        visited = np.zeros(n, dtype=bool)</code></div>
+<div class='codeline'><span class='no'>65</span><code>        cluster_id = 0</code></div>
+<div class='codeline'><span class='no'>66</span><code>        for i in range(n):</code></div>
+<div class='codeline'><span class='no'>67</span><code>            if visited[i]:</code></div>
+<div class='codeline'><span class='no'>68</span><code>                continue</code></div>
+<div class='codeline'><span class='no'>69</span><code>            visited[i] = True</code></div>
+<div class='codeline'><span class='no'>70</span><code>            neighbors = list(self._get_neighbors(X, i))</code></div>
+<div class='codeline'><span class='no'>71</span><code>            if len(neighbors) &lt; self.min_samples:</code></div>
+<div class='codeline'><span class='no'>72</span><code>                labels[i] = -1</code></div>
+<div class='codeline'><span class='no'>73</span><code>                continue</code></div>
+<div class='codeline'><span class='no'>74</span><code>            labels[i] = cluster_id</code></div>
+<div class='codeline'><span class='no'>75</span><code>            j = 0</code></div>
+<div class='codeline'><span class='no'>76</span><code>            while j &lt; len(neighbors):</code></div>
+<div class='codeline'><span class='no'>77</span><code>                p = neighbors[j]</code></div>
+<div class='codeline'><span class='no'>78</span><code>                if not visited[p]:</code></div>
+<div class='codeline'><span class='no'>79</span><code>                    visited[p] = True</code></div>
+<div class='codeline'><span class='no'>80</span><code>                    p_neighbors = list(self._get_neighbors(X, p))</code></div>
+<div class='codeline'><span class='no'>81</span><code>                    if len(p_neighbors) &gt;= self.min_samples:</code></div>
+<div class='codeline'><span class='no'>82</span><code>                        neighbors.extend([q for q in p_neighbors if q not in neighbors])</code></div>
+<div class='codeline'><span class='no'>83</span><code>                if labels[p] == -1:</code></div>
+<div class='codeline'><span class='no'>84</span><code>                    labels[p] = cluster_id</code></div>
+<div class='codeline'><span class='no'>85</span><code>                j += 1</code></div>
+<div class='codeline'><span class='no'>86</span><code>            cluster_id += 1</code></div>
+<div class='codeline'><span class='no'>87</span><code>        self.labels_ = labels</code></div>
+<div class='codeline'><span class='no'>88</span><code>        return labels</code></div>
+<div class='codeline'><span class='no'>89</span><code></code></div>
+<div class='codeline'><span class='no'>90</span><code>X_moons = make_two_moons_np(n_samples=300, noise=0.05, random_state=42)</code></div>
+<div class='codeline'><span class='no'>91</span><code>labels_kmeans = KMeansScratch(n_clusters=2, random_state=42).fit_predict(X_moons)</code></div>
+<div class='codeline'><span class='no'>92</span><code>labels_meanshift = MeanShiftScratch(bandwidth=0.38).fit_predict(X_moons)</code></div>
+<div class='codeline'><span class='no'>93</span><code>labels_dbscan = DBSCANScratch(eps=0.18, min_samples=5).fit_predict(X_moons)</code></div>
+<div class='codeline'><span class='no'>94</span><code></code></div>
+<div class='codeline'><span class='no'>95</span><code>fig, axes = plt.subplots(1, 3, figsize=(15, 5))</code></div>
+<div class='codeline'><span class='no'>96</span><code>for ax, labels, title in [</code></div>
+<div class='codeline'><span class='no'>97</span><code>    (axes[0], labels_kmeans, &#x27;K-Means viet tay&#x27;),</code></div>
+<div class='codeline'><span class='no'>98</span><code>    (axes[1], labels_meanshift, &#x27;Mean Shift viet tay&#x27;),</code></div>
+<div class='codeline'><span class='no'>99</span><code>    (axes[2], labels_dbscan, &#x27;DBSCAN viet tay&#x27;)</code></div>
+<div class='codeline'><span class='no'>100</span><code>]:</code></div>
+<div class='codeline'><span class='no'>101</span><code>    ax.scatter(X_moons[:, 0], X_moons[:, 1], c=labels, cmap=&#x27;viridis&#x27;, s=45, edgecolor=&#x27;k&#x27;, linewidth=0.2)</code></div>
+<div class='codeline'><span class='no'>102</span><code>    ax.set_title(title)</code></div>
+<div class='codeline'><span class='no'>103</span><code>    ax.set_xlabel(&#x27;Feature 1&#x27;)</code></div>
+<div class='codeline'><span class='no'>104</span><code>    ax.set_ylabel(&#x27;Feature 2&#x27;)</code></div>
+<div class='codeline'><span class='no'>105</span><code>plt.tight_layout()</code></div>
+<div class='codeline'><span class='no'>106</span><code>plt.show()</code></div></div>
+            </details>
+          </div>
+        </details>
+        <details class='cell' open>
+          <summary><span>Cell 3</span> GMM anomaly detection</summary>
+          <div class='cellbody'>
+            <section class='say'><h4>Em trình bày với cô như sau</h4><p>Cell này em viết Gaussian Mixture Model bằng EM. GMM giả sử dữ liệu bình thường được tạo từ nhiều phân phối Gaussian. Em fit GMM trên giao dịch normal, rồi tính log-likelihood cho tất cả điểm; điểm nào có likelihood thấp hơn threshold thì xem là bất thường.</p></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul><li><b>Dòng 1-15:</b> Khai báo class GMMScratch và các tham số số component, số vòng lặp, sai số hội tụ.</li>
+<li><b>Dòng 17-31:</b> Hàm Gaussian PDF tính mật độ xác suất của từng điểm theo mean và covariance.</li>
+<li><b>Dòng 33-84:</b> Hàm fit là EM algorithm: E-step tính responsibility, M-step cập nhật weight, mean, covariance, rồi kiểm tra log-likelihood hội tụ.</li>
+<li><b>Dòng 86-97:</b> Hàm score_samples tính log-likelihood của mỗi sample.</li>
+<li><b>Dòng 101-120:</b> Đọc Credit Card Fraud, lấy normal và fraud, chọn một số feature, chuẩn hóa và lấy normal làm tập train cho GMM.</li>
+<li><b>Dòng 122-146:</b> Fit GMM, đặt threshold theo percentile thấp của normal, đánh dấu anomaly, tính precision/recall và vẽ histogram score.</li></ul></section>
+            <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>Nếu cô hỏi EM là gì, em nói: EM gồm E-step ước lượng xác suất mỗi điểm thuộc từng Gaussian, và M-step cập nhật tham số Gaussian dựa trên các xác suất đó.</p></section>
+            <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>Histogram log-likelihood: vùng score thấp là vùng bất thường. Đường threshold màu đỏ dùng để tách anomaly khỏi normal.</p></section>
+            <details class='codebox'>
+              <summary>Code gốc của cell này - lấy đúng từ notebook (146 dòng)</summary>
+              <div class='code'><div class='codeline'><span class='no'>1</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>2</span><code># GAUSSIAN MIXTURE MODEL (GMM) VIET TAY (FROM SCRATCH)</code></div>
+<div class='codeline'><span class='no'>3</span><code># Khong dung sklearn.mixture.GaussianMixture</code></div>
+<div class='codeline'><span class='no'>4</span><code># Su dung EM Algorithm (Expectation-Maximization)</code></div>
+<div class='codeline'><span class='no'>5</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>6</span><code></code></div>
+<div class='codeline'><span class='no'>7</span><code>class GMMScratch:</code></div>
+<div class='codeline'><span class='no'>8</span><code>    &quot;&quot;&quot;Gaussian Mixture Model viet tay.</code></div>
+<div class='codeline'><span class='no'>9</span><code>    Su dung EM algorithm de fit.</code></div>
+<div class='codeline'><span class='no'>10</span><code>    </code></div>
+<div class='codeline'><span class='no'>11</span><code>    E-step: Tinh trach nhiem (responsibility) cua moi component doi voi moi diem</code></div>
+<div class='codeline'><span class='no'>12</span><code>    M-step: Cap nhat weights, means, covariances</code></div>
+<div class='codeline'><span class='no'>13</span><code>    &quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>14</span><code>    </code></div>
+<div class='codeline'><span class='no'>15</span><code>    def __init__(self, n_components=1, max_iter=100, tol=1e-6, random_state=42):</code></div>
+<div class='codeline'><span class='no'>16</span><code>        self.n_components = n_components</code></div>
+<div class='codeline'><span class='no'>17</span><code>        self.max_iter = max_iter</code></div>
+<div class='codeline'><span class='no'>18</span><code>        self.tol = tol</code></div>
+<div class='codeline'><span class='no'>19</span><code>        self.random_state = random_state</code></div>
+<div class='codeline'><span class='no'>20</span><code>        self.weights = None      # pi_k</code></div>
+<div class='codeline'><span class='no'>21</span><code>        self.means = None        # mu_k</code></div>
+<div class='codeline'><span class='no'>22</span><code>        self.covariances = None  # Sigma_k</code></div>
+<div class='codeline'><span class='no'>23</span><code>    </code></div>
+<div class='codeline'><span class='no'>24</span><code>    def _multivariate_gaussian(self, X, mean, cov):</code></div>
+<div class='codeline'><span class='no'>25</span><code>        &quot;&quot;&quot;Tinh mat do xac suat cua phan phoi Gaussian da chieu.</code></div>
+<div class='codeline'><span class='no'>26</span><code>        p(x) = (1/((2*pi)^(d/2) * |Sigma|^(1/2))) * exp(-0.5 * (x-mu)^T * Sigma^(-1) * (x-mu))</code></div>
+<div class='codeline'><span class='no'>27</span><code>        &quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>28</span><code>        d = len(mean)</code></div>
+<div class='codeline'><span class='no'>29</span><code>        diff = X - mean</code></div>
+<div class='codeline'><span class='no'>30</span><code>        cov_inv = np.linalg.inv(cov + 1e-6 * np.eye(d))  # Regularization</code></div>
+<div class='codeline'><span class='no'>31</span><code>        cov_det = np.linalg.det(cov + 1e-6 * np.eye(d))</code></div>
+<div class='codeline'><span class='no'>32</span><code>        </code></div>
+<div class='codeline'><span class='no'>33</span><code>        norm_const = 1.0 / (np.sqrt((2 * np.pi) ** d * np.abs(cov_det)))</code></div>
+<div class='codeline'><span class='no'>34</span><code>        exponent = -0.5 * np.sum(diff.dot(cov_inv) * diff, axis=1)</code></div>
+<div class='codeline'><span class='no'>35</span><code>        </code></div>
+<div class='codeline'><span class='no'>36</span><code>        return norm_const * np.exp(exponent)</code></div>
+<div class='codeline'><span class='no'>37</span><code>    </code></div>
+<div class='codeline'><span class='no'>38</span><code>    def fit(self, X):</code></div>
+<div class='codeline'><span class='no'>39</span><code>        &quot;&quot;&quot;Fit GMM bang EM algorithm.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>40</span><code>        np.random.seed(self.random_state)</code></div>
+<div class='codeline'><span class='no'>41</span><code>        n, d = X.shape</code></div>
+<div class='codeline'><span class='no'>42</span><code>        </code></div>
+<div class='codeline'><span class='no'>43</span><code>        # Khoi tao parameters</code></div>
+<div class='codeline'><span class='no'>44</span><code>        self.weights = np.ones(self.n_components) / self.n_components</code></div>
+<div class='codeline'><span class='no'>45</span><code>        # Khoi tao means ngau nhien tu data</code></div>
+<div class='codeline'><span class='no'>46</span><code>        indices = np.random.choice(n, self.n_components, replace=False)</code></div>
+<div class='codeline'><span class='no'>47</span><code>        self.means = X[indices].copy()</code></div>
+<div class='codeline'><span class='no'>48</span><code>        # Khoi tao covariances = identity matrix</code></div>
+<div class='codeline'><span class='no'>49</span><code>        self.covariances = np.array([np.eye(d) for _ in range(self.n_components)])</code></div>
+<div class='codeline'><span class='no'>50</span><code>        </code></div>
+<div class='codeline'><span class='no'>51</span><code>        prev_log_likelihood = -np.inf</code></div>
+<div class='codeline'><span class='no'>52</span><code>        </code></div>
+<div class='codeline'><span class='no'>53</span><code>        for iteration in range(self.max_iter):</code></div>
+<div class='codeline'><span class='no'>54</span><code>            # E-step: Tinh responsibilities</code></div>
+<div class='codeline'><span class='no'>55</span><code>            responsibilities = np.zeros((n, self.n_components))</code></div>
+<div class='codeline'><span class='no'>56</span><code>            for k in range(self.n_components):</code></div>
+<div class='codeline'><span class='no'>57</span><code>                responsibilities[:, k] = self.weights[k] * self._multivariate_gaussian(</code></div>
+<div class='codeline'><span class='no'>58</span><code>                    X, self.means[k], self.covariances[k])</code></div>
+<div class='codeline'><span class='no'>59</span><code>            </code></div>
+<div class='codeline'><span class='no'>60</span><code>            # Normalize responsibilities</code></div>
+<div class='codeline'><span class='no'>61</span><code>            resp_sum = responsibilities.sum(axis=1, keepdims=True)</code></div>
+<div class='codeline'><span class='no'>62</span><code>            resp_sum = np.maximum(resp_sum, 1e-300)  # Tranh chia cho 0</code></div>
+<div class='codeline'><span class='no'>63</span><code>            responsibilities /= resp_sum</code></div>
+<div class='codeline'><span class='no'>64</span><code>            </code></div>
+<div class='codeline'><span class='no'>65</span><code>            # M-step: Cap nhat parameters</code></div>
+<div class='codeline'><span class='no'>66</span><code>            for k in range(self.n_components):</code></div>
+<div class='codeline'><span class='no'>67</span><code>                resp_k = responsibilities[:, k]</code></div>
+<div class='codeline'><span class='no'>68</span><code>                N_k = resp_k.sum()</code></div>
+<div class='codeline'><span class='no'>69</span><code>                </code></div>
+<div class='codeline'><span class='no'>70</span><code>                if N_k &lt; 1e-10:</code></div>
+<div class='codeline'><span class='no'>71</span><code>                    continue</code></div>
+<div class='codeline'><span class='no'>72</span><code>                </code></div>
+<div class='codeline'><span class='no'>73</span><code>                # Cap nhat weight</code></div>
+<div class='codeline'><span class='no'>74</span><code>                self.weights[k] = N_k / n</code></div>
+<div class='codeline'><span class='no'>75</span><code>                </code></div>
+<div class='codeline'><span class='no'>76</span><code>                # Cap nhat mean</code></div>
+<div class='codeline'><span class='no'>77</span><code>                self.means[k] = (resp_k[:, np.newaxis] * X).sum(axis=0) / N_k</code></div>
+<div class='codeline'><span class='no'>78</span><code>                </code></div>
+<div class='codeline'><span class='no'>79</span><code>                # Cap nhat covariance</code></div>
+<div class='codeline'><span class='no'>80</span><code>                diff = X - self.means[k]</code></div>
+<div class='codeline'><span class='no'>81</span><code>                self.covariances[k] = (resp_k[:, np.newaxis] * diff).T.dot(diff) / N_k</code></div>
+<div class='codeline'><span class='no'>82</span><code>            </code></div>
+<div class='codeline'><span class='no'>83</span><code>            # Tinh log-likelihood de kiem tra hoi tu</code></div>
+<div class='codeline'><span class='no'>84</span><code>            log_likelihood = np.sum(np.log(resp_sum))</code></div>
+<div class='codeline'><span class='no'>85</span><code>            if abs(log_likelihood - prev_log_likelihood) &lt; self.tol:</code></div>
+<div class='codeline'><span class='no'>86</span><code>                break</code></div>
+<div class='codeline'><span class='no'>87</span><code>            prev_log_likelihood = log_likelihood</code></div>
+<div class='codeline'><span class='no'>88</span><code>    </code></div>
+<div class='codeline'><span class='no'>89</span><code>    def score_samples(self, X):</code></div>
+<div class='codeline'><span class='no'>90</span><code>        &quot;&quot;&quot;Tinh log-likelihood cho moi sample.&quot;&quot;&quot;</code></div>
+<div class='codeline'><span class='no'>91</span><code>        n = X.shape[0]</code></div>
+<div class='codeline'><span class='no'>92</span><code>        likelihoods = np.zeros(n)</code></div>
+<div class='codeline'><span class='no'>93</span><code>        </code></div>
+<div class='codeline'><span class='no'>94</span><code>        for k in range(self.n_components):</code></div>
+<div class='codeline'><span class='no'>95</span><code>            likelihoods += self.weights[k] * self._multivariate_gaussian(</code></div>
+<div class='codeline'><span class='no'>96</span><code>                X, self.means[k], self.covariances[k])</code></div>
+<div class='codeline'><span class='no'>97</span><code>        </code></div>
+<div class='codeline'><span class='no'>98</span><code>        return np.log(np.maximum(likelihoods, 1e-300))</code></div>
+<div class='codeline'><span class='no'>99</span><code></code></div>
+<div class='codeline'><span class='no'>100</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>101</span><code># DEMO: Anomaly Detection vei GMM viet tay tren Credit Card Fraud</code></div>
+<div class='codeline'><span class='no'>102</span><code># ============================================================</code></div>
+<div class='codeline'><span class='no'>103</span><code></code></div>
+<div class='codeline'><span class='no'>104</span><code>DATA_PATH = os.path.join(&quot;..&quot;, &quot;Lab1&quot;, &quot;data&quot;, &quot;creditcard.csv&quot;)</code></div>
+<div class='codeline'><span class='no'>105</span><code>if not os.path.exists(DATA_PATH):</code></div>
+<div class='codeline'><span class='no'>106</span><code>    raise FileNotFoundError(&quot;Can file Lab1/data/creditcard.csv de chay phan GMM.&quot;)</code></div>
+<div class='codeline'><span class='no'>107</span><code></code></div>
+<div class='codeline'><span class='no'>108</span><code>credit = pd.read_csv(DATA_PATH)</code></div>
+<div class='codeline'><span class='no'>109</span><code>normal = credit[credit[&quot;Class&quot;] == 0].sample(n=5000, random_state=42)</code></div>
+<div class='codeline'><span class='no'>110</span><code>fraud = credit[credit[&quot;Class&quot;] == 1]</code></div>
+<div class='codeline'><span class='no'>111</span><code>work = pd.concat([normal, fraud], axis=0).sample(frac=1, random_state=42)</code></div>
+<div class='codeline'><span class='no'>112</span><code>features = [&quot;V1&quot;, &quot;V2&quot;, &quot;V3&quot;, &quot;Amount&quot;]</code></div>
+<div class='codeline'><span class='no'>113</span><code>X_combined = work[features].to_numpy(float)</code></div>
+<div class='codeline'><span class='no'>114</span><code>y_true = work[&quot;Class&quot;].to_numpy(int)</code></div>
+<div class='codeline'><span class='no'>115</span><code></code></div>
+<div class='codeline'><span class='no'>116</span><code># Chuan hda thu cong.</code></div>
+<div class='codeline'><span class='no'>117</span><code>mean_g = X_combined.mean(axis=0)</code></div>
+<div class='codeline'><span class='no'>118</span><code>std_g = X_combined.std(axis=0)</code></div>
+<div class='codeline'><span class='no'>119</span><code>X_combined = (X_combined - mean_g) / std_g</code></div>
+<div class='codeline'><span class='no'>120</span><code>X_normal_train = X_combined[y_true == 0][:4000]</code></div>
+<div class='codeline'><span class='no'>121</span><code></code></div>
+<div class='codeline'><span class='no'>122</span><code>gmm = GMMScratch(n_components=3, random_state=42)</code></div>
+<div class='codeline'><span class='no'>123</span><code>gmm.fit(X_normal_train)</code></div>
+<div class='codeline'><span class='no'>124</span><code>scores = gmm.score_samples(X_combined)</code></div>
+<div class='codeline'><span class='no'>125</span><code>threshold = np.percentile(gmm.score_samples(X_normal_train), 2)</code></div>
+<div class='codeline'><span class='no'>126</span><code>y_pred_anomaly = (scores &lt; threshold).astype(int)</code></div>
+<div class='codeline'><span class='no'>127</span><code></code></div>
+<div class='codeline'><span class='no'>128</span><code>tp = np.sum((y_pred_anomaly == 1) &amp; (y_true == 1))</code></div>
+<div class='codeline'><span class='no'>129</span><code>fp = np.sum((y_pred_anomaly == 1) &amp; (y_true == 0))</code></div>
+<div class='codeline'><span class='no'>130</span><code>fn = np.sum((y_pred_anomaly == 0) &amp; (y_true == 1))</code></div>
+<div class='codeline'><span class='no'>131</span><code>precision = tp / max(tp + fp, 1)</code></div>
+<div class='codeline'><span class='no'>132</span><code>recall = tp / max(tp + fn, 1)</code></div>
+<div class='codeline'><span class='no'>133</span><code>print(f&quot;Precision anomaly: {precision:.4f}&quot;)</code></div>
+<div class='codeline'><span class='no'>134</span><code>print(f&quot;Recall anomaly: {recall:.4f}&quot;)</code></div>
+<div class='codeline'><span class='no'>135</span><code>print(&quot;So diem bi gan bat thuong:&quot;, int(y_pred_anomaly.sum()))</code></div>
+<div class='codeline'><span class='no'>136</span><code></code></div>
+<div class='codeline'><span class='no'>137</span><code>plt.figure(figsize=(8, 6))</code></div>
+<div class='codeline'><span class='no'>138</span><code>plt.hist(scores[y_true == 0], bins=60, alpha=0.65, label=&#x27;Normal&#x27;, density=True)</code></div>
+<div class='codeline'><span class='no'>139</span><code>plt.hist(scores[y_true == 1], bins=60, alpha=0.65, label=&#x27;Fraud&#x27;, density=True)</code></div>
+<div class='codeline'><span class='no'>140</span><code>plt.axvline(threshold, color=&#x27;red&#x27;, linestyle=&#x27;--&#x27;, label=&#x27;Threshold&#x27;)</code></div>
+<div class='codeline'><span class='no'>141</span><code>plt.title(&#x27;Anomaly Detection with GMM viet tay&#x27;)</code></div>
+<div class='codeline'><span class='no'>142</span><code>plt.xlabel(&#x27;Log-likelihood score&#x27;)</code></div>
+<div class='codeline'><span class='no'>143</span><code>plt.ylabel(&#x27;Density&#x27;)</code></div>
+<div class='codeline'><span class='no'>144</span><code>plt.legend()</code></div>
+<div class='codeline'><span class='no'>145</span><code>plt.grid(True, alpha=0.3)</code></div>
+<div class='codeline'><span class='no'>146</span><code>plt.show()</code></div></div>
+            </details>
+          </div>
+        </details>
+    </section></main>
+</body>
+</html>
