@@ -10,6 +10,9 @@ body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-ser
 header{background:#142033;color:white;padding:18px 15px}
 header h1{margin:0 0 8px;font-size:24px;line-height:1.2}
 header p{margin:6px 0;color:#dce6f2}
+.switcher{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.switcher a{display:inline-block;text-decoration:none;border:1px solid #8fb5ff;border-radius:999px;padding:8px 12px;font-weight:900;background:#fff;color:#123a6f}
+.switcher a.active{background:#0f766e;color:white;border-color:#0f766e}
 nav{position:sticky;top:0;z-index:10;display:flex;gap:8px;overflow-x:auto;background:white;border-bottom:1px solid #d7dde6;padding:9px}
 nav a{flex:0 0 auto;border:1px solid #cbd5e1;border-radius:999px;padding:8px 12px;text-decoration:none;color:#0f766e;font-weight:800;background:#f8fafc}
 main{max-width:1180px;margin:0 auto;padding:12px}
@@ -52,6 +55,10 @@ main{max-width:1180px;margin:0 auto;padding:12px}
 <header>
 <h1>Hướng dẫn vấn đáp Lab 3 và Lab 5</h1>
 <p>Bản này chỉ tập trung vào hai lab bạn sẽ trả lời. Code gốc trong notebook không bị sửa. Các comment từng dòng chỉ nằm trên web này để bạn đọc theo khi trình bày.</p>
+<div class="switcher">
+  <a class="active" href="LAB3_5_FOCUSED_PRESENTATION_GUIDE.html">Bản chi tiết Lab 3 & 5</a>
+  <a href="LAB3_7_PRESENTATION_GUIDE_MOBILE.html">Bản đầy đủ Lab 3-7</a>
+</div>
 </header>
 <nav><a href='#lab3'>Lab 3 - Regression Techniques</a><a href='#lab5'>Lab 5 - Model Evaluation</a></nav>
 <main><section class='lab' id='lab3'><h2>Lab 3 - Regression Techniques</h2><div class='opening'><h3>Mở đầu lab, em trình bày</h3><p>Lab 3 của em tập trung vào các kỹ thuật hồi quy và Logistic Regression. Điểm chính là em tự viết các phần cốt lõi bằng NumPy: Gradient Descent cho Linear Regression, Polynomial Regression bằng cách tự tạo feature đa thức, và Softmax Logistic Regression cho bài toán Iris 3 lớp.</p></div><div class='datasets'><h3>Dataset dùng trong lab</h3><article class='dataset'><h4>Auto MPG</h4><p><b>Nguồn:</b> UCI Machine Learning Repository</p><p><b>File:</b> <code>Lab3/data/auto-mpg.data</code></p><p>Bộ dữ liệu này mô tả thông tin xe hơi như mpg, cylinders, displacement, horsepower, weight, acceleration, model_year, origin và tên xe. Trong lab này em dùng `mpg` làm giá trị cần dự đoán. Vì `mpg` là số liên tục nên nó phù hợp cho bài hồi quy. Em dùng `horsepower` cho Linear Regression và `weight` cho Polynomial Regression để minh họa quan hệ giữa đặc trưng xe và mức tiêu hao nhiên liệu.</p></article>

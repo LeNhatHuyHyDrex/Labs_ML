@@ -225,6 +225,7 @@ page = f"""<!doctype html>
 :root {{--bg:#f4f6f8;--paper:#fff;--ink:#17202a;--line:#d7dde6;--brand:#0f766e;--brand2:#1d4ed8;--warm:#92400e;--code:#0f172a;--codeText:#e5e7eb;}}
 *{{box-sizing:border-box}} html{{scroll-behavior:smooth}} body{{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}}
 header{{background:#152232;color:white;padding:22px 18px 18px}} header h1{{margin:0 0 8px;font-size:26px;line-height:1.2}} header p{{margin:6px 0;color:#dbe4ee;max-width:1050px}}
+.switcher{{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}} .switcher a{{display:inline-block;text-decoration:none;border:1px solid #8fb5ff;border-radius:999px;padding:8px 12px;font-weight:900;background:#fff;color:#123a6f}} .switcher a.active{{background:#0f766e;color:white;border-color:#0f766e}}
 .topnav{{position:sticky;top:0;z-index:20;display:flex;gap:8px;overflow-x:auto;padding:10px;background:#fff;border-bottom:1px solid var(--line)}} .topnav a{{flex:0 0 auto;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-weight:700;font-size:14px;background:#f8fafc}}
 main{{max-width:1180px;margin:0 auto;padding:16px}} .lab{{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px;margin:0 0 18px}} .lab h2{{margin:0 0 12px;font-size:24px;padding-bottom:10px;border-bottom:2px solid #e8edf3}}
 .speech,.datasets,.say,.chunks,.teacher,.visual{{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;background:#fbfcfe}} .speech{{border-left:5px solid var(--brand)}} .datasets{{border-left:5px solid var(--brand2)}}
@@ -245,6 +246,10 @@ h3,h4{{margin:0 0 7px;line-height:1.3}} p{{margin:0 0 6px}} ul{{margin:6px 0 0;p
   <h1>Kịch bản trình bày code Lab 3-7</h1>
   <p>File này được làm lại theo kiểu dễ đọc trên điện thoại: mỗi cell có phần <b>em trình bày với cô như sau</b>, các cụm code cần chỉ, câu trả lời nếu cô hỏi thêm, và code gốc để đối chiếu.</p>
   <p class='note'>Code trong mục “Code gốc” được lấy trực tiếp từ notebook hiện tại, không viết lại thuật toán khác.</p>
+  <div class="switcher">
+    <a href="LAB3_5_FOCUSED_PRESENTATION_GUIDE.html">Bản chi tiết Lab 3 & 5</a>
+    <a class="active" href="LAB3_7_PRESENTATION_GUIDE_MOBILE.html">Bản đầy đủ Lab 3-7</a>
+  </div>
   <div class='controls'>
     <button onclick="document.querySelectorAll('details.cell').forEach(x=>x.open=true)">Mở tất cả cell</button>
     <button onclick="document.querySelectorAll('details.cell').forEach(x=>x.open=false)">Đóng tất cả cell</button>
