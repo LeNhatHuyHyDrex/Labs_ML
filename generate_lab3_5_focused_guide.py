@@ -352,7 +352,7 @@ def code_with_comments(src, start, end):
     return "\n".join(rows)
 
 
-def chunk_extra_notes(title, speech, src, start, end):
+def chunk_extra_notes_items(title, speech, src, start, end):
     block = "\n".join(src.splitlines()[start - 1:end]).lower()
     notes = []
     title_l = title.lower()
@@ -404,7 +404,23 @@ def chunk_extra_notes(title, speech, src, start, end):
         notes.append("Với dữ liệu mất cân bằng, Precision-Recall thường quan trọng hơn vì tập trung vào lớp fraud hiếm.")
     if not notes:
         notes.append("Khi trình bày cụm này, em nói theo thứ tự: đầu vào là gì, đoạn code xử lý gì, biến nào được tạo ra, và biến đó dùng cho bước nào tiếp theo.")
+    return notes
+
+
+def chunk_extra_notes(title, speech, src, start, end):
+    notes = chunk_extra_notes_items(title, speech, src, start, end)
     return "".join(f"<li>{html.escape(note)}</li>" for note in notes)
+
+
+def chunk_dialogue(title, speech, src, start, end):
+    notes = chunk_extra_notes_items(title, speech, src, start, end)
+    selected = notes[:3]
+    detail = " ".join(selected)
+    return (
+        f"{speech} "
+        f"Khi trình bày đoạn này, em nói rõ thêm rằng {detail} "
+        f"Sau khi nói xong cụm này, em chuyển sang cụm tiếp theo bằng cách nhấn mạnh kết quả của cụm hiện tại sẽ được dùng cho bước sau."
+    )
 
 
 def dataset_html(lab):
@@ -430,9 +446,9 @@ def cell_html(lab_id, order, src):
         end = max(start, min(end, max_line))
         cards.append(
             f"<article class='chunk'><h4>Cụm {idx}: {html.escape(title)}</h4>"
-            f"<p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> {html.escape(speech)}</p>"
-            f"<div class='more-talk'><b>Nói sâu hơn cho cụm này:</b><ul>{chunk_extra_notes(title, speech, src, start, end)}</ul></div>"
-            f"<div class='annotated'>{code_with_comments(src, start, end)}</div></article>"
+            f"<div class='dialogue'><h5>Đoạn thoại nên đọc khi tới cụm này</h5><p>{html.escape(chunk_dialogue(title, speech, src, start, end))}</p></div>"
+            f"<details class='extra-help'><summary>Nếu cô hỏi sâu hơn về cụm này</summary><div class='more-talk'><ul>{chunk_extra_notes(title, speech, src, start, end)}</ul></div></details>"
+            f"<details class='line-help'><summary>Nếu cô hỏi từng dòng code thì mở phần này</summary><div class='annotated'>{code_with_comments(src, start, end)}</div></details></article>"
         )
     return (
         f"<details class='cell' open><summary>Cell {order}</summary>"
@@ -490,7 +506,14 @@ main{{max-width:1180px;margin:0 auto;padding:12px}}
 .chunk{{border:1px solid #fed7aa;border-radius:11px;background:#fffaf4;margin:12px;padding:12px}}
 .chunk h4{{margin:0 0 8px;color:#92400e}}
 .speech-line{{background:#fffbeb;border-left:4px solid #f59e0b;border-radius:8px;padding:9px;margin:8px 0}}
+.dialogue{{background:#ecfdf5;border:1px solid #99f6e4;border-left:5px solid #0f766e;border-radius:10px;padding:11px;margin:9px 0}}
+.dialogue h5{{margin:0 0 7px;font-size:16px;color:#065f46}}
+.dialogue p{{margin:0;font-size:16px;line-height:1.75}}
+.extra-help{{margin-top:10px;border:1px solid #bae6fd;border-radius:10px;overflow:hidden;background:#f0f9ff}}
+.extra-help>summary{{cursor:pointer;padding:10px 12px;font-weight:900;color:#075985;background:#f0f9ff}}
 .more-talk{{background:#f0f9ff;border:1px solid #bae6fd;border-radius:9px;padding:9px;margin:9px 0}} .more-talk ul{{margin:6px 0 0;padding-left:20px}}
+.line-help{{margin-top:10px;border:1px solid #cbd5e1;border-radius:10px;overflow:hidden;background:#f8fafc}}
+.line-help>summary{{cursor:pointer;padding:10px 12px;font-weight:900;color:#0f766e;background:#fff}}
 .annotated{{border:1px solid #cbd5e1;border-radius:10px;overflow:visible;background:#0f172a;margin-top:10px}}
 .code-row{{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(320px,.9fr);border-bottom:1px solid #334155}}
 .ln{{background:#111827;color:#94a3b8;text-align:right;padding:7px 8px;font-family:Consolas,monospace;user-select:none}}
