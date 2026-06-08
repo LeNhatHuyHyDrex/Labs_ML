@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hướng dẫn vấn đáp Lab 3 và Lab 5</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f3f6f8;color:#17202a;line-height:1.65}
+header{background:#142033;color:white;padding:18px 15px}
+header h1{margin:0 0 8px;font-size:24px;line-height:1.2}
+header p{margin:6px 0;color:#dce6f2}
+nav{position:sticky;top:0;z-index:10;display:flex;gap:8px;overflow-x:auto;background:white;border-bottom:1px solid #d7dde6;padding:9px}
+nav a{flex:0 0 auto;border:1px solid #cbd5e1;border-radius:999px;padding:8px 12px;text-decoration:none;color:#0f766e;font-weight:800;background:#f8fafc}
+main{max-width:1180px;margin:0 auto;padding:12px}
+.lab{background:white;border:1px solid #d7dde6;border-radius:13px;padding:14px;margin-bottom:16px}
+.lab h2{margin:0 0 12px;border-bottom:2px solid #e5eaf0;padding-bottom:8px}
+.opening,.datasets,.deep{border:1px solid #d7dde6;border-left:5px solid #0f766e;border-radius:10px;background:#f8fffd;padding:12px;margin:12px 0}
+.dataset{background:#fff;border:1px solid #d7dde6;border-radius:10px;padding:10px;margin:10px 0}
+.dataset h4{margin:0 0 5px;color:#0f766e}
+.cell{border:1px solid #cbd5e1;border-radius:12px;margin:14px 0;overflow:hidden;background:#fff}
+.cell>summary{cursor:pointer;background:#eaf1f8;padding:13px;font-size:18px;font-weight:900}
+.chunk{border:1px solid #fed7aa;border-radius:11px;background:#fffaf4;margin:12px;padding:12px}
+.chunk h4{margin:0 0 8px;color:#92400e}
+.speech-line{background:#fffbeb;border-left:4px solid #f59e0b;border-radius:8px;padding:9px;margin:8px 0}
+.annotated{border:1px solid #cbd5e1;border-radius:10px;overflow:hidden;background:#0f172a;margin-top:10px}
+.code-row{display:grid;grid-template-columns:44px minmax(360px,1.1fr) minmax(260px,.9fr);border-bottom:1px solid #334155}
+.ln{background:#111827;color:#94a3b8;text-align:right;padding:7px 8px;font-family:Consolas,monospace;user-select:none}
+.code-row pre{margin:0;padding:7px 10px;overflow:auto;background:#0f172a;color:#e5e7eb;font-family:Consolas,Monaco,'Courier New',monospace;font-size:12.5px;line-height:1.45}
+.code-row code{white-space:pre}
+.comment{background:#f8fafc;color:#17202a;padding:7px 10px;font-size:14px;border-left:1px solid #cbd5e1}
+.full{margin:12px;border:1px solid #cbd5e1;border-radius:10px;overflow:hidden}
+.full summary{cursor:pointer;padding:10px;background:#f8fafc;color:#0f766e;font-weight:800}
+.full pre{margin:0;max-height:65vh;overflow:auto;background:#0f172a;color:#e5e7eb;padding:12px;font-size:12px}
+@media(max-width:760px){
+ body{font-size:17px;line-height:1.72}
+ header h1{font-size:21px}
+ main{padding:9px}
+ .lab{padding:10px;border-radius:10px}
+ .cell>summary{font-size:17px}
+ .chunk{margin:10px 0;padding:10px}
+ .code-row{display:block;border-bottom:2px solid #334155}
+ .ln{text-align:left;padding:5px 8px}
+ .code-row pre{font-size:12px;max-width:100%;border-top:1px solid #334155}
+ .comment{font-size:15px;border-left:0;border-top:1px solid #cbd5e1}
+}
+</style>
+</head>
+<body>
+<header>
+<h1>Hướng dẫn vấn đáp Lab 3 và Lab 5</h1>
+<p>Bản này chỉ tập trung vào hai lab bạn sẽ trả lời. Code gốc trong notebook không bị sửa. Các comment từng dòng chỉ nằm trên web này để bạn đọc theo khi trình bày.</p>
+</header>
+<nav><a href='#lab3'>Lab 3 - Regression Techniques</a><a href='#lab5'>Lab 5 - Model Evaluation</a></nav>
+<main><section class='lab' id='lab3'><h2>Lab 3 - Regression Techniques</h2><div class='opening'><h3>Mở đầu lab, em trình bày</h3><p>Lab 3 của em tập trung vào các kỹ thuật hồi quy và Logistic Regression. Điểm chính là em tự viết các phần cốt lõi bằng NumPy: Gradient Descent cho Linear Regression, Polynomial Regression bằng cách tự tạo feature đa thức, và Softmax Logistic Regression cho bài toán Iris 3 lớp.</p></div><div class='datasets'><h3>Dataset dùng trong lab</h3><article class='dataset'><h4>Auto MPG</h4><p><b>Nguồn:</b> UCI Machine Learning Repository</p><p><b>File:</b> <code>Lab3/data/auto-mpg.data</code></p><p>Bộ dữ liệu này mô tả thông tin xe hơi như mpg, cylinders, displacement, horsepower, weight, acceleration, model_year, origin và tên xe. Trong lab này em dùng `mpg` làm giá trị cần dự đoán. Vì `mpg` là số liên tục nên nó phù hợp cho bài hồi quy. Em dùng `horsepower` cho Linear Regression và `weight` cho Polynomial Regression để minh họa quan hệ giữa đặc trưng xe và mức tiêu hao nhiên liệu.</p></article>
+<article class='dataset'><h4>Iris</h4><p><b>Nguồn:</b> UCI Machine Learning Repository</p><p><b>File:</b> <code>Lab3/data/iris.data</code></p><p>Bộ Iris có 150 mẫu hoa, gồm 3 loài Setosa, Versicolor và Virginica. Mỗi mẫu có 4 đặc trưng hình học. Trong lab này em dùng petal_length và petal_width để phân loại 3 lớp bằng Softmax Logistic Regression. Hai đặc trưng này giúp vẽ decision boundary 2D rõ ràng khi trình bày.</p></article></div><details class='cell' open><summary>Cell 1</summary><div class='deep'><b>Ý chính của cell:</b> Cell này là một phần trong quy trình chính của lab. Khi trình bày, em nói nó nhận dữ liệu gì, xử lý gì và tạo ra kết quả gì cho bước sau.</div><article class='chunk'><h4>Cụm 1: Import thư viện dùng cho toàn Lab 3</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đây là bước chuẩn bị công cụ. Em dùng `os` để xử lý đường dẫn, NumPy để tự viết thuật toán, pandas để đọc dữ liệu, và matplotlib để vẽ biểu đồ.</p><div class='annotated'><div class='code-row'><div class='ln'>1</div><pre><code># Import thu vien co ban; cac thuat toan ben duoi tu viet bang NumPy.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>2</div><pre><code>import os</code></pre><div class='comment'>Import thư viện để dùng các hàm/class của thư viện đó.</div></div>
+<div class='code-row'><div class='ln'>3</div><pre><code>import numpy as np</code></pre><div class='comment'>Import thư viện để dùng các hàm/class của thư viện đó.</div></div>
+<div class='code-row'><div class='ln'>4</div><pre><code>import pandas as pd</code></pre><div class='comment'>Import thư viện để dùng các hàm/class của thư viện đó.</div></div>
+<div class='code-row'><div class='ln'>5</div><pre><code>import matplotlib.pyplot as plt</code></pre><div class='comment'>Import thư viện để dùng các hàm/class của thư viện đó.</div></div></div></article><details class='full'><summary>Code gốc toàn cell</summary><pre><code># Import thu vien co ban; cac thuat toan ben duoi tu viet bang NumPy.
+import os
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+</code></pre></details></details>
+<details class='cell' open><summary>Cell 2</summary><div class='deep'><b>Ý chính của cell:</b> Cell này là phần quan trọng nhất của Linear Regression viết tay. Khi trình bày, em nhấn mạnh rằng Batch Gradient Descent dùng toàn bộ tập train trong mỗi lần cập nhật. MSE giảm theo iteration chứng minh model đang học dần tham số tốt hơn.</div><article class='chunk'><h4>Cụm 1: Khai báo cột và đọc Auto MPG</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này lấy dữ liệu Auto MPG từ file ngoài, đặt tên cột, đọc file bằng pandas và bỏ dòng thiếu dữ liệu.</p><div class='annotated'><div class='code-row'><div class='ln'>1</div><pre><code># Doc Auto MPG tu UCI file ngoai, khong tu tao du lieu synthetic.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>2</div><pre><code>columns = [&quot;mpg&quot;, &quot;cylinders&quot;, &quot;displacement&quot;, &quot;horsepower&quot;, &quot;weight&quot;, &quot;acceleration&quot;, &quot;model_year&quot;, &quot;origin&quot;, &quot;car_name&quot;]</code></pre><div class='comment'>Gán kết quả bên phải vào `columns` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>3</div><pre><code>auto = pd.read_csv(</code></pre><div class='comment'>Đọc file dữ liệu vào DataFrame pandas để bắt đầu xử lý dataset.</div></div>
+<div class='code-row'><div class='ln'>4</div><pre><code>    os.path.join(&quot;data&quot;, &quot;auto-mpg.data&quot;),</code></pre><div class='comment'>Ghép các phần đường dẫn file theo cách an toàn trên hệ điều hành.</div></div>
+<div class='code-row'><div class='ln'>5</div><pre><code>    delim_whitespace=True,</code></pre><div class='comment'>Báo cho pandas biết file được phân tách bằng khoảng trắng.</div></div>
+<div class='code-row'><div class='ln'>6</div><pre><code>    names=columns,</code></pre><div class='comment'>Gán tên cột cho dataset vì file gốc không có header rõ ràng.</div></div>
+<div class='code-row'><div class='ln'>7</div><pre><code>    na_values=&quot;?&quot;,</code></pre><div class='comment'>Quy định ký tự `?` là giá trị thiếu để pandas nhận diện NaN.</div></div>
+<div class='code-row'><div class='ln'>8</div><pre><code>    quotechar=&#x27;&quot;&#x27;</code></pre><div class='comment'>Gán kết quả bên phải vào `quotechar` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>9</div><pre><code>).dropna()</code></pre><div class='comment'>Bỏ các dòng có giá trị thiếu để tránh lỗi khi tính toán.</div></div>
+<div class='code-row'><div class='ln'>10</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div></div></article>
+<article class='chunk'><h4>Cụm 2: Tách X/y và chia train-test</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này chọn horsepower làm đầu vào, mpg làm target, rồi tự xáo trộn index để chia train và test.</p><div class='annotated'><div class='code-row'><div class='ln'>12</div><pre><code>X_linear = auto[[&quot;horsepower&quot;]].to_numpy(dtype=float)</code></pre><div class='comment'>Chuyển dữ liệu từ pandas sang NumPy array để thuật toán viết tay xử lý được.</div></div>
+<div class='code-row'><div class='ln'>13</div><pre><code>y_linear = auto[&quot;mpg&quot;].to_numpy(dtype=float).reshape(-1, 1)</code></pre><div class='comment'>Chuyển dữ liệu từ pandas sang NumPy array để thuật toán viết tay xử lý được.</div></div>
+<div class='code-row'><div class='ln'>14</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>15</div><pre><code># Chia train/test ve chuan hda.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>16</div><pre><code>rng = np.random.default_rng(42)</code></pre><div class='comment'>Tạo bộ sinh số ngẫu nhiên có seed để kết quả chia dữ liệu lặp lại được.</div></div>
+<div class='code-row'><div class='ln'>17</div><pre><code>idx = rng.permutation(len(X_linear))</code></pre><div class='comment'>Xáo trộn chỉ số để train/test không phụ thuộc thứ tự dữ liệu ban đầu.</div></div>
+<div class='code-row'><div class='ln'>18</div><pre><code>split = int(0.8 * len(idx))</code></pre><div class='comment'>Tính vị trí cắt để chia dữ liệu thành train và test.</div></div>
+<div class='code-row'><div class='ln'>19</div><pre><code>train_idx, test_idx = idx[:split], idx[split:]</code></pre><div class='comment'>Tạo hoặc dùng danh sách chỉ số cho tập train và tập test.</div></div>
+<div class='code-row'><div class='ln'>20</div><pre><code>X_train_raw, X_test_raw = X_linear[train_idx], X_linear[test_idx]</code></pre><div class='comment'>Tạo hoặc dùng danh sách chỉ số cho tập train và tập test.</div></div>
+<div class='code-row'><div class='ln'>21</div><pre><code>y_train, y_test = y_linear[train_idx], y_linear[test_idx]</code></pre><div class='comment'>Tạo hoặc dùng danh sách chỉ số cho tập train và tập test.</div></div>
+<div class='code-row'><div class='ln'>22</div><pre><code>mean_x = X_train_raw.mean(axis=0)</code></pre><div class='comment'>Tính giá trị trung bình để chuẩn hóa dữ liệu.</div></div>
+<div class='code-row'><div class='ln'>23</div><pre><code>std_x = X_train_raw.std(axis=0)</code></pre><div class='comment'>Tính độ lệch chuẩn để chuẩn hóa dữ liệu.</div></div></div></article>
+<article class='chunk'><h4>Cụm 3: Chuẩn hóa và thêm bias</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này chuẩn hóa horsepower theo mean/std của train và thêm cột bias 1 để mô hình học được hệ số chặn.</p><div class='annotated'><div class='code-row'><div class='ln'>24</div><pre><code>X_train = (X_train_raw - mean_x) / std_x</code></pre><div class='comment'>Chuẩn hóa feature theo công thức (x - mean) / std.</div></div>
+<div class='code-row'><div class='ln'>25</div><pre><code>X_test = (X_test_raw - mean_x) / std_x</code></pre><div class='comment'>Chuẩn hóa feature theo công thức (x - mean) / std.</div></div>
+<div class='code-row'><div class='ln'>26</div><pre><code>X_train_b = np.c_[np.ones((len(X_train), 1)), X_train]</code></pre><div class='comment'>Ghép thêm cột hoặc ma trận, thường dùng để thêm bias hoặc tạo feature mới.</div></div>
+<div class='code-row'><div class='ln'>27</div><pre><code>X_test_b = np.c_[np.ones((len(X_test), 1)), X_test]</code></pre><div class='comment'>Ghép thêm cột hoặc ma trận, thường dùng để thêm bias hoặc tạo feature mới.</div></div></div></article>
+<article class='chunk'><h4>Cụm 4: Viết hàm Batch Gradient Descent</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đây là phần cốt lõi: mỗi vòng lặp dùng toàn bộ tập train để tính lỗi, tính gradient của MSE, rồi cập nhật theta.</p><div class='annotated'><div class='code-row'><div class='ln'>29</div><pre><code># Batch Gradient Descent viet tay cho Linear Regression.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>30</div><pre><code>def gradient_descent(X_b, y, learning_rate, n_iterations=160):</code></pre><div class='comment'>Định nghĩa hàm `gradient_descent` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>31</div><pre><code>    theta = np.zeros((X_b.shape[1], 1))</code></pre><div class='comment'>Khởi tạo mảng toàn số 0 để lưu tham số, vector one-hot hoặc bộ đếm.</div></div>
+<div class='code-row'><div class='ln'>32</div><pre><code>    cost_history = []</code></pre><div class='comment'>Tính hoặc lưu lỗi của mô hình để theo dõi quá trình học.</div></div>
+<div class='code-row'><div class='ln'>33</div><pre><code>    m = len(y)</code></pre><div class='comment'>Gán kết quả bên phải vào `m` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>34</div><pre><code>    for iteration in range(n_iterations):</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div>
+<div class='code-row'><div class='ln'>35</div><pre><code>        error = X_b.dot(theta) - y</code></pre><div class='comment'>Thực hiện nhân ma trận/vector, phần cốt lõi trong dự đoán và tính gradient.</div></div>
+<div class='code-row'><div class='ln'>36</div><pre><code>        gradients = 2 / m * X_b.T.dot(error)</code></pre><div class='comment'>Thực hiện nhân ma trận/vector, phần cốt lõi trong dự đoán và tính gradient.</div></div>
+<div class='code-row'><div class='ln'>37</div><pre><code>        theta = theta - learning_rate * gradients</code></pre><div class='comment'>Tính gradient, tức hướng thay đổi của loss theo tham số.</div></div>
+<div class='code-row'><div class='ln'>38</div><pre><code>        cost_history.append(float(np.mean(error ** 2)))</code></pre><div class='comment'>Tính giá trị trung bình để chuẩn hóa dữ liệu.</div></div>
+<div class='code-row'><div class='ln'>39</div><pre><code>    return theta, cost_history</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div>
+<div class='code-row'><div class='ln'>40</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>41</div><pre><code>learning_rates = [0.005, 0.03, 0.1, 0.8]</code></pre><div class='comment'>Thiết lập hoặc dùng learning rate, tức độ lớn bước cập nhật tham số.</div></div>
+<div class='code-row'><div class='ln'>42</div><pre><code>cost_histories = {}</code></pre><div class='comment'>Tính hoặc lưu lỗi của mô hình để theo dõi quá trình học.</div></div></div></article>
+<article class='chunk'><h4>Cụm 5: Thử nhiều learning rate</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này chạy lại Gradient Descent với nhiều learning rate để so sánh tốc độ giảm lỗi.</p><div class='annotated'><div class='code-row'><div class='ln'>44</div><pre><code>    theta, cost_history = gradient_descent(X_train_b, y_train, lr)</code></pre><div class='comment'>Tính gradient, tức hướng thay đổi của loss theo tham số.</div></div>
+<div class='code-row'><div class='ln'>45</div><pre><code>    cost_histories[lr] = cost_history</code></pre><div class='comment'>Thiết lập hoặc dùng learning rate, tức độ lớn bước cập nhật tham số.</div></div>
+<div class='code-row'><div class='ln'>46</div><pre><code>    test_mse = np.mean((X_test_b.dot(theta) - y_test) ** 2)</code></pre><div class='comment'>Tính giá trị trung bình để chuẩn hóa dữ liệu.</div></div>
+<div class='code-row'><div class='ln'>47</div><pre><code>    print(f&quot;lr={lr}: theta={theta.ravel()}, test MSE={test_mse:.3f}&quot;)</code></pre><div class='comment'>Khởi tạo hoặc cập nhật tham số theta của mô hình hồi quy/logistic.</div></div>
+<div class='code-row'><div class='ln'>48</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>49</div><pre><code>plt.figure(figsize=(10, 6))</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>50</div><pre><code>for lr, cost_history in cost_histories.items():</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div>
+<div class='code-row'><div class='ln'>51</div><pre><code>    plt.plot(cost_history, label=f&#x27;lr = {lr}&#x27;)</code></pre><div class='comment'>Thiết lập hoặc dùng learning rate, tức độ lớn bước cập nhật tham số.</div></div>
+<div class='code-row'><div class='ln'>52</div><pre><code>plt.yscale(&#x27;log&#x27;)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div></div></article>
+<article class='chunk'><h4>Cụm 6: Vẽ biểu đồ hội tụ</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này vẽ MSE theo số iteration, giúp quan sát learning rate nào hội tụ nhanh hoặc chậm.</p><div class='annotated'><div class='code-row'><div class='ln'>54</div><pre><code>plt.xlabel(&#x27;Iterations&#x27;)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>55</div><pre><code>plt.ylabel(&#x27;Cost MSE (log scale)&#x27;)</code></pre><div class='comment'>Tính hoặc lưu lỗi của mô hình để theo dõi quá trình học.</div></div>
+<div class='code-row'><div class='ln'>56</div><pre><code>plt.legend()</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>57</div><pre><code>plt.grid(True, alpha=0.3)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>58</div><pre><code>plt.show()</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div></div></article><details class='full'><summary>Code gốc toàn cell</summary><pre><code># Doc Auto MPG tu UCI file ngoai, khong tu tao du lieu synthetic.
+columns = [&quot;mpg&quot;, &quot;cylinders&quot;, &quot;displacement&quot;, &quot;horsepower&quot;, &quot;weight&quot;, &quot;acceleration&quot;, &quot;model_year&quot;, &quot;origin&quot;, &quot;car_name&quot;]
+auto = pd.read_csv(
+    os.path.join(&quot;data&quot;, &quot;auto-mpg.data&quot;),
+    delim_whitespace=True,
+    names=columns,
+    na_values=&quot;?&quot;,
+    quotechar=&#x27;&quot;&#x27;
+).dropna()
+
+# Du doan mpg tu horsepower de minh hoa hoi quy tuyen tinh 1 bien.
+X_linear = auto[[&quot;horsepower&quot;]].to_numpy(dtype=float)
+y_linear = auto[&quot;mpg&quot;].to_numpy(dtype=float).reshape(-1, 1)
+
+# Chia train/test ve chuan hda.
+rng = np.random.default_rng(42)
+idx = rng.permutation(len(X_linear))
+split = int(0.8 * len(idx))
+train_idx, test_idx = idx[:split], idx[split:]
+X_train_raw, X_test_raw = X_linear[train_idx], X_linear[test_idx]
+y_train, y_test = y_linear[train_idx], y_linear[test_idx]
+mean_x = X_train_raw.mean(axis=0)
+std_x = X_train_raw.std(axis=0)
+X_train = (X_train_raw - mean_x) / std_x
+X_test = (X_test_raw - mean_x) / std_x
+X_train_b = np.c_[np.ones((len(X_train), 1)), X_train]
+X_test_b = np.c_[np.ones((len(X_test), 1)), X_test]
+
+# Batch Gradient Descent viet tay cho Linear Regression.
+def gradient_descent(X_b, y, learning_rate, n_iterations=160):
+    theta = np.zeros((X_b.shape[1], 1))
+    cost_history = []
+    m = len(y)
+    for iteration in range(n_iterations):
+        error = X_b.dot(theta) - y
+        gradients = 2 / m * X_b.T.dot(error)
+        theta = theta - learning_rate * gradients
+        cost_history.append(float(np.mean(error ** 2)))
+    return theta, cost_history
+
+learning_rates = [0.005, 0.03, 0.1, 0.8]
+cost_histories = {}
+for lr in learning_rates:
+    theta, cost_history = gradient_descent(X_train_b, y_train, lr)
+    cost_histories[lr] = cost_history
+    test_mse = np.mean((X_test_b.dot(theta) - y_test) ** 2)
+    print(f&quot;lr={lr}: theta={theta.ravel()}, test MSE={test_mse:.3f}&quot;)
+
+plt.figure(figsize=(10, 6))
+for lr, cost_history in cost_histories.items():
+    plt.plot(cost_history, label=f&#x27;lr = {lr}&#x27;)
+plt.yscale(&#x27;log&#x27;)
+plt.title(&#x27;Gradient Descent : MSE theo s veng lyp&#x27;)
+plt.xlabel(&#x27;Iterations&#x27;)
+plt.ylabel(&#x27;Cost MSE (log scale)&#x27;)
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.show()
+</code></pre></details></details>
+<details class='cell' open><summary>Cell 3</summary><div class='deep'><b>Ý chính của cell:</b> Ý cần nói là Polynomial Regression không phải model hoàn toàn khác Linear Regression; nó vẫn tuyến tính theo theta, nhưng X được mở rộng thành các lũy thừa nên đường dự đoán có thể cong.</div><article class='chunk'><h4>Cụm 1: Tạo feature đa thức thủ công</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này tự tạo các cột 1, x, x^2,...,x^degree thay vì dùng PolynomialFeatures của sklearn.</p><div class='annotated'><div class='code-row'><div class='ln'>1</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>2</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>3</div><pre><code>def create_polynomial_features(X, degree):</code></pre><div class='comment'>Định nghĩa hàm `create_polynomial_features` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>4</div><pre><code>    &quot;&quot;&quot;Tao polynomial features thu cong: [1, X, X^2, ..., X^degree].&quot;&quot;&quot;</code></pre><div class='comment'>Docstring giải thích nhanh chức năng của hàm hoặc đoạn code.</div></div>
+<div class='code-row'><div class='ln'>5</div><pre><code>    X_poly = np.ones((X.shape[0], 1))</code></pre><div class='comment'>Tạo mảng toàn số 1, thường dùng làm cột bias hoặc cột x^0.</div></div>
+<div class='code-row'><div class='ln'>6</div><pre><code>    for d in range(1, degree + 1):</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div>
+<div class='code-row'><div class='ln'>7</div><pre><code>        X_poly = np.c_[X_poly, X ** d]</code></pre><div class='comment'>Ghép thêm cột hoặc ma trận, thường dùng để thêm bias hoặc tạo feature mới.</div></div>
+<div class='code-row'><div class='ln'>8</div><pre><code>    return X_poly</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div></div></article>
+<article class='chunk'><h4>Cụm 2: Fit bằng Normal Equation</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này giải trực tiếp theta bằng công thức ma trận, có regularization nhỏ để tránh lỗi nghịch đảo.</p><div class='annotated'><div class='code-row'><div class='ln'>10</div><pre><code>def linear_regression_normal_equation(X, y, l2=1e-8):</code></pre><div class='comment'>Định nghĩa hàm `linear_regression_normal_equation` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>11</div><pre><code>    &quot;&quot;&quot;Fit hi quy tuyen tinh bang Normal Equation co regularization rat nho.&quot;&quot;&quot;</code></pre><div class='comment'>Docstring giải thích nhanh chức năng của hàm hoặc đoạn code.</div></div>
+<div class='code-row'><div class='ln'>12</div><pre><code>    reg = l2 * np.eye(X.shape[1])</code></pre><div class='comment'>Gán kết quả bên phải vào `reg` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>13</div><pre><code>    reg[0, 0] = 0</code></pre><div class='comment'>Gán kết quả bên phải vào `reg[0, 0]` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>14</div><pre><code>    return np.linalg.pinv(X.T.dot(X) + reg).dot(X.T).dot(y)</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div>
+<div class='code-row'><div class='ln'>15</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>16</div><pre><code># D aon mpg tu weight bang coc boc da thuc khac nhau.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div></div></article>
+<article class='chunk'><h4>Cụm 3: Chuẩn bị dữ liệu weight và mpg</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này lấy weight làm X và mpg làm y, chuẩn hóa weight và tạo lưới điểm để vẽ đường hồi quy mượt.</p><div class='annotated'><div class='code-row'><div class='ln'>18</div><pre><code>y_poly = auto[&quot;mpg&quot;].to_numpy(dtype=float).reshape(-1, 1)</code></pre><div class='comment'>Chuyển dữ liệu từ pandas sang NumPy array để thuật toán viết tay xử lý được.</div></div>
+<div class='code-row'><div class='ln'>19</div><pre><code>mean_w = X_poly_raw.mean(axis=0)</code></pre><div class='comment'>Tính giá trị trung bình để chuẩn hóa dữ liệu.</div></div>
+<div class='code-row'><div class='ln'>20</div><pre><code>std_w = X_poly_raw.std(axis=0)</code></pre><div class='comment'>Tính độ lệch chuẩn để chuẩn hóa dữ liệu.</div></div>
+<div class='code-row'><div class='ln'>21</div><pre><code>X_poly = (X_poly_raw - mean_w) / std_w</code></pre><div class='comment'>Chuẩn hóa feature theo công thức (x - mean) / std.</div></div>
+<div class='code-row'><div class='ln'>22</div><pre><code>X_new_raw = np.linspace(X_poly_raw.min(), X_poly_raw.max(), 200).reshape(-1, 1)</code></pre><div class='comment'>Đưa mảng về đúng dạng cột/hàng để nhân ma trận không bị sai kích thước.</div></div>
+<div class='code-row'><div class='ln'>23</div><pre><code>X_new = (X_new_raw - mean_w) / std_w</code></pre><div class='comment'>Chuẩn hóa feature theo công thức (x - mean) / std.</div></div>
+<div class='code-row'><div class='ln'>24</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>25</div><pre><code>degrees = [1, 2, 3, 5]</code></pre><div class='comment'>Gán kết quả bên phải vào `degrees` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>26</div><pre><code>colors = [&#x27;red&#x27;, &#x27;green&#x27;, &#x27;orange&#x27;, &#x27;purple&#x27;]</code></pre><div class='comment'>Gán kết quả bên phải vào `colors` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>27</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div></div></article>
+<article class='chunk'><h4>Cụm 4: Train nhiều bậc đa thức và vẽ đường hồi quy</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này thử nhiều degree, fit theta, dự đoán đường cong và vẽ lên biểu đồ để so sánh độ phức tạp.</p><div class='annotated'><div class='code-row'><div class='ln'>29</div><pre><code>plt.scatter(X_poly_raw, y_poly, color=&#x27;blue&#x27;, s=18, label=&#x27;Auto MPG data&#x27;, alpha=0.45)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>30</div><pre><code>for degree, color in zip(degrees, colors):</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div>
+<div class='code-row'><div class='ln'>31</div><pre><code>    X_feat = create_polynomial_features(X_poly, degree)</code></pre><div class='comment'>Gán kết quả bên phải vào `X_feat` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>32</div><pre><code>    X_new_feat = create_polynomial_features(X_new, degree)</code></pre><div class='comment'>Gán kết quả bên phải vào `X_new_feat` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>33</div><pre><code>    theta = linear_regression_normal_equation(X_feat, y_poly)</code></pre><div class='comment'>Khởi tạo hoặc cập nhật tham số theta của mô hình hồi quy/logistic.</div></div>
+<div class='code-row'><div class='ln'>34</div><pre><code>    y_new = X_new_feat.dot(theta)</code></pre><div class='comment'>Thực hiện nhân ma trận/vector, phần cốt lõi trong dự đoán và tính gradient.</div></div>
+<div class='code-row'><div class='ln'>35</div><pre><code>    mse = np.mean((X_feat.dot(theta) - y_poly) ** 2)</code></pre><div class='comment'>Tính giá trị trung bình để chuẩn hóa dữ liệu.</div></div>
+<div class='code-row'><div class='ln'>36</div><pre><code>    plt.plot(X_new_raw, y_new, color=color, label=f&#x27;Degree {degree}, train MSE={mse:.2f}&#x27;, linewidth=2)</code></pre><div class='comment'>Tính hoặc lưu lỗi của mô hình để theo dõi quá trình học.</div></div>
+<div class='code-row'><div class='ln'>37</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>38</div><pre><code>plt.title(&#x27;Polynomial Regression viet tay tren Auto MPG&#x27;)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>39</div><pre><code>plt.xlabel(&#x27;Weight&#x27;)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>40</div><pre><code>plt.ylabel(&#x27;MPG&#x27;)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>41</div><pre><code>plt.legend(loc=&#x27;upper right&#x27;)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>42</div><pre><code>plt.grid(True, alpha=0.3)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>43</div><pre><code>plt.show()</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div></div></article><details class='full'><summary>Code gốc toàn cell</summary><pre><code>
+
+def create_polynomial_features(X, degree):
+    &quot;&quot;&quot;Tao polynomial features thu cong: [1, X, X^2, ..., X^degree].&quot;&quot;&quot;
+    X_poly = np.ones((X.shape[0], 1))
+    for d in range(1, degree + 1):
+        X_poly = np.c_[X_poly, X ** d]
+    return X_poly
+
+def linear_regression_normal_equation(X, y, l2=1e-8):
+    &quot;&quot;&quot;Fit hi quy tuyen tinh bang Normal Equation co regularization rat nho.&quot;&quot;&quot;
+    reg = l2 * np.eye(X.shape[1])
+    reg[0, 0] = 0
+    return np.linalg.pinv(X.T.dot(X) + reg).dot(X.T).dot(y)
+
+# D aon mpg tu weight bang coc boc da thuc khac nhau.
+X_poly_raw = auto[[&quot;weight&quot;]].to_numpy(dtype=float)
+y_poly = auto[&quot;mpg&quot;].to_numpy(dtype=float).reshape(-1, 1)
+mean_w = X_poly_raw.mean(axis=0)
+std_w = X_poly_raw.std(axis=0)
+X_poly = (X_poly_raw - mean_w) / std_w
+X_new_raw = np.linspace(X_poly_raw.min(), X_poly_raw.max(), 200).reshape(-1, 1)
+X_new = (X_new_raw - mean_w) / std_w
+
+degrees = [1, 2, 3, 5]
+colors = [&#x27;red&#x27;, &#x27;green&#x27;, &#x27;orange&#x27;, &#x27;purple&#x27;]
+
+plt.figure(figsize=(10, 6))
+plt.scatter(X_poly_raw, y_poly, color=&#x27;blue&#x27;, s=18, label=&#x27;Auto MPG data&#x27;, alpha=0.45)
+for degree, color in zip(degrees, colors):
+    X_feat = create_polynomial_features(X_poly, degree)
+    X_new_feat = create_polynomial_features(X_new, degree)
+    theta = linear_regression_normal_equation(X_feat, y_poly)
+    y_new = X_new_feat.dot(theta)
+    mse = np.mean((X_feat.dot(theta) - y_poly) ** 2)
+    plt.plot(X_new_raw, y_new, color=color, label=f&#x27;Degree {degree}, train MSE={mse:.2f}&#x27;, linewidth=2)
+
+plt.title(&#x27;Polynomial Regression viet tay tren Auto MPG&#x27;)
+plt.xlabel(&#x27;Weight&#x27;)
+plt.ylabel(&#x27;MPG&#x27;)
+plt.legend(loc=&#x27;upper right&#x27;)
+plt.grid(True, alpha=0.3)
+plt.show()
+</code></pre></details></details>
+<details class='cell' open><summary>Cell 4</summary><div class='deep'><b>Ý chính của cell:</b> Vì Iris có 3 lớp nên dùng softmax thay vì sigmoid. Softmax trả về xác suất cho từng lớp, sau đó lấy argmax để chọn lớp có xác suất cao nhất.</div><article class='chunk'><h4>Cụm 1: Hàm softmax và one-hot</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này chuẩn bị toán cho Logistic Regression đa lớp: softmax đổi score thành xác suất, one-hot đổi nhãn thành vector.</p><div class='annotated'><div class='code-row'><div class='ln'>1</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>2</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>3</div><pre><code>def softmax(z):</code></pre><div class='comment'>Định nghĩa hàm `softmax` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>4</div><pre><code>    exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))</code></pre><div class='comment'>Gán kết quả bên phải vào `exp_z` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>5</div><pre><code>    return exp_z / np.sum(exp_z, axis=1, keepdims=True)</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div>
+<div class='code-row'><div class='ln'>6</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>7</div><pre><code>def one_hot_encode(y, n_classes):</code></pre><div class='comment'>Định nghĩa hàm `one_hot_encode` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>8</div><pre><code>    one_hot = np.zeros((len(y), n_classes))</code></pre><div class='comment'>Khởi tạo mảng toàn số 0 để lưu tham số, vector one-hot hoặc bộ đếm.</div></div>
+<div class='code-row'><div class='ln'>9</div><pre><code>    one_hot[np.arange(len(y)), y] = 1</code></pre><div class='comment'>Biểu diễn nhãn lớp thành vector one-hot cho bài toán nhiều lớp.</div></div>
+<div class='code-row'><div class='ln'>10</div><pre><code>    return one_hot</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div>
+<div class='code-row'><div class='ln'>11</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>12</div><pre><code>class LogisticRegressionScratch:</code></pre><div class='comment'>Định nghĩa class `LogisticRegressionScratch` để đóng gói thuật toán, tham số và các hàm fit/predict.</div></div></div></article>
+<article class='chunk'><h4>Cụm 2: Class LogisticRegressionScratch</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này tự viết model softmax regression: khởi tạo tham số, tính xác suất, tính gradient và cập nhật weights/bias.</p><div class='annotated'><div class='code-row'><div class='ln'>14</div><pre><code>    def __init__(self, learning_rate=0.15, n_iterations=2500, l2=0.001):</code></pre><div class='comment'>Định nghĩa hàm `__init__` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>15</div><pre><code>        self.lr = learning_rate</code></pre><div class='comment'>Thiết lập hoặc dùng learning rate, tức độ lớn bước cập nhật tham số.</div></div>
+<div class='code-row'><div class='ln'>16</div><pre><code>        self.n_iter = n_iterations</code></pre><div class='comment'>Gán kết quả bên phải vào `self.n_iter` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>17</div><pre><code>        self.l2 = l2</code></pre><div class='comment'>Gán kết quả bên phải vào `self.l2` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>18</div><pre><code>        self.losses = []</code></pre><div class='comment'>Tính hoặc lưu lỗi của mô hình để theo dõi quá trình học.</div></div>
+<div class='code-row'><div class='ln'>19</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>20</div><pre><code>    def fit(self, X, y):</code></pre><div class='comment'>Định nghĩa hàm `fit` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>21</div><pre><code>        m, n = X.shape</code></pre><div class='comment'>Gán kết quả bên phải vào `m, n` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>22</div><pre><code>        n_classes = len(np.unique(y))</code></pre><div class='comment'>Gán kết quả bên phải vào `n_classes` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>23</div><pre><code>        self.weights = np.zeros((n, n_classes))</code></pre><div class='comment'>Khởi tạo mảng toàn số 0 để lưu tham số, vector one-hot hoặc bộ đếm.</div></div>
+<div class='code-row'><div class='ln'>24</div><pre><code>        self.bias = np.zeros((1, n_classes))</code></pre><div class='comment'>Khởi tạo mảng toàn số 0 để lưu tham số, vector one-hot hoặc bộ đếm.</div></div>
+<div class='code-row'><div class='ln'>25</div><pre><code>        y_encoded = one_hot_encode(y, n_classes)</code></pre><div class='comment'>Biểu diễn nhãn lớp thành vector one-hot cho bài toán nhiều lớp.</div></div>
+<div class='code-row'><div class='ln'>26</div><pre><code>        for i in range(self.n_iter):</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div>
+<div class='code-row'><div class='ln'>27</div><pre><code>            scores = X.dot(self.weights) + self.bias</code></pre><div class='comment'>Thực hiện nhân ma trận/vector, phần cốt lõi trong dự đoán và tính gradient.</div></div>
+<div class='code-row'><div class='ln'>28</div><pre><code>            y_pred = softmax(scores)</code></pre><div class='comment'>Tính hoặc dùng softmax để biến score nhiều lớp thành xác suất.</div></div>
+<div class='code-row'><div class='ln'>29</div><pre><code>            error = y_pred - y_encoded</code></pre><div class='comment'>Tính sai số giữa dự đoán của model và giá trị thật.</div></div>
+<div class='code-row'><div class='ln'>30</div><pre><code>            dw = X.T.dot(error) / m + self.l2 * self.weights</code></pre><div class='comment'>Thực hiện nhân ma trận/vector, phần cốt lõi trong dự đoán và tính gradient.</div></div>
+<div class='code-row'><div class='ln'>31</div><pre><code>            db = np.sum(error, axis=0, keepdims=True) / m</code></pre><div class='comment'>Gán kết quả bên phải vào `db` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>32</div><pre><code>            self.weights -= self.lr * dw</code></pre><div class='comment'>Thiết lập hoặc dùng learning rate, tức độ lớn bước cập nhật tham số.</div></div>
+<div class='code-row'><div class='ln'>33</div><pre><code>            self.bias -= self.lr * db</code></pre><div class='comment'>Thiết lập hoặc dùng learning rate, tức độ lớn bước cập nhật tham số.</div></div>
+<div class='code-row'><div class='ln'>34</div><pre><code>            if i % 50 == 0:</code></pre><div class='comment'>Kiểm tra điều kiện; nếu điều kiện đúng thì chạy khối code bên trong.</div></div>
+<div class='code-row'><div class='ln'>35</div><pre><code>                loss = -np.mean(np.sum(y_encoded * np.log(y_pred + 1e-12), axis=1))</code></pre><div class='comment'>Tính giá trị trung bình để chuẩn hóa dữ liệu.</div></div>
+<div class='code-row'><div class='ln'>36</div><pre><code>                self.losses.append(float(loss))</code></pre><div class='comment'>Tính hoặc lưu lỗi của mô hình để theo dõi quá trình học.</div></div>
+<div class='code-row'><div class='ln'>37</div><pre><code>        return self</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div>
+<div class='code-row'><div class='ln'>38</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>39</div><pre><code>    def predict(self, X):</code></pre><div class='comment'>Định nghĩa hàm `predict` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>40</div><pre><code>        return np.argmax(softmax(X.dot(self.weights) + self.bias), axis=1)</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div>
+<div class='code-row'><div class='ln'>41</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>42</div><pre><code>def accuracy_score_manual(y_true, y_pred):</code></pre><div class='comment'>Định nghĩa hàm `accuracy_score_manual` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>43</div><pre><code>    return np.mean(y_true == y_pred)</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div>
+<div class='code-row'><div class='ln'>44</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>45</div><pre><code>def classification_report_manual(y_true, y_pred, target_names):</code></pre><div class='comment'>Định nghĩa hàm `classification_report_manual` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>46</div><pre><code>    print(f&quot;{&#x27;class&#x27;:&gt;18} {&#x27;precision&#x27;:&gt;10} {&#x27;recall&#x27;:&gt;10} {&#x27;f1-score&#x27;:&gt;10} {&#x27;support&#x27;:&gt;10}&quot;)</code></pre><div class='comment'>Tính precision: trong các dự đoán fraud, có bao nhiêu dự đoán đúng.</div></div>
+<div class='code-row'><div class='ln'>47</div><pre><code>    for c, name in enumerate(target_names):</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div>
+<div class='code-row'><div class='ln'>48</div><pre><code>        tp = np.sum((y_pred == c) &amp; (y_true == c))</code></pre><div class='comment'>Đếm true positive: fraud thật và model cũng dự đoán fraud.</div></div>
+<div class='code-row'><div class='ln'>49</div><pre><code>        fp = np.sum((y_pred == c) &amp; (y_true != c))</code></pre><div class='comment'>Đếm false positive: normal thật nhưng model báo fraud.</div></div>
+<div class='code-row'><div class='ln'>50</div><pre><code>        fn = np.sum((y_pred != c) &amp; (y_true == c))</code></pre><div class='comment'>Đếm false negative: fraud thật nhưng model bỏ sót.</div></div>
+<div class='code-row'><div class='ln'>51</div><pre><code>        precision = tp / (tp + fp) if (tp + fp) else 0</code></pre><div class='comment'>Tính precision: trong các dự đoán fraud, có bao nhiêu dự đoán đúng.</div></div>
+<div class='code-row'><div class='ln'>52</div><pre><code>        recall = tp / (tp + fn) if (tp + fn) else 0</code></pre><div class='comment'>Tính recall: trong các fraud thật, model bắt được bao nhiêu.</div></div>
+<div class='code-row'><div class='ln'>53</div><pre><code>        f1 = 2 * precision * recall / (precision + recall) if (precision + recall) else 0</code></pre><div class='comment'>Tính precision: trong các dự đoán fraud, có bao nhiêu dự đoán đúng.</div></div></div></article>
+<article class='chunk'><h4>Cụm 3: Hàm đánh giá tự viết</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này tự tính accuracy và classification report, không dùng sklearn metrics.</p><div class='annotated'><div class='code-row'><div class='ln'>55</div><pre><code>        print(f&quot;{name:&gt;18} {precision:&gt;10.2f} {recall:&gt;10.2f} {f1:&gt;10.2f} {support:&gt;10}&quot;)</code></pre><div class='comment'>Tính precision: trong các dự đoán fraud, có bao nhiêu dự đoán đúng.</div></div>
+<div class='code-row'><div class='ln'>56</div><pre><code>    print(&quot;accuracy:&quot;, accuracy_score_manual(y_true, y_pred))</code></pre><div class='comment'>Thực hiện một bước xử lý trong cell; kết quả phục vụ cho đoạn code phía sau.</div></div>
+<div class='code-row'><div class='ln'>57</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>58</div><pre><code># Doc Iris tu UCI file ngoai; dung petal length/width de ve decision boundary.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>59</div><pre><code>iris_cols = [&quot;sepal_length&quot;, &quot;sepal_width&quot;, &quot;petal_length&quot;, &quot;petal_width&quot;, &quot;species&quot;]</code></pre><div class='comment'>Gán kết quả bên phải vào `iris_cols` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>60</div><pre><code>iris = pd.read_csv(os.path.join(&quot;data&quot;, &quot;iris.data&quot;), header=None, names=iris_cols).dropna()</code></pre><div class='comment'>Đọc file dữ liệu vào DataFrame pandas để bắt đầu xử lý dataset.</div></div>
+<div class='code-row'><div class='ln'>61</div><pre><code>target_names = sorted(iris[&quot;species&quot;].unique())</code></pre><div class='comment'>Gán kết quả bên phải vào `target_names` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>62</div><pre><code>label_map = {name: i for i, name in enumerate(target_names)}</code></pre><div class='comment'>Gán kết quả bên phải vào `label_map` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>63</div><pre><code>X_iris = iris[[&quot;petal_length&quot;, &quot;petal_width&quot;]].to_numpy(dtype=float)</code></pre><div class='comment'>Chuyển dữ liệu từ pandas sang NumPy array để thuật toán viết tay xử lý được.</div></div>
+<div class='code-row'><div class='ln'>64</div><pre><code>y_iris = iris[&quot;species&quot;].map(label_map).to_numpy(dtype=int)</code></pre><div class='comment'>Chuyển dữ liệu từ pandas sang NumPy array để thuật toán viết tay xử lý được.</div></div>
+<div class='code-row'><div class='ln'>65</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>66</div><pre><code># Chia train/test stratified thu cong.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>67</div><pre><code>rng = np.random.default_rng(42)</code></pre><div class='comment'>Tạo bộ sinh số ngẫu nhiên có seed để kết quả chia dữ liệu lặp lại được.</div></div>
+<div class='code-row'><div class='ln'>68</div><pre><code>train_idx, test_idx = [], []</code></pre><div class='comment'>Tạo hoặc dùng danh sách chỉ số cho tập train và tập test.</div></div>
+<div class='code-row'><div class='ln'>69</div><pre><code>for c in np.unique(y_iris):</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div>
+<div class='code-row'><div class='ln'>70</div><pre><code>    idx = np.where(y_iris == c)[0]</code></pre><div class='comment'>Gán kết quả bên phải vào `idx` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>71</div><pre><code>    rng.shuffle(idx)</code></pre><div class='comment'>Xáo trộn chỉ số để train/test không phụ thuộc thứ tự dữ liệu ban đầu.</div></div>
+<div class='code-row'><div class='ln'>72</div><pre><code>    n_test = int(0.25 * len(idx))</code></pre><div class='comment'>Gán kết quả bên phải vào `n_test` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>73</div><pre><code>    test_idx.extend(idx[:n_test])</code></pre><div class='comment'>Tạo hoặc dùng danh sách chỉ số cho tập train và tập test.</div></div></div></article>
+<article class='chunk'><h4>Cụm 4: Đọc Iris và chọn feature</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này đọc Iris từ file ngoài, map tên lớp thành số và chọn petal_length/petal_width để vẽ được 2D.</p><div class='annotated'><div class='code-row'><div class='ln'>75</div><pre><code>train_idx = np.array(train_idx); test_idx = np.array(test_idx)</code></pre><div class='comment'>Tạo hoặc dùng danh sách chỉ số cho tập train và tập test.</div></div>
+<div class='code-row'><div class='ln'>76</div><pre><code>rng.shuffle(train_idx); rng.shuffle(test_idx)</code></pre><div class='comment'>Xáo trộn chỉ số để train/test không phụ thuộc thứ tự dữ liệu ban đầu.</div></div>
+<div class='code-row'><div class='ln'>77</div><pre><code>X_train, X_test = X_iris[train_idx], X_iris[test_idx]</code></pre><div class='comment'>Tạo hoặc dùng danh sách chỉ số cho tập train và tập test.</div></div>
+<div class='code-row'><div class='ln'>78</div><pre><code>y_train, y_test = y_iris[train_idx], y_iris[test_idx]</code></pre><div class='comment'>Tạo hoặc dùng danh sách chỉ số cho tập train và tập test.</div></div>
+<div class='code-row'><div class='ln'>79</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>80</div><pre><code># Chuan hda thu cong.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>81</div><pre><code>mean = X_train.mean(axis=0)</code></pre><div class='comment'>Tính giá trị trung bình để chuẩn hóa dữ liệu.</div></div>
+<div class='code-row'><div class='ln'>82</div><pre><code>std = X_train.std(axis=0)</code></pre><div class='comment'>Tính độ lệch chuẩn để chuẩn hóa dữ liệu.</div></div>
+<div class='code-row'><div class='ln'>83</div><pre><code>X_train_scaled = (X_train - mean) / std</code></pre><div class='comment'>Chuẩn hóa feature theo công thức (x - mean) / std.</div></div>
+<div class='code-row'><div class='ln'>84</div><pre><code>X_test_scaled = (X_test - mean) / std</code></pre><div class='comment'>Chuẩn hóa feature theo công thức (x - mean) / std.</div></div></div></article>
+<article class='chunk'><h4>Cụm 5: Chia train-test stratified</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này chia train/test thủ công nhưng vẫn giữ đủ tỷ lệ từng lớp hoa.</p><div class='annotated'><div class='code-row'><div class='ln'>86</div><pre><code>log_reg = LogisticRegressionScratch()</code></pre><div class='comment'>Gán kết quả bên phải vào `log_reg` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>87</div><pre><code>log_reg.fit(X_train_scaled, y_train)</code></pre><div class='comment'>Thực hiện một bước xử lý trong cell; kết quả phục vụ cho đoạn code phía sau.</div></div>
+<div class='code-row'><div class='ln'>88</div><pre><code>y_pred = log_reg.predict(X_test_scaled)</code></pre><div class='comment'>Dự đoán nhãn hoặc giá trị dựa trên tham số/model đã học.</div></div>
+<div class='code-row'><div class='ln'>89</div><pre><code>classification_report_manual(y_test, y_pred, target_names)</code></pre><div class='comment'>Thực hiện một bước xử lý trong cell; kết quả phục vụ cho đoạn code phía sau.</div></div>
+<div class='code-row'><div class='ln'>90</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>91</div><pre><code># Ve decision boundary.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>92</div><pre><code>x_min, x_max = X_iris[:, 0].min() - 0.5, X_iris[:, 0].max() + 0.5</code></pre><div class='comment'>Gán kết quả bên phải vào `x_min, x_max` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>93</div><pre><code>y_min, y_max = X_iris[:, 1].min() - 0.3, X_iris[:, 1].max() + 0.3</code></pre><div class='comment'>Gán kết quả bên phải vào `y_min, y_max` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>94</div><pre><code>xx, yy = np.meshgrid(np.linspace(x_min, x_max, 250), np.linspace(y_min, y_max, 250))</code></pre><div class='comment'>Tạo lưới điểm 2D để vẽ decision boundary.</div></div>
+<div class='code-row'><div class='ln'>95</div><pre><code>grid = np.c_[xx.ravel(), yy.ravel()]</code></pre><div class='comment'>Ghép thêm cột hoặc ma trận, thường dùng để thêm bias hoặc tạo feature mới.</div></div>
+<div class='code-row'><div class='ln'>96</div><pre><code>grid_scaled = (grid - mean) / std</code></pre><div class='comment'>Chuẩn hóa feature theo công thức (x - mean) / std.</div></div>
+<div class='code-row'><div class='ln'>97</div><pre><code>Z = log_reg.predict(grid_scaled).reshape(xx.shape)</code></pre><div class='comment'>Đưa mảng về đúng dạng cột/hàng để nhân ma trận không bị sai kích thước.</div></div>
+<div class='code-row'><div class='ln'>98</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>99</div><pre><code>plt.figure(figsize=(8, 6))</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>100</div><pre><code>plt.contourf(xx, yy, Z, alpha=0.25, cmap=&#x27;tab10&#x27;)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>101</div><pre><code>plt.scatter(X_iris[:, 0], X_iris[:, 1], c=y_iris, cmap=&#x27;tab10&#x27;, edgecolor=&#x27;k&#x27;, s=45)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div></div></article>
+<article class='chunk'><h4>Cụm 6: Chuẩn hóa, train và đánh giá</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này chuẩn hóa dữ liệu, train Logistic Regression viết tay và in kết quả phân loại.</p><div class='annotated'><div class='code-row'><div class='ln'>103</div><pre><code>plt.xlabel(&#x27;Petal length&#x27;)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>104</div><pre><code>plt.ylabel(&#x27;Petal width&#x27;)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>105</div><pre><code>plt.show()</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div></div></article>
+<article class='chunk'><h4>Cụm 7: Vẽ decision boundary</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này tạo lưới điểm 2D, dự đoán toàn bộ lưới và tô màu vùng dự đoán của từng lớp.</p><div class='annotated'><div class='code-row'><div class='ln'>91</div><pre><code># Ve decision boundary.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>92</div><pre><code>x_min, x_max = X_iris[:, 0].min() - 0.5, X_iris[:, 0].max() + 0.5</code></pre><div class='comment'>Gán kết quả bên phải vào `x_min, x_max` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>93</div><pre><code>y_min, y_max = X_iris[:, 1].min() - 0.3, X_iris[:, 1].max() + 0.3</code></pre><div class='comment'>Gán kết quả bên phải vào `y_min, y_max` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>94</div><pre><code>xx, yy = np.meshgrid(np.linspace(x_min, x_max, 250), np.linspace(y_min, y_max, 250))</code></pre><div class='comment'>Tạo lưới điểm 2D để vẽ decision boundary.</div></div>
+<div class='code-row'><div class='ln'>95</div><pre><code>grid = np.c_[xx.ravel(), yy.ravel()]</code></pre><div class='comment'>Ghép thêm cột hoặc ma trận, thường dùng để thêm bias hoặc tạo feature mới.</div></div>
+<div class='code-row'><div class='ln'>96</div><pre><code>grid_scaled = (grid - mean) / std</code></pre><div class='comment'>Chuẩn hóa feature theo công thức (x - mean) / std.</div></div>
+<div class='code-row'><div class='ln'>97</div><pre><code>Z = log_reg.predict(grid_scaled).reshape(xx.shape)</code></pre><div class='comment'>Đưa mảng về đúng dạng cột/hàng để nhân ma trận không bị sai kích thước.</div></div>
+<div class='code-row'><div class='ln'>98</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>99</div><pre><code>plt.figure(figsize=(8, 6))</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>100</div><pre><code>plt.contourf(xx, yy, Z, alpha=0.25, cmap=&#x27;tab10&#x27;)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>101</div><pre><code>plt.scatter(X_iris[:, 0], X_iris[:, 1], c=y_iris, cmap=&#x27;tab10&#x27;, edgecolor=&#x27;k&#x27;, s=45)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>102</div><pre><code>plt.title(&#x27;Decision Boundary - Logistic Regression viet tay&#x27;)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>103</div><pre><code>plt.xlabel(&#x27;Petal length&#x27;)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>104</div><pre><code>plt.ylabel(&#x27;Petal width&#x27;)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>105</div><pre><code>plt.show()</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div></div></article><details class='full'><summary>Code gốc toàn cell</summary><pre><code>
+
+def softmax(z):
+    exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
+    return exp_z / np.sum(exp_z, axis=1, keepdims=True)
+
+def one_hot_encode(y, n_classes):
+    one_hot = np.zeros((len(y), n_classes))
+    one_hot[np.arange(len(y)), y] = 1
+    return one_hot
+
+class LogisticRegressionScratch:
+    &quot;&quot;&quot;Softmax Logistic Regression viet tay cho phan loai nhieu lyp.&quot;&quot;&quot;
+    def __init__(self, learning_rate=0.15, n_iterations=2500, l2=0.001):
+        self.lr = learning_rate
+        self.n_iter = n_iterations
+        self.l2 = l2
+        self.losses = []
+
+    def fit(self, X, y):
+        m, n = X.shape
+        n_classes = len(np.unique(y))
+        self.weights = np.zeros((n, n_classes))
+        self.bias = np.zeros((1, n_classes))
+        y_encoded = one_hot_encode(y, n_classes)
+        for i in range(self.n_iter):
+            scores = X.dot(self.weights) + self.bias
+            y_pred = softmax(scores)
+            error = y_pred - y_encoded
+            dw = X.T.dot(error) / m + self.l2 * self.weights
+            db = np.sum(error, axis=0, keepdims=True) / m
+            self.weights -= self.lr * dw
+            self.bias -= self.lr * db
+            if i % 50 == 0:
+                loss = -np.mean(np.sum(y_encoded * np.log(y_pred + 1e-12), axis=1))
+                self.losses.append(float(loss))
+        return self
+
+    def predict(self, X):
+        return np.argmax(softmax(X.dot(self.weights) + self.bias), axis=1)
+
+def accuracy_score_manual(y_true, y_pred):
+    return np.mean(y_true == y_pred)
+
+def classification_report_manual(y_true, y_pred, target_names):
+    print(f&quot;{&#x27;class&#x27;:&gt;18} {&#x27;precision&#x27;:&gt;10} {&#x27;recall&#x27;:&gt;10} {&#x27;f1-score&#x27;:&gt;10} {&#x27;support&#x27;:&gt;10}&quot;)
+    for c, name in enumerate(target_names):
+        tp = np.sum((y_pred == c) &amp; (y_true == c))
+        fp = np.sum((y_pred == c) &amp; (y_true != c))
+        fn = np.sum((y_pred != c) &amp; (y_true == c))
+        precision = tp / (tp + fp) if (tp + fp) else 0
+        recall = tp / (tp + fn) if (tp + fn) else 0
+        f1 = 2 * precision * recall / (precision + recall) if (precision + recall) else 0
+        support = np.sum(y_true == c)
+        print(f&quot;{name:&gt;18} {precision:&gt;10.2f} {recall:&gt;10.2f} {f1:&gt;10.2f} {support:&gt;10}&quot;)
+    print(&quot;accuracy:&quot;, accuracy_score_manual(y_true, y_pred))
+
+# Doc Iris tu UCI file ngoai; dung petal length/width de ve decision boundary.
+iris_cols = [&quot;sepal_length&quot;, &quot;sepal_width&quot;, &quot;petal_length&quot;, &quot;petal_width&quot;, &quot;species&quot;]
+iris = pd.read_csv(os.path.join(&quot;data&quot;, &quot;iris.data&quot;), header=None, names=iris_cols).dropna()
+target_names = sorted(iris[&quot;species&quot;].unique())
+label_map = {name: i for i, name in enumerate(target_names)}
+X_iris = iris[[&quot;petal_length&quot;, &quot;petal_width&quot;]].to_numpy(dtype=float)
+y_iris = iris[&quot;species&quot;].map(label_map).to_numpy(dtype=int)
+
+# Chia train/test stratified thu cong.
+rng = np.random.default_rng(42)
+train_idx, test_idx = [], []
+for c in np.unique(y_iris):
+    idx = np.where(y_iris == c)[0]
+    rng.shuffle(idx)
+    n_test = int(0.25 * len(idx))
+    test_idx.extend(idx[:n_test])
+    train_idx.extend(idx[n_test:])
+train_idx = np.array(train_idx); test_idx = np.array(test_idx)
+rng.shuffle(train_idx); rng.shuffle(test_idx)
+X_train, X_test = X_iris[train_idx], X_iris[test_idx]
+y_train, y_test = y_iris[train_idx], y_iris[test_idx]
+
+# Chuan hda thu cong.
+mean = X_train.mean(axis=0)
+std = X_train.std(axis=0)
+X_train_scaled = (X_train - mean) / std
+X_test_scaled = (X_test - mean) / std
+
+log_reg = LogisticRegressionScratch()
+log_reg.fit(X_train_scaled, y_train)
+y_pred = log_reg.predict(X_test_scaled)
+classification_report_manual(y_test, y_pred, target_names)
+
+# Ve decision boundary.
+x_min, x_max = X_iris[:, 0].min() - 0.5, X_iris[:, 0].max() + 0.5
+y_min, y_max = X_iris[:, 1].min() - 0.3, X_iris[:, 1].max() + 0.3
+xx, yy = np.meshgrid(np.linspace(x_min, x_max, 250), np.linspace(y_min, y_max, 250))
+grid = np.c_[xx.ravel(), yy.ravel()]
+grid_scaled = (grid - mean) / std
+Z = log_reg.predict(grid_scaled).reshape(xx.shape)
+
+plt.figure(figsize=(8, 6))
+plt.contourf(xx, yy, Z, alpha=0.25, cmap=&#x27;tab10&#x27;)
+plt.scatter(X_iris[:, 0], X_iris[:, 1], c=y_iris, cmap=&#x27;tab10&#x27;, edgecolor=&#x27;k&#x27;, s=45)
+plt.title(&#x27;Decision Boundary - Logistic Regression viet tay&#x27;)
+plt.xlabel(&#x27;Petal length&#x27;)
+plt.ylabel(&#x27;Petal width&#x27;)
+plt.show()
+</code></pre></details></details></section><section class='lab' id='lab5'><h2>Lab 5 - Model Evaluation</h2><div class='opening'><h3>Mở đầu lab, em trình bày</h3><p>Lab 5 của em tập trung vào đánh giá mô hình trên dữ liệu mất cân bằng. Em dùng Credit Card Fraud Detection vì lớp fraud rất hiếm. Mục tiêu không chỉ là train model, mà là chứng minh vì sao accuracy chưa đủ, và vì sao cần nhìn thêm confusion matrix, precision, recall, F1, ROC và Precision-Recall.</p></div><div class='datasets'><h3>Dataset dùng trong lab</h3><article class='dataset'><h4>Credit Card Fraud Detection</h4><p><b>Nguồn:</b> Kaggle - mlg-ulb/creditcardfraud</p><p><b>File:</b> <code>Lab1/data/creditcard.csv</code></p><p>Bộ dữ liệu này gồm các giao dịch thẻ tín dụng. Cột `Class` là nhãn: 0 là giao dịch bình thường, 1 là giao dịch gian lận. Dữ liệu phù hợp với Lab 5 vì fraud là lớp rất hiếm, nên nếu model dự đoán toàn normal thì accuracy vẫn có thể cao nhưng thực tế lại bỏ sót fraud. Vì vậy lab này dùng nó để giải thích accuracy trap và các metric quan trọng hơn như recall, precision và Precision-Recall curve.</p></article></div><details class='cell' open><summary>Cell 1</summary><div class='deep'><b>Ý chính của cell:</b> Cell này là một phần trong quy trình chính của lab. Khi trình bày, em nói nó nhận dữ liệu gì, xử lý gì và tạo ra kết quả gì cho bước sau.</div><article class='chunk'><h4>Cụm 1: Import thư viện dùng cho Lab 5</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này chuẩn bị công cụ đọc file, xử lý mảng, xử lý bảng và vẽ biểu đồ.</p><div class='annotated'><div class='code-row'><div class='ln'>1</div><pre><code>import os</code></pre><div class='comment'>Import thư viện để dùng các hàm/class của thư viện đó.</div></div>
+<div class='code-row'><div class='ln'>2</div><pre><code>import numpy as np</code></pre><div class='comment'>Import thư viện để dùng các hàm/class của thư viện đó.</div></div>
+<div class='code-row'><div class='ln'>3</div><pre><code>import pandas as pd</code></pre><div class='comment'>Import thư viện để dùng các hàm/class của thư viện đó.</div></div>
+<div class='code-row'><div class='ln'>4</div><pre><code>import matplotlib.pyplot as plt</code></pre><div class='comment'>Import thư viện để dùng các hàm/class của thư viện đó.</div></div></div></article><details class='full'><summary>Code gốc toàn cell</summary><pre><code>import os
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt</code></pre></details></details>
+<details class='cell' open><summary>Cell 2</summary><div class='deep'><b>Ý chính của cell:</b> Các hàm tiện ích này giúp Lab 5 không phụ thuộc sklearn ở phần chia dữ liệu, chuẩn hóa và sigmoid. Đây là nền để nói rằng em hiểu rõ quy trình evaluation.</div><article class='chunk'><h4>Cụm 1: Chia train-test stratified tự viết</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này tự viết hàm chia dữ liệu theo từng lớp để lớp fraud hiếm vẫn có mặt trong cả train và test.</p><div class='annotated'><div class='code-row'><div class='ln'>1</div><pre><code># Hm tien ich tu viet, khong dung train_test_split/metrics cua sklearn.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>2</div><pre><code>def train_test_split_np(X, y, test_size=0.25, random_state=42):</code></pre><div class='comment'>Định nghĩa hàm `train_test_split_np` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>3</div><pre><code>    rng = np.random.default_rng(random_state)</code></pre><div class='comment'>Tạo bộ sinh số ngẫu nhiên có seed để kết quả chia dữ liệu lặp lại được.</div></div>
+<div class='code-row'><div class='ln'>4</div><pre><code>    train_parts, test_parts = [], []</code></pre><div class='comment'>Gán kết quả bên phải vào `train_parts, test_parts` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>5</div><pre><code>    for cls in np.unique(y):</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div>
+<div class='code-row'><div class='ln'>6</div><pre><code>        idx = np.where(y == cls)[0]</code></pre><div class='comment'>Gán kết quả bên phải vào `idx` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>7</div><pre><code>        rng.shuffle(idx)</code></pre><div class='comment'>Xáo trộn chỉ số để train/test không phụ thuộc thứ tự dữ liệu ban đầu.</div></div>
+<div class='code-row'><div class='ln'>8</div><pre><code>        n_test = max(1, int(len(idx) * test_size))</code></pre><div class='comment'>Gán kết quả bên phải vào `n_test` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>9</div><pre><code>        test_parts.append(idx[:n_test])</code></pre><div class='comment'>Thực hiện một bước xử lý trong cell; kết quả phục vụ cho đoạn code phía sau.</div></div>
+<div class='code-row'><div class='ln'>10</div><pre><code>        train_parts.append(idx[n_test:])</code></pre><div class='comment'>Thực hiện một bước xử lý trong cell; kết quả phục vụ cho đoạn code phía sau.</div></div>
+<div class='code-row'><div class='ln'>11</div><pre><code>    train_idx = np.concatenate(train_parts)</code></pre><div class='comment'>Tạo hoặc dùng danh sách chỉ số cho tập train và tập test.</div></div>
+<div class='code-row'><div class='ln'>12</div><pre><code>    test_idx = np.concatenate(test_parts)</code></pre><div class='comment'>Tạo hoặc dùng danh sách chỉ số cho tập train và tập test.</div></div>
+<div class='code-row'><div class='ln'>13</div><pre><code>    rng.shuffle(train_idx)</code></pre><div class='comment'>Xáo trộn chỉ số để train/test không phụ thuộc thứ tự dữ liệu ban đầu.</div></div>
+<div class='code-row'><div class='ln'>14</div><pre><code>    rng.shuffle(test_idx)</code></pre><div class='comment'>Xáo trộn chỉ số để train/test không phụ thuộc thứ tự dữ liệu ban đầu.</div></div></div></article>
+<article class='chunk'><h4>Cụm 2: Chuẩn hóa train-test</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này chuẩn hóa dữ liệu theo mean/std của train, tránh dùng thông tin từ test.</p><div class='annotated'><div class='code-row'><div class='ln'>16</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>17</div><pre><code>def standardize_train_test(X_train, X_test):</code></pre><div class='comment'>Định nghĩa hàm `standardize_train_test` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>18</div><pre><code>    mean = X_train.mean(axis=0)</code></pre><div class='comment'>Tính giá trị trung bình để chuẩn hóa dữ liệu.</div></div>
+<div class='code-row'><div class='ln'>19</div><pre><code>    std = X_train.std(axis=0)</code></pre><div class='comment'>Tính độ lệch chuẩn để chuẩn hóa dữ liệu.</div></div>
+<div class='code-row'><div class='ln'>20</div><pre><code>    std[std == 0] = 1</code></pre><div class='comment'>Gán kết quả bên phải vào `std[std` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>21</div><pre><code>    return (X_train - mean) / std, (X_test - mean) / std</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div></div></article>
+<article class='chunk'><h4>Cụm 3: Hàm sigmoid</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này định nghĩa sigmoid để đổi logit thành xác suất lớp 1 trong Logistic Regression.</p><div class='annotated'><div class='code-row'><div class='ln'>23</div><pre><code>def sigmoid(z):</code></pre><div class='comment'>Định nghĩa hàm `sigmoid` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>24</div><pre><code>    z = np.clip(z, -40, 40)</code></pre><div class='comment'>Gán kết quả bên phải vào `z` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>25</div><pre><code>    return 1 / (1 + np.exp(-z))</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div></div></article><details class='full'><summary>Code gốc toàn cell</summary><pre><code># Hm tien ich tu viet, khong dung train_test_split/metrics cua sklearn.
+def train_test_split_np(X, y, test_size=0.25, random_state=42):
+    rng = np.random.default_rng(random_state)
+    train_parts, test_parts = [], []
+    for cls in np.unique(y):
+        idx = np.where(y == cls)[0]
+        rng.shuffle(idx)
+        n_test = max(1, int(len(idx) * test_size))
+        test_parts.append(idx[:n_test])
+        train_parts.append(idx[n_test:])
+    train_idx = np.concatenate(train_parts)
+    test_idx = np.concatenate(test_parts)
+    rng.shuffle(train_idx)
+    rng.shuffle(test_idx)
+    return X[train_idx], X[test_idx], y[train_idx], y[test_idx]
+
+def standardize_train_test(X_train, X_test):
+    mean = X_train.mean(axis=0)
+    std = X_train.std(axis=0)
+    std[std == 0] = 1
+    return (X_train - mean) / std, (X_test - mean) / std
+
+def sigmoid(z):
+    z = np.clip(z, -40, 40)
+    return 1 / (1 + np.exp(-z))</code></pre></details></details>
+<details class='cell' open><summary>Cell 3</summary><div class='deep'><b>Ý chính của cell:</b> Cell này là một phần trong quy trình chính của lab. Khi trình bày, em nói nó nhận dữ liệu gì, xử lý gì và tạo ra kết quả gì cho bước sau.</div><article class='chunk'><h4>Cụm 1: Đọc Credit Card Fraud</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này xác định đường dẫn và đọc dataset fraud từ file đã có ở Lab 1.</p><div class='annotated'><div class='code-row'><div class='ln'>1</div><pre><code># Doc dataset mat can bang that. Lay mau normal de notebook chay nhanh nhung fraud van la lop hiem.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>2</div><pre><code>DATA_PATH = os.path.join(&quot;..&quot;, &quot;Lab1&quot;, &quot;data&quot;, &quot;creditcard.csv&quot;)</code></pre><div class='comment'>Ghép các phần đường dẫn file theo cách an toàn trên hệ điều hành.</div></div>
+<div class='code-row'><div class='ln'>3</div><pre><code>if not os.path.exists(DATA_PATH):</code></pre><div class='comment'>Kiểm tra điều kiện; nếu điều kiện đúng thì chạy khối code bên trong.</div></div>
+<div class='code-row'><div class='ln'>4</div><pre><code>    raise FileNotFoundError(&quot;Can file Lab1/data/creditcard.csv de chay Lab5.&quot;)</code></pre><div class='comment'>Chủ động báo lỗi để dừng chương trình khi dữ liệu hoặc điều kiện không hợp lệ.</div></div>
+<div class='code-row'><div class='ln'>5</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>6</div><pre><code>df = pd.read_csv(DATA_PATH)</code></pre><div class='comment'>Đọc file dữ liệu vào DataFrame pandas để bắt đầu xử lý dataset.</div></div></div></article>
+<article class='chunk'><h4>Cụm 2: Lấy mẫu normal và giữ fraud</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này lấy toàn bộ fraud và sample 20.000 normal để giữ bài toán mất cân bằng nhưng notebook chạy nhanh hơn.</p><div class='annotated'><div class='code-row'><div class='ln'>7</div><pre><code>fraud = df[df[&quot;Class&quot;] == 1]</code></pre><div class='comment'>Gán kết quả bên phải vào `fraud` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>8</div><pre><code>normal = df[df[&quot;Class&quot;] == 0].sample(n=20000, random_state=42)</code></pre><div class='comment'>Gán kết quả bên phải vào `normal` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>9</div><pre><code>work = pd.concat([normal, fraud], axis=0).sample(frac=1, random_state=42).reset_index(drop=True)</code></pre><div class='comment'>Gán kết quả bên phải vào `work` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>10</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div></div></article>
+<article class='chunk'><h4>Cụm 3: Tạo X/y và in tỷ lệ fraud</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này chọn các feature đầu vào, lấy Class làm y và in tỷ lệ fraud để thấy dữ liệu mất cân bằng.</p><div class='annotated'><div class='code-row'><div class='ln'>12</div><pre><code>X = work[features].to_numpy(float)</code></pre><div class='comment'>Chuyển dữ liệu từ pandas sang NumPy array để thuật toán viết tay xử lý được.</div></div>
+<div class='code-row'><div class='ln'>13</div><pre><code>y = work[&quot;Class&quot;].to_numpy(int)</code></pre><div class='comment'>Chuyển dữ liệu từ pandas sang NumPy array để thuật toán viết tay xử lý được.</div></div>
+<div class='code-row'><div class='ln'>14</div><pre><code>print(&quot;Kich thuoc mau:&quot;, work.shape)</code></pre><div class='comment'>Thực hiện một bước xử lý trong cell; kết quả phục vụ cho đoạn code phía sau.</div></div>
+<div class='code-row'><div class='ln'>15</div><pre><code>print(&quot;Tu ly fraud:&quot;, y.mean())</code></pre><div class='comment'>Tính giá trị trung bình để chuẩn hóa dữ liệu.</div></div></div></article><details class='full'><summary>Code gốc toàn cell</summary><pre><code># Doc dataset mat can bang that. Lay mau normal de notebook chay nhanh nhung fraud van la lop hiem.
+DATA_PATH = os.path.join(&quot;..&quot;, &quot;Lab1&quot;, &quot;data&quot;, &quot;creditcard.csv&quot;)
+if not os.path.exists(DATA_PATH):
+    raise FileNotFoundError(&quot;Can file Lab1/data/creditcard.csv de chay Lab5.&quot;)
+
+df = pd.read_csv(DATA_PATH)
+fraud = df[df[&quot;Class&quot;] == 1]
+normal = df[df[&quot;Class&quot;] == 0].sample(n=20000, random_state=42)
+work = pd.concat([normal, fraud], axis=0).sample(frac=1, random_state=42).reset_index(drop=True)
+
+features = [&quot;Time&quot;, &quot;Amount&quot;] + [f&quot;V{i}&quot; for i in range(1, 29)]
+X = work[features].to_numpy(float)
+y = work[&quot;Class&quot;].to_numpy(int)
+print(&quot;Kich thuoc mau:&quot;, work.shape)
+print(&quot;Tu ly fraud:&quot;, y.mean())</code></pre></details></details>
+<details class='cell' open><summary>Cell 4</summary><div class='deep'><b>Ý chính của cell:</b> Điểm quan trọng là class_weight balanced. Vì fraud rất ít, nếu không tăng trọng số thì model dễ thiên về normal. Balanced làm lỗi fraud có ảnh hưởng lớn hơn khi cập nhật theta.</div><article class='chunk'><h4>Cụm 1: Khai báo class Logistic Regression</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này tạo class model và lưu các tham số như learning rate, số epoch, class_weight.</p><div class='annotated'><div class='code-row'><div class='ln'>1</div><pre><code># Logistic Regression viet tay, co tuy chn class_weight=&#x27;balanced&#x27;.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>2</div><pre><code>class LogisticRegressionScratch:</code></pre><div class='comment'>Định nghĩa class `LogisticRegressionScratch` để đóng gói thuật toán, tham số và các hàm fit/predict.</div></div>
+<div class='code-row'><div class='ln'>3</div><pre><code>    def __init__(self, learning_rate=0.08, n_epochs=500, class_weight=None):</code></pre><div class='comment'>Định nghĩa hàm `__init__` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>4</div><pre><code>        self.learning_rate = learning_rate</code></pre><div class='comment'>Thiết lập hoặc dùng learning rate, tức độ lớn bước cập nhật tham số.</div></div>
+<div class='code-row'><div class='ln'>5</div><pre><code>        self.n_epochs = n_epochs</code></pre><div class='comment'>Gán kết quả bên phải vào `self.n_epochs` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>6</div><pre><code>        self.class_weight = class_weight</code></pre><div class='comment'>Xử lý mất cân bằng lớp bằng cách tăng trọng số cho lớp hiếm.</div></div>
+<div class='code-row'><div class='ln'>7</div><pre><code>        self.losses = []</code></pre><div class='comment'>Tính hoặc lưu lỗi của mô hình để theo dõi quá trình học.</div></div></div></article>
+<article class='chunk'><h4>Cụm 2: Hàm fit: thêm bias và tạo trọng số lớp</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này thêm cột bias, khởi tạo theta và nếu dùng balanced thì tăng trọng số cho lớp fraud hiếm.</p><div class='annotated'><div class='code-row'><div class='ln'>9</div><pre><code>    def fit(self, X, y):</code></pre><div class='comment'>Định nghĩa hàm `fit` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>10</div><pre><code>        X_b = np.c_[np.ones((len(X), 1)), X]</code></pre><div class='comment'>Ghép thêm cột hoặc ma trận, thường dùng để thêm bias hoặc tạo feature mới.</div></div>
+<div class='code-row'><div class='ln'>11</div><pre><code>        self.theta = np.zeros(X_b.shape[1])</code></pre><div class='comment'>Khởi tạo mảng toàn số 0 để lưu tham số, vector one-hot hoặc bộ đếm.</div></div>
+<div class='code-row'><div class='ln'>12</div><pre><code>        if self.class_weight == &quot;balanced&quot;:</code></pre><div class='comment'>Kiểm tra điều kiện; nếu điều kiện đúng thì chạy khối code bên trong.</div></div>
+<div class='code-row'><div class='ln'>13</div><pre><code>            counts = np.bincount(y, minlength=2)</code></pre><div class='comment'>Đếm số mẫu của từng lớp để tính trọng số hoặc thống kê nhãn.</div></div>
+<div class='code-row'><div class='ln'>14</div><pre><code>            class_weights = len(y) / (2 * counts)</code></pre><div class='comment'>Xử lý mất cân bằng lớp bằng cách tăng trọng số cho lớp hiếm.</div></div>
+<div class='code-row'><div class='ln'>15</div><pre><code>            sample_weight = class_weights[y]</code></pre><div class='comment'>Xử lý mất cân bằng lớp bằng cách tăng trọng số cho lớp hiếm.</div></div>
+<div class='code-row'><div class='ln'>16</div><pre><code>        else:</code></pre><div class='comment'>Nhánh còn lại khi điều kiện phía trên không đúng.</div></div>
+<div class='code-row'><div class='ln'>17</div><pre><code>            sample_weight = np.ones(len(y))</code></pre><div class='comment'>Tạo mảng toàn số 1, thường dùng làm cột bias hoặc cột x^0.</div></div>
+<div class='code-row'><div class='ln'>18</div><pre><code>        for epoch in range(self.n_epochs):</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div></div></article>
+<article class='chunk'><h4>Cụm 3: Hàm fit: vòng lặp gradient descent</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đây là phần train: tính xác suất, tính lỗi có trọng số, tính gradient và cập nhật theta.</p><div class='annotated'><div class='code-row'><div class='ln'>19</div><pre><code>            proba = sigmoid(X_b @ self.theta)</code></pre><div class='comment'>Thực hiện nhân ma trận/vector, phần cốt lõi trong dự đoán và tính gradient.</div></div>
+<div class='code-row'><div class='ln'>20</div><pre><code>            error = (proba - y) * sample_weight</code></pre><div class='comment'>Tính sai số giữa dự đoán của model và giá trị thật.</div></div>
+<div class='code-row'><div class='ln'>21</div><pre><code>            grad = X_b.T @ error / len(y)</code></pre><div class='comment'>Thực hiện nhân ma trận/vector, phần cốt lõi trong dự đoán và tính gradient.</div></div>
+<div class='code-row'><div class='ln'>22</div><pre><code>            self.theta -= self.learning_rate * grad</code></pre><div class='comment'>Tính gradient, tức hướng thay đổi của loss theo tham số.</div></div>
+<div class='code-row'><div class='ln'>23</div><pre><code>            if epoch % 20 == 0:</code></pre><div class='comment'>Kiểm tra điều kiện; nếu điều kiện đúng thì chạy khối code bên trong.</div></div>
+<div class='code-row'><div class='ln'>24</div><pre><code>                loss = -np.mean(sample_weight * (y*np.log(proba+1e-12) + (1-y)*np.log(1-proba+1e-12)))</code></pre><div class='comment'>Tính giá trị trung bình để chuẩn hóa dữ liệu.</div></div>
+<div class='code-row'><div class='ln'>25</div><pre><code>                self.losses.append(float(loss))</code></pre><div class='comment'>Tính hoặc lưu lỗi của mô hình để theo dõi quá trình học.</div></div>
+<div class='code-row'><div class='ln'>26</div><pre><code>        return self</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div>
+<div class='code-row'><div class='ln'>27</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div></div></article>
+<article class='chunk'><h4>Cụm 4: Predict probability và predict nhãn</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này dùng theta đã học để tính xác suất rồi đổi thành nhãn 0/1 theo threshold.</p><div class='annotated'><div class='code-row'><div class='ln'>29</div><pre><code>        return sigmoid(np.c_[np.ones((len(X), 1)), X] @ self.theta)</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div>
+<div class='code-row'><div class='ln'>30</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>31</div><pre><code>    def predict(self, X, threshold=0.5):</code></pre><div class='comment'>Định nghĩa hàm `predict` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>32</div><pre><code>        return (self.predict_proba(X) &gt;= threshold).astype(int)</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div>
+<div class='code-row'><div class='ln'>33</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>34</div><pre><code>X_train, X_test, y_train, y_test = train_test_split_np(X, y, test_size=0.25, random_state=42)</code></pre><div class='comment'>Gán kết quả bên phải vào `X_train, X_test, y_train, y_test` để dùng ở các bước sau.</div></div></div></article>
+<article class='chunk'><h4>Cụm 5: Train baseline và balanced</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này chia dữ liệu, chuẩn hóa và train hai mô hình để so sánh ảnh hưởng của class_weight.</p><div class='annotated'><div class='code-row'><div class='ln'>36</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>37</div><pre><code>baseline = LogisticRegressionScratch().fit(X_train_s, y_train)</code></pre><div class='comment'>Gán kết quả bên phải vào `baseline` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>38</div><pre><code>balanced = LogisticRegressionScratch(class_weight=&quot;balanced&quot;).fit(X_train_s, y_train)</code></pre><div class='comment'>Xử lý mất cân bằng lớp bằng cách tăng trọng số cho lớp hiếm.</div></div></div></article><details class='full'><summary>Code gốc toàn cell</summary><pre><code># Logistic Regression viet tay, co tuy chn class_weight=&#x27;balanced&#x27;.
+class LogisticRegressionScratch:
+    def __init__(self, learning_rate=0.08, n_epochs=500, class_weight=None):
+        self.learning_rate = learning_rate
+        self.n_epochs = n_epochs
+        self.class_weight = class_weight
+        self.losses = []
+
+    def fit(self, X, y):
+        X_b = np.c_[np.ones((len(X), 1)), X]
+        self.theta = np.zeros(X_b.shape[1])
+        if self.class_weight == &quot;balanced&quot;:
+            counts = np.bincount(y, minlength=2)
+            class_weights = len(y) / (2 * counts)
+            sample_weight = class_weights[y]
+        else:
+            sample_weight = np.ones(len(y))
+        for epoch in range(self.n_epochs):
+            proba = sigmoid(X_b @ self.theta)
+            error = (proba - y) * sample_weight
+            grad = X_b.T @ error / len(y)
+            self.theta -= self.learning_rate * grad
+            if epoch % 20 == 0:
+                loss = -np.mean(sample_weight * (y*np.log(proba+1e-12) + (1-y)*np.log(1-proba+1e-12)))
+                self.losses.append(float(loss))
+        return self
+
+    def predict_proba(self, X):
+        return sigmoid(np.c_[np.ones((len(X), 1)), X] @ self.theta)
+
+    def predict(self, X, threshold=0.5):
+        return (self.predict_proba(X) &gt;= threshold).astype(int)
+
+X_train, X_test, y_train, y_test = train_test_split_np(X, y, test_size=0.25, random_state=42)
+X_train_s, X_test_s = standardize_train_test(X_train, X_test)
+
+baseline = LogisticRegressionScratch().fit(X_train_s, y_train)
+balanced = LogisticRegressionScratch(class_weight=&quot;balanced&quot;).fit(X_train_s, y_train)</code></pre></details></details>
+<details class='cell' open><summary>Cell 5</summary><div class='deep'><b>Ý chính của cell:</b> Metric cần nhấn mạnh là recall và precision. Recall cao nghĩa là bắt được nhiều fraud thật; precision cao nghĩa là các cảnh báo fraud ít bị nhầm.</div><article class='chunk'><h4>Cụm 1: Tính TP, TN, FP, FN</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này tự đếm 4 ô của confusion matrix để làm nền cho các metric.</p><div class='annotated'><div class='code-row'><div class='ln'>1</div><pre><code># Metric viet tay: confusion matrix, precision, recall, f1.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>2</div><pre><code>def classification_metrics(y_true, y_pred):</code></pre><div class='comment'>Định nghĩa hàm `classification_metrics` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>3</div><pre><code>    tp = int(np.sum((y_true == 1) &amp; (y_pred == 1)))</code></pre><div class='comment'>Đếm true positive: fraud thật và model cũng dự đoán fraud.</div></div>
+<div class='code-row'><div class='ln'>4</div><pre><code>    tn = int(np.sum((y_true == 0) &amp; (y_pred == 0)))</code></pre><div class='comment'>Đếm true negative: normal thật và model dự đoán normal.</div></div>
+<div class='code-row'><div class='ln'>5</div><pre><code>    fp = int(np.sum((y_true == 0) &amp; (y_pred == 1)))</code></pre><div class='comment'>Đếm false positive: normal thật nhưng model báo fraud.</div></div>
+<div class='code-row'><div class='ln'>6</div><pre><code>    fn = int(np.sum((y_true == 1) &amp; (y_pred == 0)))</code></pre><div class='comment'>Đếm false negative: fraud thật nhưng model bỏ sót.</div></div></div></article>
+<article class='chunk'><h4>Cụm 2: Tính accuracy, precision, recall, F1</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này tính các metric quan trọng, đặc biệt precision/recall cho lớp fraud.</p><div class='annotated'><div class='code-row'><div class='ln'>7</div><pre><code>    acc = (tp + tn) / len(y_true)</code></pre><div class='comment'>Gán kết quả bên phải vào `acc` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>8</div><pre><code>    precision = tp / max(tp + fp, 1)</code></pre><div class='comment'>Tính precision: trong các dự đoán fraud, có bao nhiêu dự đoán đúng.</div></div>
+<div class='code-row'><div class='ln'>9</div><pre><code>    recall = tp / max(tp + fn, 1)</code></pre><div class='comment'>Tính recall: trong các fraud thật, model bắt được bao nhiêu.</div></div>
+<div class='code-row'><div class='ln'>10</div><pre><code>    f1 = 2 * precision * recall / max(precision + recall, 1e-12)</code></pre><div class='comment'>Tính precision: trong các dự đoán fraud, có bao nhiêu dự đoán đúng.</div></div>
+<div class='code-row'><div class='ln'>11</div><pre><code>    return {&quot;tp&quot;: tp, &quot;tn&quot;: tn, &quot;fp&quot;: fp, &quot;fn&quot;: fn, &quot;accuracy&quot;: acc, &quot;precision&quot;: precision, &quot;recall&quot;: recall, &quot;f1&quot;: f1}</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div>
+<div class='code-row'><div class='ln'>12</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>13</div><pre><code>for name, model in [(&quot;Baseline&quot;, baseline), (&quot;Balanced&quot;, balanced)]:</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div></div></article>
+<article class='chunk'><h4>Cụm 3: In metric cho hai mô hình</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này chạy metric cho baseline và balanced để so sánh.</p><div class='annotated'><div class='code-row'><div class='ln'>15</div><pre><code>    print(name, classification_metrics(y_test, pred))</code></pre><div class='comment'>Thực hiện một bước xử lý trong cell; kết quả phục vụ cho đoạn code phía sau.</div></div></div></article><details class='full'><summary>Code gốc toàn cell</summary><pre><code># Metric viet tay: confusion matrix, precision, recall, f1.
+def classification_metrics(y_true, y_pred):
+    tp = int(np.sum((y_true == 1) &amp; (y_pred == 1)))
+    tn = int(np.sum((y_true == 0) &amp; (y_pred == 0)))
+    fp = int(np.sum((y_true == 0) &amp; (y_pred == 1)))
+    fn = int(np.sum((y_true == 1) &amp; (y_pred == 0)))
+    acc = (tp + tn) / len(y_true)
+    precision = tp / max(tp + fp, 1)
+    recall = tp / max(tp + fn, 1)
+    f1 = 2 * precision * recall / max(precision + recall, 1e-12)
+    return {&quot;tp&quot;: tp, &quot;tn&quot;: tn, &quot;fp&quot;: fp, &quot;fn&quot;: fn, &quot;accuracy&quot;: acc, &quot;precision&quot;: precision, &quot;recall&quot;: recall, &quot;f1&quot;: f1}
+
+for name, model in [(&quot;Baseline&quot;, baseline), (&quot;Balanced&quot;, balanced)]:
+    pred = model.predict(X_test_s)
+    print(name, classification_metrics(y_test, pred))</code></pre></details></details>
+<details class='cell' open><summary>Cell 6</summary><div class='deep'><b>Ý chính của cell:</b> Cell này là một phần trong quy trình chính của lab. Khi trình bày, em nói nó nhận dữ liệu gì, xử lý gì và tạo ra kết quả gì cho bước sau.</div><article class='chunk'><h4>Cụm 1: Hàm vẽ confusion matrix</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này biến các metric TP/TN/FP/FN thành ma trận 2x2 và ghi số lên hình.</p><div class='annotated'><div class='code-row'><div class='ln'>1</div><pre><code># Ve confusion matrix bang matplotlib.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>2</div><pre><code>def plot_confusion(ax, metrics, title):</code></pre><div class='comment'>Định nghĩa hàm `plot_confusion` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>3</div><pre><code>    cm = np.array([[metrics[&quot;tn&quot;], metrics[&quot;fp&quot;]], [metrics[&quot;fn&quot;], metrics[&quot;tp&quot;]]])</code></pre><div class='comment'>Gán kết quả bên phải vào `cm` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>4</div><pre><code>    ax.imshow(cm, cmap=&quot;Blues&quot;)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>5</div><pre><code>    for i in range(2):</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div>
+<div class='code-row'><div class='ln'>6</div><pre><code>        for j in range(2):</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div>
+<div class='code-row'><div class='ln'>7</div><pre><code>            ax.text(j, i, str(cm[i, j]), ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=12)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>8</div><pre><code>    ax.set_xticks([0, 1], [&quot;Pred 0&quot;, &quot;Pred 1&quot;])</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>9</div><pre><code>    ax.set_yticks([0, 1], [&quot;True 0&quot;, &quot;True 1&quot;])</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>10</div><pre><code>    ax.set_title(title)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>11</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>12</div><pre><code>fig, axes = plt.subplots(1, 2, figsize=(10, 4))</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div></div></article>
+<article class='chunk'><h4>Cụm 2: Vẽ baseline và balanced cạnh nhau</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này vẽ hai confusion matrix để nhìn trực quan model nào bắt fraud tốt hơn.</p><div class='annotated'><div class='code-row'><div class='ln'>14</div><pre><code>plot_confusion(axes[1], classification_metrics(y_test, balanced.predict(X_test_s)), &quot;Class weight balanced&quot;)</code></pre><div class='comment'>Dự đoán nhãn hoặc giá trị dựa trên tham số/model đã học.</div></div>
+<div class='code-row'><div class='ln'>15</div><pre><code>plt.tight_layout()</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>16</div><pre><code>plt.show()</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div></div></article><details class='full'><summary>Code gốc toàn cell</summary><pre><code># Ve confusion matrix bang matplotlib.
+def plot_confusion(ax, metrics, title):
+    cm = np.array([[metrics[&quot;tn&quot;], metrics[&quot;fp&quot;]], [metrics[&quot;fn&quot;], metrics[&quot;tp&quot;]]])
+    ax.imshow(cm, cmap=&quot;Blues&quot;)
+    for i in range(2):
+        for j in range(2):
+            ax.text(j, i, str(cm[i, j]), ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=12)
+    ax.set_xticks([0, 1], [&quot;Pred 0&quot;, &quot;Pred 1&quot;])
+    ax.set_yticks([0, 1], [&quot;True 0&quot;, &quot;True 1&quot;])
+    ax.set_title(title)
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+plot_confusion(axes[0], classification_metrics(y_test, baseline.predict(X_test_s)), &quot;Baseline&quot;)
+plot_confusion(axes[1], classification_metrics(y_test, balanced.predict(X_test_s)), &quot;Class weight balanced&quot;)
+plt.tight_layout()
+plt.show()</code></pre></details></details>
+<details class='cell' open><summary>Cell 7</summary><div class='deep'><b>Ý chính của cell:</b> ROC và Precision-Recall đều quét threshold. Với dữ liệu mất cân bằng, Precision-Recall thường dễ đọc hơn vì nó tập trung vào lớp fraud hiếm.</div><article class='chunk'><h4>Cụm 1: Tự tính điểm ROC và PR theo threshold</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này quét nhiều threshold, mỗi threshold tạo dự đoán mới rồi tính FPR, TPR, precision, recall.</p><div class='annotated'><div class='code-row'><div class='ln'>1</div><pre><code># Tu tinh ROC ve Precision-Recall theo nhieu threshold.</code></pre><div class='comment'>Chú thích mô tả mục đích của đoạn code ngay phía dưới.</div></div>
+<div class='code-row'><div class='ln'>2</div><pre><code>def roc_pr_points(y_true, scores):</code></pre><div class='comment'>Định nghĩa hàm `roc_pr_points` để gom một chức năng riêng và gọi lại nhiều lần.</div></div>
+<div class='code-row'><div class='ln'>3</div><pre><code>    thresholds = np.r_[np.inf, np.sort(scores)[::-1], -np.inf]</code></pre><div class='comment'>Thiết lập hoặc quét ngưỡng để đổi xác suất thành nhãn dự đoán.</div></div>
+<div class='code-row'><div class='ln'>4</div><pre><code>    fpr, tpr, precision, recall = [], [], [], []</code></pre><div class='comment'>Tính precision: trong các dự đoán fraud, có bao nhiêu dự đoán đúng.</div></div>
+<div class='code-row'><div class='ln'>5</div><pre><code>    for th in thresholds:</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div>
+<div class='code-row'><div class='ln'>6</div><pre><code>        pred = (scores &gt;= th).astype(int)</code></pre><div class='comment'>Gán kết quả bên phải vào `pred` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>7</div><pre><code>        m = classification_metrics(y_true, pred)</code></pre><div class='comment'>Gán kết quả bên phải vào `m` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>8</div><pre><code>        fpr.append(m[&quot;fp&quot;] / max(m[&quot;fp&quot;] + m[&quot;tn&quot;], 1))</code></pre><div class='comment'>Tính điểm cho ROC curve: FPR là báo động nhầm, TPR là recall.</div></div>
+<div class='code-row'><div class='ln'>9</div><pre><code>        tpr.append(m[&quot;recall&quot;])</code></pre><div class='comment'>Tính recall: trong các fraud thật, model bắt được bao nhiêu.</div></div>
+<div class='code-row'><div class='ln'>10</div><pre><code>        precision.append(m[&quot;precision&quot;])</code></pre><div class='comment'>Tính precision: trong các dự đoán fraud, có bao nhiêu dự đoán đúng.</div></div>
+<div class='code-row'><div class='ln'>11</div><pre><code>        recall.append(m[&quot;recall&quot;])</code></pre><div class='comment'>Tính recall: trong các fraud thật, model bắt được bao nhiêu.</div></div>
+<div class='code-row'><div class='ln'>12</div><pre><code>    return np.array(fpr), np.array(tpr), np.array(recall), np.array(precision)</code></pre><div class='comment'>Trả kết quả từ hàm về nơi gọi hàm.</div></div>
+<div class='code-row'><div class='ln'>13</div><pre><code></code></pre><div class='comment'>Dòng trống để tách các khối code cho dễ đọc.</div></div>
+<div class='code-row'><div class='ln'>14</div><pre><code>fig, axes = plt.subplots(1, 2, figsize=(12, 5))</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>15</div><pre><code>for name, model in [(&quot;Baseline&quot;, baseline), (&quot;Balanced&quot;, balanced)]:</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div></div></article>
+<article class='chunk'><h4>Cụm 2: Vẽ ROC và Precision-Recall</h4><p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> Đoạn này lấy xác suất của hai model rồi vẽ ROC và Precision-Recall để so sánh.</p><div class='annotated'><div class='code-row'><div class='ln'>17</div><pre><code>    fpr, tpr, rec, prec = roc_pr_points(y_test, scores)</code></pre><div class='comment'>Tính điểm cho ROC curve: FPR là báo động nhầm, TPR là recall.</div></div>
+<div class='code-row'><div class='ln'>18</div><pre><code>    axes[0].plot(fpr, tpr, label=name)</code></pre><div class='comment'>Tính điểm cho ROC curve: FPR là báo động nhầm, TPR là recall.</div></div>
+<div class='code-row'><div class='ln'>19</div><pre><code>    axes[1].plot(rec, prec, label=name)</code></pre><div class='comment'>Gán kết quả bên phải vào `axes[1].plot(rec, prec, label` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>20</div><pre><code>axes[0].plot([0, 1], [0, 1], &quot;k--&quot;, alpha=0.5)</code></pre><div class='comment'>Gán kết quả bên phải vào `axes[0].plot([0, 1], [0, 1], &quot;k--&quot;, alpha` để dùng ở các bước sau.</div></div>
+<div class='code-row'><div class='ln'>21</div><pre><code>axes[0].set_title(&quot;ROC Curve&quot;)</code></pre><div class='comment'>Thực hiện một bước xử lý trong cell; kết quả phục vụ cho đoạn code phía sau.</div></div>
+<div class='code-row'><div class='ln'>22</div><pre><code>axes[0].set_xlabel(&quot;False Positive Rate&quot;)</code></pre><div class='comment'>Thực hiện một bước xử lý trong cell; kết quả phục vụ cho đoạn code phía sau.</div></div>
+<div class='code-row'><div class='ln'>23</div><pre><code>axes[0].set_ylabel(&quot;True Positive Rate&quot;)</code></pre><div class='comment'>Thực hiện một bước xử lý trong cell; kết quả phục vụ cho đoạn code phía sau.</div></div>
+<div class='code-row'><div class='ln'>24</div><pre><code>axes[1].set_title(&quot;Precision-Recall Curve&quot;)</code></pre><div class='comment'>Tính precision: trong các dự đoán fraud, có bao nhiêu dự đoán đúng.</div></div>
+<div class='code-row'><div class='ln'>25</div><pre><code>axes[1].set_xlabel(&quot;Recall&quot;)</code></pre><div class='comment'>Tính recall: trong các fraud thật, model bắt được bao nhiêu.</div></div>
+<div class='code-row'><div class='ln'>26</div><pre><code>axes[1].set_ylabel(&quot;Precision&quot;)</code></pre><div class='comment'>Tính precision: trong các dự đoán fraud, có bao nhiêu dự đoán đúng.</div></div>
+<div class='code-row'><div class='ln'>27</div><pre><code>for ax in axes:</code></pre><div class='comment'>Bắt đầu vòng lặp để xử lý lần lượt từng phần tử hoặc từng giá trị.</div></div>
+<div class='code-row'><div class='ln'>28</div><pre><code>    ax.legend(); ax.grid(alpha=0.3)</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>29</div><pre><code>plt.tight_layout()</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div>
+<div class='code-row'><div class='ln'>30</div><pre><code>plt.show()</code></pre><div class='comment'>Lệnh matplotlib để vẽ hoặc chỉnh biểu đồ.</div></div></div></article><details class='full'><summary>Code gốc toàn cell</summary><pre><code># Tu tinh ROC ve Precision-Recall theo nhieu threshold.
+def roc_pr_points(y_true, scores):
+    thresholds = np.r_[np.inf, np.sort(scores)[::-1], -np.inf]
+    fpr, tpr, precision, recall = [], [], [], []
+    for th in thresholds:
+        pred = (scores &gt;= th).astype(int)
+        m = classification_metrics(y_true, pred)
+        fpr.append(m[&quot;fp&quot;] / max(m[&quot;fp&quot;] + m[&quot;tn&quot;], 1))
+        tpr.append(m[&quot;recall&quot;])
+        precision.append(m[&quot;precision&quot;])
+        recall.append(m[&quot;recall&quot;])
+    return np.array(fpr), np.array(tpr), np.array(recall), np.array(precision)
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+for name, model in [(&quot;Baseline&quot;, baseline), (&quot;Balanced&quot;, balanced)]:
+    scores = model.predict_proba(X_test_s)
+    fpr, tpr, rec, prec = roc_pr_points(y_test, scores)
+    axes[0].plot(fpr, tpr, label=name)
+    axes[1].plot(rec, prec, label=name)
+axes[0].plot([0, 1], [0, 1], &quot;k--&quot;, alpha=0.5)
+axes[0].set_title(&quot;ROC Curve&quot;)
+axes[0].set_xlabel(&quot;False Positive Rate&quot;)
+axes[0].set_ylabel(&quot;True Positive Rate&quot;)
+axes[1].set_title(&quot;Precision-Recall Curve&quot;)
+axes[1].set_xlabel(&quot;Recall&quot;)
+axes[1].set_ylabel(&quot;Precision&quot;)
+for ax in axes:
+    ax.legend(); ax.grid(alpha=0.3)
+plt.tight_layout()
+plt.show()</code></pre></details></details></section></main>
+</body>
+</html>
