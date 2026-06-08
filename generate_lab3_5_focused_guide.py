@@ -214,6 +214,25 @@ def load_code_cells(path):
     return result
 
 
+CELL_LABELS = {
+    ("lab3", 1): "Cell 1 - Import thư viện",
+    ("lab3", 2): "Cell 2 - Linear Regression và Batch Gradient Descent",
+    ("lab3", 3): "Cell 3 - Polynomial Regression viết tay",
+    ("lab3", 4): "Cell 4 - Logistic Regression Iris",
+    ("lab5", 1): "Cell 1 - Import thư viện",
+    ("lab5", 2): "Cell 2 - Hàm chia dữ liệu, chuẩn hóa và sigmoid",
+    ("lab5", 3): "Cell 3 - Đọc Credit Card Fraud",
+    ("lab5", 4): "Cell 4 - Logistic Regression cho dữ liệu mất cân bằng",
+    ("lab5", 5): "Cell 5 - Tự tính confusion matrix và metric",
+    ("lab5", 6): "Cell 6 - Vẽ confusion matrix",
+    ("lab5", 7): "Cell 7 - ROC và Precision-Recall",
+}
+
+
+def cell_label(lab_id, order):
+    return CELL_LABELS.get((lab_id, order), f"Cell {order}")
+
+
 def comment_for_line(line):
     s = line.strip()
     low = s.lower()
@@ -445,6 +464,7 @@ def cell_html(lab_id, order, src):
     chunks = CHUNKS[(lab_id, order)]
     deep = DEEP.get((lab_id, order), "Cell này là một phần trong quy trình chính của lab. Khi trình bày, em nói nó nhận dữ liệu gì, xử lý gì và tạo ra kết quả gì cho bước sau.")
     overview = CELL_OVERVIEW[(lab_id, order)]
+    label = cell_label(lab_id, order)
     cards = []
     max_line = len(src.splitlines())
     for idx, (title, start, end, speech) in enumerate(chunks, 1):
@@ -457,7 +477,7 @@ def cell_html(lab_id, order, src):
             f"<details class='line-help'><summary>Nếu cô hỏi từng dòng code thì mở phần này</summary><div class='annotated'>{code_with_comments(src, start, end)}</div></details></article>"
         )
     return (
-        f"<details class='cell' open><summary>Cell {order}</summary>"
+        f"<details class='cell' id='{lab_id}-cell-{order}' open><summary>{html.escape(label)}</summary>"
         f"<div class='cell-overview'><h3>Em trình bày với cô như sau</h3><p>{html.escape(overview)}</p></div>"
         f"<div class='deep'><b>Ý chính của cell:</b> {html.escape(deep)}</div>"
         + "\n".join(cards)
@@ -479,7 +499,22 @@ def lab_html(lab_id, lab):
     )
 
 
-nav = "".join(f"<a href='#{lab_id}'>{html.escape(lab['title'])}</a>" for lab_id, lab in LABS.items())
+def nav_html():
+    groups = []
+    for lab_id, lab in LABS.items():
+        links = [f"<a class='lab-top' href='#{lab_id}'>Đầu {html.escape(lab['title'])}</a>"]
+        for order, _idx, _src in load_code_cells(lab["path"]):
+            links.append(
+                f"<a href='#{lab_id}-cell-{order}'>{html.escape(cell_label(lab_id, order))}</a>"
+            )
+        groups.append(
+            f"<details class='nav-lab'><summary>{html.escape(lab['title'])}</summary>"
+            f"<div class='nav-cells'>{''.join(links)}</div></details>"
+        )
+    return "".join(groups)
+
+
+nav = nav_html()
 content = "".join(lab_html(lab_id, lab) for lab_id, lab in LABS.items())
 
 page = f"""<!doctype html>
@@ -490,6 +525,7 @@ page = f"""<!doctype html>
 <title>Hướng dẫn vấn đáp Lab 3 và Lab 5</title>
 <style>
 *{{box-sizing:border-box}}
+html{{scroll-behavior:smooth;scroll-padding-top:88px}}
 body{{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f3f6f8;color:#17202a;line-height:1.65}}
 header{{background:#142033;color:white;padding:18px 15px}}
 header h1{{margin:0 0 8px;font-size:24px;line-height:1.2}}
@@ -497,10 +533,19 @@ header p{{margin:6px 0;color:#dce6f2}}
 .switcher{{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}}
 .switcher a{{display:inline-block;text-decoration:none;border:1px solid #8fb5ff;border-radius:999px;padding:8px 12px;font-weight:900;background:#fff;color:#123a6f}}
 .switcher a.active{{background:#0f766e;color:white;border-color:#0f766e}}
-nav{{position:sticky;top:0;z-index:10;display:flex;gap:8px;overflow-x:auto;background:white;border-bottom:1px solid #d7dde6;padding:9px}}
-nav a{{flex:0 0 auto;border:1px solid #cbd5e1;border-radius:999px;padding:8px 12px;text-decoration:none;color:#0f766e;font-weight:800;background:#f8fafc}}
+nav{{position:sticky;top:0;z-index:10;display:flex;gap:8px;overflow-x:auto;align-items:flex-start;background:white;border-bottom:1px solid #d7dde6;padding:9px}}
+.nav-lab{{flex:0 0 auto;border:1px solid #cbd5e1;border-radius:999px;background:#f8fafc;max-width:88vw}}
+.nav-lab[open]{{border-radius:14px;background:white;box-shadow:0 8px 22px rgba(15,23,42,.12)}}
+.nav-lab>summary{{cursor:pointer;list-style:none;padding:8px 12px;color:#0f766e;font-weight:900;white-space:nowrap}}
+.nav-lab>summary::-webkit-details-marker{{display:none}}
+.nav-lab>summary::after{{content:" ▾";font-size:13px;color:#64748b}}
+.nav-lab[open]>summary::after{{content:" ▴"}}
+.nav-cells{{display:grid;gap:7px;padding:8px;min-width:260px;max-height:56vh;overflow:auto}}
+.nav-cells a{{display:block;border:1px solid #cbd5e1;border-radius:9px;padding:9px 10px;text-decoration:none;color:#17202a;font-weight:800;background:#f8fafc;line-height:1.35}}
+.nav-cells a.lab-top{{background:#ecfdf5;color:#0f766e;border-color:#99f6e4}}
 main{{max-width:1180px;margin:0 auto;padding:12px}}
 .lab{{background:white;border:1px solid #d7dde6;border-radius:13px;padding:14px;margin-bottom:16px}}
+.lab,.cell{{scroll-margin-top:88px}}
 .lab h2{{margin:0 0 12px;border-bottom:2px solid #e5eaf0;padding-bottom:8px}}
 .opening,.datasets,.deep,.cell-overview{{border:1px solid #d7dde6;border-left:5px solid #0f766e;border-radius:10px;background:#f8fffd;padding:12px;margin:12px 0}}
 .cell-overview{{background:#f0fdfa}}
@@ -555,6 +600,13 @@ main{{max-width:1180px;margin:0 auto;padding:12px}}
 </header>
 <nav>{nav}</nav>
 <main>{content}</main>
+<script>
+document.querySelectorAll('.nav-cells a').forEach((link) => {{
+  link.addEventListener('click', () => {{
+    document.querySelectorAll('.nav-lab[open]').forEach((item) => item.removeAttribute('open'));
+  }});
+}});
+</script>
 </body>
 </html>
 """
