@@ -99,13 +99,79 @@ def numbered_code(src):
         rows.append(f"<div class='codeline'><span class='no'>{i}</span><code>{html.escape(line)}</code></div>")
     return "\n".join(rows)
 
-def chunk_list(chunks, max_lines):
-    items = []
-    for a, b, text in chunks:
+def code_excerpt(src, start, end):
+    lines = src.splitlines()
+    rows = []
+    for line_no in range(start, end + 1):
+        line = lines[line_no - 1] if line_no - 1 < len(lines) else ""
+        rows.append(
+            f"<div class='mini-line'><span>{line_no}</span><code>{html.escape(line)}</code></div>"
+        )
+    return "\n".join(rows)
+
+def infer_chunk_details(block):
+    lower = block.lower()
+    details = []
+    if "pd.read_csv" in block:
+        details.append("Đoạn này đọc dữ liệu từ file ngoài vào DataFrame. Khi trình bày, em nói rõ đây là bước lấy dữ liệu thật từ dataset, không phải tự tạo dữ liệu mẫu.")
+    if "dropna" in block:
+        details.append("Có xử lý giá trị thiếu bằng cách bỏ các dòng bị thiếu, để các phép tính phía sau không bị lỗi hoặc sinh ra NaN.")
+    if "to_numpy" in block or ".astype" in block:
+        details.append("Dữ liệu được đổi sang dạng số hoặc mảng NumPy để thuật toán viết tay có thể nhân ma trận, tính gradient, khoảng cách hoặc xác suất.")
+    if "random" in lower or "permutation" in lower or "shuffle" in lower or "sample" in lower:
+        details.append("Có bước xáo trộn hoặc lấy mẫu để dữ liệu train/test khách quan hơn, tránh lấy theo thứ tự ban đầu của file.")
+    if "train" in lower and "test" in lower:
+        details.append("Đoạn này tách dữ liệu thành phần train để học mô hình và phần test để kiểm tra mô hình trên dữ liệu chưa dùng khi học.")
+    if "mean" in lower and "std" in lower:
+        details.append("Có chuẩn hóa bằng mean và độ lệch chuẩn. Ý cần nói là đưa các feature về cùng thang đo để thuật toán ổn định hơn.")
+    if "gradient" in lower or "theta" in lower or "learning_rate" in lower:
+        details.append("Đây là phần tối ưu tham số: model tính lỗi, tính hướng giảm lỗi, rồi cập nhật tham số theo learning rate.")
+    if "def " in block:
+        details.append("Có định nghĩa hàm để gom một chức năng riêng. Khi cô hỏi, em chỉ cần nói hàm này nhận đầu vào gì, xử lý gì, và trả ra kết quả gì.")
+    if "class " in block:
+        details.append("Có định nghĩa class để đóng gói thuật toán. Các hàm bên trong class tương ứng với các bước như fit, predict, tính metric hoặc vẽ kết quả.")
+    if "fit(" in block:
+        details.append("Có bước huấn luyện model. Ở đây model dùng dữ liệu train để học tham số hoặc học cấu trúc cần thiết.")
+    if "predict" in lower:
+        details.append("Có bước dự đoán. Sau khi model học xong, đoạn này dùng model để sinh nhãn hoặc giá trị dự đoán.")
+    if "accuracy" in lower or "precision" in lower or "recall" in lower or "f1" in lower:
+        details.append("Có tính metric đánh giá. Khi nói với cô, em nên nêu metric đó đo điều gì chứ không chỉ đọc con số.")
+    if "plt." in block or "ax." in block or "scatter" in lower or "plot(" in lower or "hist" in lower or "contourf" in lower or "imshow" in lower or "barh" in lower:
+        details.append("Có phần trực quan hóa. Khi trình bày hình, em nói trục X/Y là gì, màu biểu diễn gì, và kết luận chính rút ra từ hình.")
+    if "gini" in lower:
+        details.append("Phần này liên quan Decision Tree: Gini dùng để đo độ lẫn nhãn trong node, split tốt là split làm Gini giảm nhiều.")
+    if "kernel" in lower or "gamma" in lower:
+        details.append("Phần này liên quan kernel RBF: kernel đo độ giống nhau phi tuyến giữa các điểm, giúp tạo biên quyết định cong.")
+    if "eps" in lower or "min_samples" in lower:
+        details.append("Phần này liên quan DBSCAN: eps là bán kính lân cận, min_samples là số điểm tối thiểu để một vùng được xem là đủ đặc.")
+    if "likelihood" in lower or "responsibilities" in lower or "covariance" in lower or "gaussian" in lower:
+        details.append("Phần này liên quan GMM/EM: model ước lượng phân phối Gaussian và dùng log-likelihood để xem điểm nào bình thường hay bất thường.")
+    if not details:
+        details.append("Đây là một cụm xử lý phụ trong cell. Khi trình bày, em nói nó phục vụ cho bước ngay phía sau, ví dụ chuẩn bị biến, lưu kết quả, hoặc hoàn tất cấu trúc code.")
+    return details
+
+def chunk_cards(chunks, max_lines, src, cell_order):
+    lines = src.splitlines()
+    cards = []
+    for idx, (a, b, text) in enumerate(chunks, 1):
         a = max(1, min(a, max_lines))
         b = max(a, min(b, max_lines))
-        items.append(f"<li><b>Dòng {a}-{b}:</b> {html.escape(text)}</li>")
-    return "\n".join(items)
+        block = "\n".join(lines[a - 1:b])
+        first_line = lines[a - 1].strip() if lines else ""
+        detail_items = "".join(f"<li>{html.escape(item)}</li>" for item in infer_chunk_details(block))
+        cards.append(f"""
+        <article class='chunk-card' id='cell-{cell_order}-chunk-{idx}'>
+          <h5>Cụm {idx}: dòng {a}-{b}</h5>
+          <p class='chunk-say'><b>Khi chỉ đoạn này, em nói:</b> {html.escape(text)}</p>
+          <p class='find-tip'><b>Mốc để tìm trên code máy tính:</b> dòng đầu cụm là <code>{html.escape(first_line[:120])}</code></p>
+          <div class='mini-code'>{code_excerpt(src, a, b)}</div>
+          <div class='deep'>
+            <b>Nói kỹ hơn nếu cô hỏi:</b>
+            <ul>{detail_items}</ul>
+          </div>
+        </article>
+        """)
+    return "\n".join(cards)
 
 def dataset_cards(lab):
     cards = []
@@ -129,7 +195,7 @@ def lab_html(lab):
           <summary><span>Cell {order}</span> {html.escape(name)}</summary>
           <div class='cellbody'>
             <section class='say'><h4>Em trình bày với cô như sau</h4><p>{html.escape(say)}</p></section>
-            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4><ul>{chunk_list(chunks, max_lines)}</ul></section>
+            <section class='chunks'><h4>Các cụm code cần chỉ khi nói</h4>{chunk_cards(chunks, max_lines, src, order)}</section>
             <section class='teacher'><h4>Nếu cô hỏi thêm</h4><p>{html.escape(ask)}</p></section>
             <section class='visual'><h4>Phân tích kết quả hoặc hình vẽ</h4><p>{html.escape(visual)}</p></section>
             <details class='codebox'>
@@ -168,6 +234,8 @@ main{{max-width:1180px;margin:0 auto;padding:16px}} .lab{{background:var(--paper
 h3,h4{{margin:0 0 7px;line-height:1.3}} p{{margin:0 0 6px}} ul{{margin:6px 0 0;padding-left:21px}} li{{margin:7px 0}}
 .codebox{{margin-top:12px;border:1px solid #cbd5e1;border-radius:10px;overflow:hidden}} .codebox>summary{{cursor:pointer;padding:11px 13px;background:#f8fafc;font-weight:800;color:#0f766e}}
 .code{{background:var(--code);color:var(--codeText);overflow:auto;max-height:70vh;padding:10px 0;font-family:Consolas,Monaco,'Courier New',monospace;font-size:13px;line-height:1.55}} .codeline{{display:grid;grid-template-columns:52px max-content;min-width:max-content}} .no{{color:#94a3b8;text-align:right;padding:0 12px 0 8px;user-select:none;border-right:1px solid #334155}} .codeline code{{white-space:pre;padding-left:12px;padding-right:16px}}
+.chunk-card{{background:#fff;border:1px solid #fed7aa;border-radius:10px;margin:12px 0;padding:11px}} .chunk-card h5{{margin:0 0 8px;font-size:16px;color:#92400e}} .chunk-say{{background:#fffbeb;border-left:4px solid #f59e0b;padding:9px;border-radius:7px}} .find-tip{{font-size:14px;color:#475569;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:7px;padding:8px;margin-top:8px}} .find-tip code{{word-break:break-all}}
+.mini-code{{background:#111827;color:#e5e7eb;border-radius:8px;overflow:auto;margin:10px 0;padding:8px 0;font-family:Consolas,Monaco,'Courier New',monospace;font-size:12.5px;line-height:1.5}} .mini-line{{display:grid;grid-template-columns:42px max-content;min-width:max-content}} .mini-line span{{color:#94a3b8;text-align:right;padding:0 10px 0 6px;border-right:1px solid #334155;user-select:none}} .mini-line code{{white-space:pre;padding-left:10px;padding-right:14px}} .deep{{background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:9px;margin-top:8px}} .deep ul{{margin-top:6px}}
 .note{{font-size:14px;color:#dbe4ee}} .controls{{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}} button{{border:1px solid #91a1b5;background:#fff;color:#17202a;border-radius:8px;padding:8px 10px;font-weight:700}}
 @media(max-width:720px){{body{{font-size:17px;line-height:1.7}}header{{padding:18px 14px}}header h1{{font-size:22px}}main{{padding:10px}}.lab{{padding:12px;border-radius:10px}}.lab h2{{font-size:21px}}.cell>summary{{font-size:16px;padding:12px}}.speech,.datasets,.say,.chunks,.teacher,.visual{{padding:11px;margin:10px 0}}.code{{font-size:12px;max-height:62vh}}.codeline{{grid-template-columns:42px max-content}}.topnav{{padding:8px;gap:6px}}.topnav a{{font-size:13px;padding:7px 10px}}}}
 </style>
