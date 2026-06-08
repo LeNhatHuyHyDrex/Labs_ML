@@ -139,6 +139,70 @@ DEEP = {
 }
 
 
+CELL_OVERVIEW = {
+    ("lab3", 1): (
+        "Ở cell này, em chỉ import các thư viện cần dùng cho Lab 3. "
+        "Cụ thể, `os` để xử lý đường dẫn dataset, `numpy` để tự viết các phép toán vector và ma trận, "
+        "`pandas` để đọc dữ liệu dạng bảng, còn `matplotlib` để vẽ loss, đường hồi quy và decision boundary. "
+        "Cell này chưa xử lý dữ liệu hay train mô hình, nó chỉ chuẩn bị môi trường cho các cell phía sau."
+    ),
+    ("lab3", 2): (
+        "Ở cell này, em làm Linear Regression bằng Batch Gradient Descent trên bộ Auto MPG. "
+        "Đầu tiên em đọc dữ liệu từ file UCI, lấy `horsepower` làm biến đầu vào và `mpg` làm giá trị cần dự đoán. "
+        "Sau đó em tự chia train-test, tự chuẩn hóa dữ liệu, thêm bias, rồi viết hàm Gradient Descent để học tham số `theta`. "
+        "Cuối cell, em chạy nhiều learning rate khác nhau để so sánh tốc độ hội tụ qua biểu đồ MSE."
+    ),
+    ("lab3", 3): (
+        "Ở cell này, em làm Polynomial Regression viết tay. "
+        "Ý tưởng là thay vì chỉ dùng một biến `weight`, em tự tạo thêm các biến lũy thừa như `weight^2`, `weight^3` để mô hình học được quan hệ cong giữa cân nặng xe và MPG. "
+        "Sau đó em dùng Normal Equation để tìm tham số, không dùng `PolynomialFeatures` hay `LinearRegression` của sklearn. "
+        "Cuối cùng em vẽ nhiều đường hồi quy với các bậc khác nhau để so sánh độ phức tạp của mô hình."
+    ),
+    ("lab3", 4): (
+        "Ở cell này, em làm Logistic Regression đa lớp cho bộ Iris. "
+        "Vì Iris có 3 loài hoa nên em dùng softmax thay vì sigmoid nhị phân. "
+        "Em tự viết hàm softmax, one-hot label, class `LogisticRegressionScratch`, rồi train bằng gradient descent. "
+        "Sau khi train, em tự in classification report và vẽ decision boundary để thấy mô hình chia vùng dự đoán cho từng loài hoa như thế nào."
+    ),
+    ("lab5", 1): (
+        "Ở cell này, em import các thư viện cần dùng cho Lab 5. "
+        "`os` dùng để lấy đường dẫn file credit card, `numpy` để tự tính metric và Logistic Regression, `pandas` để đọc dữ liệu, còn `matplotlib` để vẽ confusion matrix, ROC và Precision-Recall. "
+        "Cell này chỉ là bước chuẩn bị."
+    ),
+    ("lab5", 2): (
+        "Ở cell này, em tự viết các hàm tiện ích thay cho sklearn. "
+        "Hàm `train_test_split_np` chia dữ liệu theo từng lớp để giữ tỷ lệ fraud và normal trong train/test. "
+        "Hàm `standardize_train_test` chuẩn hóa dữ liệu theo thống kê của tập train để tránh data leakage. "
+        "Hàm `sigmoid` dùng cho Logistic Regression để đổi đầu ra tuyến tính thành xác suất."
+    ),
+    ("lab5", 3): (
+        "Ở cell này, em đọc bộ Credit Card Fraud Detection từ file của Lab 1. "
+        "Vì dữ liệu gốc rất lớn và fraud là lớp hiếm, em lấy toàn bộ fraud nhưng chỉ sample 20.000 giao dịch normal để notebook chạy nhanh hơn mà vẫn giữ được tình huống mất cân bằng. "
+        "Sau đó em tạo ma trận đặc trưng `X` gồm Time, Amount và V1 đến V28, còn `y` là nhãn Class."
+    ),
+    ("lab5", 4): (
+        "Ở cell này, em tự viết Logistic Regression nhị phân để phân loại fraud và normal. "
+        "Trong hàm `fit`, model thêm bias, khởi tạo theta, tính xác suất bằng sigmoid, tính lỗi và gradient rồi cập nhật theta qua nhiều epoch. "
+        "Điểm quan trọng là em train hai phiên bản: baseline bình thường và bản `class_weight='balanced'` để xử lý lớp fraud hiếm."
+    ),
+    ("lab5", 5): (
+        "Ở cell này, em tự tính các chỉ số đánh giá từ confusion matrix. "
+        "Em đếm TP, TN, FP, FN rồi tính accuracy, precision, recall và F1. "
+        "Với bài fraud detection, em nhấn mạnh recall và precision quan trọng hơn accuracy, vì fraud là lớp ít nhưng rất quan trọng."
+    ),
+    ("lab5", 6): (
+        "Ở cell này, em vẽ confusion matrix cho baseline và balanced model. "
+        "Mục đích là nhìn trực tiếp mô hình dự đoán đúng normal, đúng fraud, báo động nhầm và bỏ sót fraud bao nhiêu trường hợp. "
+        "Phần này giúp giải thích vì sao chỉ nhìn accuracy là chưa đủ với dữ liệu mất cân bằng."
+    ),
+    ("lab5", 7): (
+        "Ở cell này, em tự tính ROC curve và Precision-Recall curve bằng cách quét nhiều threshold. "
+        "Mỗi threshold tạo ra một bộ dự đoán khác nhau, từ đó tính FPR, TPR, precision và recall. "
+        "Em vẽ hai đường này để so sánh baseline và balanced model, trong đó Precision-Recall đặc biệt quan trọng vì tập trung vào lớp fraud hiếm."
+    ),
+}
+
+
 def load_code_cells(path):
     nb = json.loads(path.read_text(encoding="utf-8"))
     result = []
@@ -358,6 +422,7 @@ def dataset_html(lab):
 def cell_html(lab_id, order, src):
     chunks = CHUNKS[(lab_id, order)]
     deep = DEEP.get((lab_id, order), "Cell này là một phần trong quy trình chính của lab. Khi trình bày, em nói nó nhận dữ liệu gì, xử lý gì và tạo ra kết quả gì cho bước sau.")
+    overview = CELL_OVERVIEW[(lab_id, order)]
     cards = []
     max_line = len(src.splitlines())
     for idx, (title, start, end, speech) in enumerate(chunks, 1):
@@ -371,6 +436,7 @@ def cell_html(lab_id, order, src):
         )
     return (
         f"<details class='cell' open><summary>Cell {order}</summary>"
+        f"<div class='cell-overview'><h3>Em trình bày với cô như sau</h3><p>{html.escape(overview)}</p></div>"
         f"<div class='deep'><b>Ý chính của cell:</b> {html.escape(deep)}</div>"
         + "\n".join(cards)
         + f"<details class='full'><summary>Code gốc toàn cell</summary><pre><code>{html.escape(src)}</code></pre></details>"
@@ -414,7 +480,9 @@ nav a{{flex:0 0 auto;border:1px solid #cbd5e1;border-radius:999px;padding:8px 12
 main{{max-width:1180px;margin:0 auto;padding:12px}}
 .lab{{background:white;border:1px solid #d7dde6;border-radius:13px;padding:14px;margin-bottom:16px}}
 .lab h2{{margin:0 0 12px;border-bottom:2px solid #e5eaf0;padding-bottom:8px}}
-.opening,.datasets,.deep{{border:1px solid #d7dde6;border-left:5px solid #0f766e;border-radius:10px;background:#f8fffd;padding:12px;margin:12px 0}}
+.opening,.datasets,.deep,.cell-overview{{border:1px solid #d7dde6;border-left:5px solid #0f766e;border-radius:10px;background:#f8fffd;padding:12px;margin:12px 0}}
+.cell-overview{{background:#f0fdfa}}
+.cell-overview h3{{margin:0 0 8px;font-size:16px}}
 .dataset{{background:#fff;border:1px solid #d7dde6;border-radius:10px;padding:10px;margin:10px 0}}
 .dataset h4{{margin:0 0 5px;color:#0f766e}}
 .cell{{border:1px solid #cbd5e1;border-radius:12px;margin:14px 0;overflow:hidden;background:#fff}}
