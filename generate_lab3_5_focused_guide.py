@@ -414,13 +414,19 @@ def chunk_extra_notes(title, speech, src, start, end):
 
 def chunk_dialogue(title, speech, src, start, end):
     notes = chunk_extra_notes_items(title, speech, src, start, end)
-    selected = notes[:3]
-    detail = " ".join(selected)
-    return (
-        f"{speech} "
-        f"Khi trình bày đoạn này, em nói rõ thêm rằng {detail} "
-        f"Sau khi nói xong cụm này, em chuyển sang cụm tiếp theo bằng cách nhấn mạnh kết quả của cụm hiện tại sẽ được dùng cho bước sau."
-    )
+    clean_notes = []
+    for note in notes[:3]:
+        text = note
+        text = text.replace("Đầu tiên em luôn nói rõ", "Ở đây em xác định rõ")
+        text = text.replace("Khi cô hỏi, em chỉ cần nói", "Hàm này cần hiểu theo ba ý:")
+        text = text.replace("Khi trình bày hình, em nói rõ", "Ở biểu đồ này, em xác định")
+        text = text.replace("Khi chỉ hình, em đọc theo", "Em đọc hình theo")
+        text = text.replace("Khi trình bày cụm này, em nói theo thứ tự:", "Cụm này có thể hiểu theo thứ tự:")
+        text = text.replace("Khi trình bày,", "")
+        text = text.replace("em nói rõ thêm rằng", "")
+        clean_notes.append(text.strip())
+    detail = " ".join(clean_notes)
+    return f"{speech} {detail}"
 
 
 def dataset_html(lab):
