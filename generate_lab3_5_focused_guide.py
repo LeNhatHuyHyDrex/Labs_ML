@@ -288,6 +288,61 @@ def code_with_comments(src, start, end):
     return "\n".join(rows)
 
 
+def chunk_extra_notes(title, speech, src, start, end):
+    block = "\n".join(src.splitlines()[start - 1:end]).lower()
+    notes = []
+    title_l = title.lower()
+    if "đọc" in title_l or "khai báo cột" in title_l:
+        notes.append("Đầu tiên em luôn nói rõ dữ liệu đi từ đâu vào: file nào, đọc bằng hàm nào, và sau khi đọc thì dữ liệu nằm trong biến nào.")
+        notes.append("Nếu đoạn này có `dropna`, em giải thích là vì dữ liệu thô có thể bị thiếu, nên cần làm sạch trước khi đưa vào mô hình.")
+    if "chia train" in title_l or "train-test" in title_l:
+        notes.append("Điểm cần nhấn mạnh là train dùng để học tham số, test dùng để kiểm tra sau khi học xong. Không được dùng test để tính tham số chuẩn hóa hoặc train model.")
+        notes.append("Việc xáo trộn index giúp dữ liệu test không bị lệ thuộc vào thứ tự ban đầu trong file.")
+    if "chuẩn hóa" in title_l:
+        notes.append("Chuẩn hóa giúp các giá trị đầu vào có thang đo gần nhau hơn. Với Gradient Descent, điều này làm quá trình giảm loss ổn định và nhanh hơn.")
+        notes.append("Cột bias toàn số 1 giúp mô hình học được hệ số chặn, tức đường hồi quy không bắt buộc đi qua gốc tọa độ.")
+    if "gradient descent" in title_l:
+        notes.append("Batch Gradient Descent nghĩa là mỗi lần cập nhật theta, em dùng toàn bộ tập train để tính gradient. Vì dùng toàn bộ dữ liệu nên đường loss thường mượt và ổn định hơn.")
+        notes.append("Công thức chính là: dự đoán -> tính lỗi -> tính gradient -> cập nhật theta. Learning rate quyết định bước cập nhật lớn hay nhỏ.")
+    if "learning rate" in title_l:
+        notes.append("Mỗi learning rate tạo ra một đường loss riêng. Đường nào xuống nhanh và không dao động thì learning rate đó tốt trong thí nghiệm này.")
+        notes.append("Không nên nói learning rate lớn luôn tốt; phải nói nó tốt trong biểu đồ này vì loss giảm nhanh mà vẫn ổn định.")
+    if "biểu đồ" in title_l or "vẽ" in title_l:
+        notes.append("Khi trình bày hình, em nói rõ trục X là gì, trục Y là gì, mỗi màu/đường biểu diễn gì, và kết luận chính rút ra từ hình.")
+    if "đa thức" in title_l or "polynomial" in title_l:
+        notes.append("Polynomial Regression vẫn là Linear Regression theo tham số theta, nhưng dữ liệu đầu vào đã được mở rộng thành các lũy thừa để tạo đường cong.")
+        notes.append("Bậc càng cao thì mô hình càng linh hoạt, nhưng nếu quá cao có thể bám nhiễu và overfit.")
+    if "normal equation" in title_l:
+        notes.append("Normal Equation là cách giải trực tiếp theta bằng công thức ma trận, không cần lặp như Gradient Descent.")
+        notes.append("Regularization nhỏ được thêm vào để phép nghịch đảo ổn định hơn khi ma trận khó nghịch đảo.")
+    if "softmax" in title_l or "one-hot" in title_l:
+        notes.append("Softmax dùng cho bài toán nhiều lớp. Nó biến score của từng lớp thành xác suất, tổng xác suất bằng 1.")
+        notes.append("One-hot biến nhãn số thành vector để so sánh với xác suất softmax khi tính lỗi.")
+    if "logisticregressionscratch" in title_l or "class logistic" in title_l:
+        notes.append("Trong class này, `weights` và `bias` là tham số model học được. `fit` là nơi học tham số, còn `predict` là nơi dùng tham số đã học để dự đoán.")
+        notes.append("Gradient được tính từ chênh lệch giữa xác suất dự đoán và nhãn one-hot, rồi cập nhật weights/bias sau mỗi vòng lặp.")
+    if "iris" in title_l:
+        notes.append("Iris có 3 lớp nên phải dùng softmax thay vì sigmoid nhị phân. Chọn 2 feature petal giúp vẽ decision boundary trên mặt phẳng 2D.")
+    if "credit card" in title_l or "fraud" in title_l:
+        notes.append("Bộ credit card phù hợp vì lớp fraud rất hiếm. Đây là lý do Lab 5 không nên chỉ nhìn accuracy.")
+        notes.append("Lấy mẫu normal giúp notebook chạy nhanh hơn nhưng vẫn giữ được tình huống mất cân bằng.")
+    if "class_weight" in title_l or "trọng số" in title_l:
+        notes.append("class_weight balanced làm mẫu fraud có trọng số lớn hơn trong loss. Nhờ vậy model chú ý hơn đến lỗi bỏ sót fraud.")
+        notes.append("Baseline và balanced được train song song để so sánh xem xử lý mất cân bằng có cải thiện recall fraud không.")
+    if "metric" in title_l or "tp" in block or "precision" in block:
+        notes.append("TP, TN, FP, FN là nền của mọi metric phân loại. Với fraud, FN là nguy hiểm vì đó là fraud thật nhưng model bỏ sót.")
+        notes.append("Precision trả lời: trong các cảnh báo fraud, bao nhiêu cái đúng. Recall trả lời: trong các fraud thật, bắt được bao nhiêu.")
+    if "confusion" in title_l:
+        notes.append("Confusion matrix giúp nhìn số lượng lỗi cụ thể, dễ giải thích hơn một con số accuracy.")
+        notes.append("Khi chỉ hình, em đọc theo hàng là nhãn thật, cột là nhãn dự đoán.")
+    if "roc" in title_l or "precision-recall" in title_l:
+        notes.append("ROC và Precision-Recall được tạo bằng cách thay đổi threshold. Mỗi threshold cho một bộ precision/recall hoặc FPR/TPR khác nhau.")
+        notes.append("Với dữ liệu mất cân bằng, Precision-Recall thường quan trọng hơn vì tập trung vào lớp fraud hiếm.")
+    if not notes:
+        notes.append("Khi trình bày cụm này, em nói theo thứ tự: đầu vào là gì, đoạn code xử lý gì, biến nào được tạo ra, và biến đó dùng cho bước nào tiếp theo.")
+    return "".join(f"<li>{html.escape(note)}</li>" for note in notes)
+
+
 def dataset_html(lab):
     cards = []
     for ds in lab["datasets"]:
@@ -311,6 +366,7 @@ def cell_html(lab_id, order, src):
         cards.append(
             f"<article class='chunk'><h4>Cụm {idx}: {html.escape(title)}</h4>"
             f"<p class='speech-line'><b>Khi chỉ đoạn này em nói:</b> {html.escape(speech)}</p>"
+            f"<div class='more-talk'><b>Nói sâu hơn cho cụm này:</b><ul>{chunk_extra_notes(title, speech, src, start, end)}</ul></div>"
             f"<div class='annotated'>{code_with_comments(src, start, end)}</div></article>"
         )
     return (
@@ -363,12 +419,14 @@ main{{max-width:1180px;margin:0 auto;padding:12px}}
 .chunk{{border:1px solid #fed7aa;border-radius:11px;background:#fffaf4;margin:12px;padding:12px}}
 .chunk h4{{margin:0 0 8px;color:#92400e}}
 .speech-line{{background:#fffbeb;border-left:4px solid #f59e0b;border-radius:8px;padding:9px;margin:8px 0}}
-.annotated{{border:1px solid #cbd5e1;border-radius:10px;overflow:hidden;background:#0f172a;margin-top:10px}}
-.code-row{{display:grid;grid-template-columns:44px minmax(360px,1.1fr) minmax(260px,.9fr);border-bottom:1px solid #334155}}
+.more-talk{{background:#f0f9ff;border:1px solid #bae6fd;border-radius:9px;padding:9px;margin:9px 0}} .more-talk ul{{margin:6px 0 0;padding-left:20px}}
+.annotated{{border:1px solid #cbd5e1;border-radius:10px;overflow:visible;background:#0f172a;margin-top:10px}}
+.code-row{{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(320px,.9fr);border-bottom:1px solid #334155}}
 .ln{{background:#111827;color:#94a3b8;text-align:right;padding:7px 8px;font-family:Consolas,monospace;user-select:none}}
-.code-row pre{{margin:0;padding:7px 10px;overflow:auto;background:#0f172a;color:#e5e7eb;font-family:Consolas,Monaco,'Courier New',monospace;font-size:12.5px;line-height:1.45}}
-.code-row code{{white-space:pre}}
+.code-row pre{{margin:0;padding:7px 10px;overflow:auto;min-width:0;background:#0f172a;color:#e5e7eb;font-family:Consolas,Monaco,'Courier New',monospace;font-size:12.5px;line-height:1.45}}
+.code-row code{{white-space:pre-wrap;word-break:break-word}}
 .comment{{background:#f8fafc;color:#17202a;padding:7px 10px;font-size:14px;border-left:1px solid #cbd5e1}}
+.comment::before{{content:"Dòng này làm gì: ";font-weight:800;color:#0f766e}}
 .full{{margin:12px;border:1px solid #cbd5e1;border-radius:10px;overflow:hidden}}
 .full summary{{cursor:pointer;padding:10px;background:#f8fafc;color:#0f766e;font-weight:800}}
 .full pre{{margin:0;max-height:65vh;overflow:auto;background:#0f172a;color:#e5e7eb;padding:12px;font-size:12px}}
